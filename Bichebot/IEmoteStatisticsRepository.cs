@@ -47,7 +47,7 @@ namespace Bichebot
                 Console.WriteLine("Incrementing " + emoteName);
                 var collection = database.GetCollection<EmoteStatistic>("emotes");
                 var items = await collection.FindAsync(p => p.Name == emoteName).ConfigureAwait(false);
-                var item = items.Current?.FirstOrDefault();
+                var item = items?.ToEnumerable().FirstOrDefault();
             
                 if (item != null)
                 {
