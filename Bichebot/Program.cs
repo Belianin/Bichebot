@@ -74,6 +74,54 @@ namespace Bichebot
 
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
             }
+            else if (message.Content.Contains("/t4"))
+            {
+                var rates = GetEmotesRateFor(TimeSpan.FromDays(3), message.Channel)
+                    .OrderByDescending(r => r.Value)
+                    .Take(10);
+                
+                var response = "Величайшие смайлы:\n" + string.Join("\n", rates.Select(e => $"{ToEmojiString(e.Key)}: {e.Value}"));
+
+                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                
+            }
+        }
+
+        private Dictionary<string, int> GetEmotesRateFor(TimeSpan timeSpan, ISocketMessageChannel channel)
+        {
+            var result = new Dictionary<string, int>();
+            var timestamp = DateTime.UtcNow;
+            ulong lastId = 0;
+            
+            var messages = channel.GetMessagesAsync().Flatten();
+            var enumerator = messages.GetEnumerator();
+            while (true)
+            {
+                var isEmpty = true;
+                while (enumerator.MoveNext().Result)
+                {
+                    isEmpty = false;
+                    lastId = enumerator.Current.Id;
+                    if (enumerator.Current.Timestamp.UtcDateTime < timestamp)
+                        timestamp = enumerator.Current.Timestamp.UtcDateTime;
+                    if (!(enumerator.Current is IUserMessage userMessage))
+                        break;
+                    foreach (var reaction in userMessage.Reactions)
+                    {
+                        if (!result.ContainsKey(reaction.Key.Name))
+                            result[reaction.Key.Name] = 0;
+
+                        result[reaction.Key.Name] += reaction.Value.ReactionCount;
+                    }
+                }
+                
+                if (isEmpty || timestamp.Add(timeSpan) < DateTime.UtcNow)
+                    break;
+
+                enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
+            }
+
+            return result;
         }
 
         private async Task HandleReactionAsync(
