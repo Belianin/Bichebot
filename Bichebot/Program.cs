@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Db.Logging;
-using Db.Logging.Abstractions;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -15,7 +13,7 @@ namespace Bichebot
     {
         static void Main(string[] args)
         {
-            new Bot().RunAsync().Wait();
+            new Bot(Environment.GetEnvironmentVariable("BICHEBOT_TOKEN")).RunAsync().Wait();
         }
     }
 
@@ -42,8 +40,9 @@ namespace Bichebot
         
         private HashSet<ulong> alreadyBest = new HashSet<ulong>();
 
-        public Bot()
+        public Bot(string token)
         {
+            this.token = token;
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessage;
