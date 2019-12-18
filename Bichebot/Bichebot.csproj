@@ -9,10 +9,4 @@
       <PackageReference Include="Discord.Net" Version="2.1.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Db.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\Db\Db.Logging\bin\Release\netstandard2.0\Db.Logging.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

@@ -35,9 +35,7 @@ namespace Bichebot
         private SocketGuild guild => discordClient.Guilds.First(g => g.Id == serverId);
 
         private string token = "";
-
-        private ILog log;
-
+        
         private ulong bestChannelId = 602475515391246358;
 
         private int reactionCountToBeBest = 3;
@@ -46,7 +44,6 @@ namespace Bichebot
 
         public Bot()
         {
-            log = new ColorConsoleLog();
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessage;
