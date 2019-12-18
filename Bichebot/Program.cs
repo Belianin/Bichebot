@@ -70,7 +70,7 @@ namespace Bichebot
 
         private async Task SendToBestChannelAsync(IUserMessage userMessage)
         {
-            if (alreadyBest.Contains(userMessage.Id) && userMessage.Reactions.Values.Any(r => r.ReactionCount >= 4))
+            if (!alreadyBest.Contains(userMessage.Id) && userMessage.Reactions.Values.Any(r => r.ReactionCount >= 4))
             {
                 alreadyBest.Add(userMessage.Id);
                 await guild.GetTextChannel(bestChannelId)
