@@ -13,7 +13,19 @@ namespace Bichebot
     {
         static void Main(string[] args)
         {
-            new Bot(Environment.GetEnvironmentVariable("BICHEBOT_TOKEN")).RunAsync().Wait();
+            var token = Environment.GetEnvironmentVariable("BICHEBOT_TOKEN", EnvironmentVariableTarget.User);
+            string mongoPassword;
+            if (token != null)
+            {
+                mongoPassword = Environment.GetEnvironmentVariable("MONGODB_PASSWORD", EnvironmentVariableTarget.User);
+            }
+            else
+            {
+                token = Environment.GetEnvironmentVariable("BICHEBOT_TOKEN");
+                mongoPassword = Environment.GetEnvironmentVariable("MONGODB_PASSWORD");
+            }
+            new Bot(token, new MongoEmoteStatisticsRepository(mongoPassword))
+                .RunAsync().Wait();
         }
     }
 
@@ -40,9 +52,12 @@ namespace Bichebot
         
         private HashSet<ulong> alreadyBest = new HashSet<ulong>();
 
-        public Bot(string token)
+        private readonly IEmoteStatisticsRepository statistics;
+
+        public Bot(string token, IEmoteStatisticsRepository statistics)
         {
             this.token = token;
+            this.statistics = statistics;
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessage;
@@ -51,6 +66,14 @@ namespace Bichebot
         private async Task HandleMessage(SocketMessage message)
         {
             Console.WriteLine(message);
+            if (message.Content.Contains("/stat")) // Костыль message.MentionedUsers.FirstOrDefault(u => u.IsBot) != null && 
+            {
+                var result = await statistics.GetAllStatisticsAsync().ConfigureAwait(false);
+
+                var response = result == null ? "Что-то не то..." : string.Join("\n", result.OrderByDescending(e => e.ReactionCount).Select(e => $"{ToEmojiString(e.Name)}: {e.ReactionCount}"));
+
+                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+            }
         }
 
         private async Task HandleReactionAsync(
@@ -65,6 +88,8 @@ namespace Bichebot
                 await SendToBestChannelAsync(userMessage).ConfigureAwait(false);
             }
             
+            await statistics.IncrementAsync(reaction.Emote.Name).ConfigureAwait(false);
+
             //await channel.SendMessageAsync($"Хм, \"{message.Content}\" вызывает у тебя {ToEmojiString(reaction.Emote.Name)}? Понятно...").ConfigureAwait(false);
         }
 
