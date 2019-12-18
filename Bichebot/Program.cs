@@ -70,7 +70,7 @@ namespace Bichebot
             {
                 var result = await statistics.GetAllStatisticsAsync().ConfigureAwait(false);
 
-                var response = result == null ? "Что-то не то..." : string.Join("\n", result.OrderByDescending(e => e.ReactionCount).Select(e => $"{ToEmojiString(e.Name)}: {e.ReactionCount}"));
+                var response = result == null ? "Что-то не то..." : "Величайшие смайлы:\n" + string.Join("\n", result.OrderByDescending(e => e.ReactionCount).Select(e => $"{ToEmojiString(e.Name)}: {e.ReactionCount}"));
 
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
             }

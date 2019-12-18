@@ -52,8 +52,8 @@ namespace Bichebot
                 if (item != null)
                 {
                     Console.WriteLine("REplaceing");
-                    item.ReactionCount++;
-                    var resplaceResult = await collection.ReplaceOneAsync(i => i.Name == emoteName, item).ConfigureAwait(false);
+                    item.ReactionCount += 1;
+                    var replaceOneResult = await collection.ReplaceOneAsync(i => i.Name == emoteName, item).ConfigureAwait(false);
                 }
                 else
                 {
