@@ -121,12 +121,14 @@ namespace Bichebot
                         continue;
                     if (!(enumerator.Current is IUserMessage userMessage))
                         continue;
-                    foreach (var emote in regex.Match(userMessage.Content).Groups[1].Captures)
+                    foreach (var emote in regex.Matches(userMessage.Content))
                     {
-                        if (!result.ContainsKey(emote.ToString()))
-                            result[emote.ToString()] = 0;
+                        // fuck it
+                        var value = emote.ToString().Substring(1, emote.ToString().Length - 2);
+                        if (!result.ContainsKey(value))
+                            result[value] = 0;
 
-                        result[emote.ToString()] += 1;
+                        result[value] += 1;
                     }
                 }
                 
