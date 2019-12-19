@@ -28,15 +28,15 @@ namespace Bichebot
             discordClient.MessageReceived += HandleMessage;
         }
 
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken token)
         {
             await discordClient.LoginAsync(TokenType.Bot, config.Token)
                 .ConfigureAwait(false);
             await discordClient.StartAsync().ConfigureAwait(false);
 
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Bichebot
             Console.WriteLine(message);
             if (message.Content.Contains("/t4"))
             {
-                var rates = GetEmotesRateFor(TimeSpan.FromDays(3), message.Channel)
+                var rates = GetEmoteReactionsRating(TimeSpan.FromDays(3), message.Channel)
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
@@ -56,7 +56,7 @@ namespace Bichebot
             }
             else if (message.Content.Contains("/t5"))
             {
-                var rates = GetEmotesRateFor5(TimeSpan.FromDays(3), message.Channel)
+                var rates = GetEmotesUsingRaiting(TimeSpan.FromDays(3), message.Channel)
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
@@ -67,7 +67,7 @@ namespace Bichebot
             }
         }
 
-        private IEnumerable<IUserMessage> GetMessages(TimeSpan period, ISocketMessageChannel channel)
+        private static IEnumerable<IUserMessage> GetMessages(TimeSpan period, IMessageChannel channel)
         {
             var timestamp = DateTime.UtcNow;
             ulong lastId = 0;
@@ -91,7 +91,7 @@ namespace Bichebot
             } while (!isEmpty && timestamp.Add(period) < DateTime.UtcNow);
         }
 
-        private Dictionary<string, int> GetEmotesRateFor5(TimeSpan timeSpan, ISocketMessageChannel channel)
+        private static Dictionary<string, int> GetEmotesUsingRaiting(TimeSpan timeSpan, IMessageChannel channel)
         {
             var result = new Dictionary<string, int>();
             var regex = new Regex(@":(.*?):");
@@ -112,7 +112,7 @@ namespace Bichebot
             return result;
         }
 
-        private Dictionary<string, int> GetEmotesRateFor(TimeSpan timeSpan, ISocketMessageChannel channel)
+        private static Dictionary<string, int> GetEmoteReactionsRating(TimeSpan timeSpan, ISocketMessageChannel channel)
         {
             var result = new Dictionary<string, int>();
             

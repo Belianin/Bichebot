@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Bichebot
 {
@@ -13,9 +14,11 @@ namespace Bichebot
             {
                 Token = token
             };
+
+            var cts = new CancellationTokenSource();
             
             new Bot(config)
-                .RunAsync().Wait();
+                .RunAsync(cts.Token).Wait(cts.Token);
         }
 
         static string GetEnvironmentVariable(string name)
