@@ -74,28 +74,21 @@ namespace Bichebot
             
             var messages = channel.GetMessagesAsync().Flatten();
             var enumerator = messages.GetEnumerator();
-            while (true)
+            var isEmpty = true;
+            do
             {
-                var isEmpty = true;
                 while (enumerator.MoveNext().Result)
                 {
                     isEmpty = false;
                     lastId = enumerator.Current.Id;
                     if (enumerator.Current.Timestamp.UtcDateTime < timestamp)
                         timestamp = enumerator.Current.Timestamp.UtcDateTime;
-                    if (enumerator.Current.Author.IsBot)
-                        continue;
                     if (enumerator.Current is IUserMessage userMessage)
-                    {
                         yield return userMessage;
-                    }
                 }
-                
-                if (isEmpty || timestamp.Add(period) < DateTime.UtcNow)
-                    break;
 
                 enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
-            }
+            } while (!isEmpty && timestamp.Add(period) < DateTime.UtcNow);
         }
 
         private Dictionary<string, int> GetEmotesRateFor5(TimeSpan timeSpan, ISocketMessageChannel channel)
