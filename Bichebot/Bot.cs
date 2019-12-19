@@ -45,7 +45,7 @@ namespace Bichebot
             Console.WriteLine(message);
             if (message.Content.Contains("/t4"))
             {
-                var rates = GetEmoteReactionsRating(TimeSpan.FromDays(3), message.Channel)
+                var rates = GetEmoteReactionsRating(GetMessages(TimeSpan.FromDays(3), message.Channel))
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
@@ -56,7 +56,7 @@ namespace Bichebot
             }
             else if (message.Content.Contains("/t5"))
             {
-                var rates = GetEmotesUsingRaiting(TimeSpan.FromDays(3), message.Channel)
+                var rates = GetEmoteUsingsRating(GetMessages(TimeSpan.FromDays(3), message.Channel))
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
@@ -91,12 +91,12 @@ namespace Bichebot
             } while (!isEmpty && timestamp.Add(period) < DateTime.UtcNow);
         }
 
-        private static Dictionary<string, int> GetEmotesUsingRaiting(TimeSpan timeSpan, IMessageChannel channel)
+        private static Dictionary<string, int> GetEmoteUsingsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             var regex = new Regex(@":(.*?):");
 
-            var emotes = GetMessages(timeSpan, channel)
+            var emotes = messages
                 .Where(m => !m.Author.IsBot)
                 .SelectMany(m => regex.Matches(m.Content));
             
@@ -112,11 +112,11 @@ namespace Bichebot
             return result;
         }
 
-        private static Dictionary<string, int> GetEmoteReactionsRating(TimeSpan timeSpan, ISocketMessageChannel channel)
+        private static Dictionary<string, int> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             
-            foreach (var reaction in GetMessages(timeSpan, channel).SelectMany(m => m.Reactions))
+            foreach (var reaction in messages.SelectMany(m => m.Reactions))
             {
                 if (!result.ContainsKey(reaction.Key.Name))
                     result[reaction.Key.Name] = 0;
