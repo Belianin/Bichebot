@@ -49,7 +49,7 @@ namespace Bichebot
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
-                var response = "Величайшие смайлы:\n" + string.Join("\n", rates.Select(e => $"{ToEmojiString(e.Key)}: {e.Value}"));
+                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
                 
@@ -60,11 +60,16 @@ namespace Bichebot
                     .OrderByDescending(r => r.Value)
                     .Take(10);
                 
-                var response = "Величайшие смайлы:\n" + string.Join("\n", rates.Select(e => $"{ToEmojiString(e.Key)}: {e.Value}"));
+                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
                 
             }
+        }
+
+        private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
+        {
+            return string.Join("\n", statistics.Select(e => $"{ToEmojiString(e.Value)}: {e.Count}"));
         }
 
         private static IEnumerable<IUserMessage> GetMessages(TimeSpan period, IMessageChannel channel)
@@ -91,7 +96,7 @@ namespace Bichebot
             } while (!isEmpty && timestamp.Add(period) < DateTime.UtcNow);
         }
 
-        private static Dictionary<string, int> GetEmoteUsingsRating(IEnumerable<IUserMessage> messages)
+        private static IEnumerable<Statistic> GetEmoteUsingsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             var regex = new Regex(@":(.*?):");
@@ -109,10 +114,14 @@ namespace Bichebot
                 result[value] += 1;
             }
 
-            return result;
+            return result.Select(v => new Statistic
+            {
+                Count = v.Value,
+                Value = v.Key
+            });
         }
 
-        private static Dictionary<string, int> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
+        private static IEnumerable<Statistic> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             
@@ -124,7 +133,11 @@ namespace Bichebot
                 result[reaction.Key.Name] += reaction.Value.ReactionCount;
             }
 
-            return result;
+            return result.Select(v => new Statistic
+            {
+                Count = v.Value,
+                Value = v.Key
+            });
         }
 
         private async Task HandleReactionAsync(
