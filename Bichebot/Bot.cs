@@ -20,6 +20,8 @@ namespace Bichebot
         
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
         
+        private readonly Random rnd = new Random();
+        
         public Bot(BotConfig config)
         {
             this.config = config;
@@ -76,6 +78,34 @@ namespace Bichebot
 
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
                 
+            }
+            else if (message.Content.Contains("лол"))
+            {
+                if (rnd.Next(0, 100) > 50)
+                {
+                    await message.Channel.SendMessageAsync(
+                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?")
+                        .ConfigureAwait(false);
+                }
+                else if (rnd.Next(0, 100) > 50)
+                {
+                    await message.Channel.SendMessageAsync(
+                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?")
+                        .ConfigureAwait(false);
+                }
+                else
+                {
+                    await message.Channel.SendMessageAsync(
+                            $"{ToEmojiString("valera")} ну лан")
+                        .ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                if (rnd.Next(0, 1000) == 999)
+                {
+                    await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
+                }
             }
         }
 
