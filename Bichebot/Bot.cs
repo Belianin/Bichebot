@@ -19,20 +19,23 @@ namespace Bichebot
         private readonly DiscordSocketClient discordClient;
         
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
+        
         public Bot(BotConfig config)
         {
             this.config = config;
             
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
-            discordClient.MessageReceived += HandleMessage;
+            discordClient.MessageReceived += HandleMessageAsync;
         }
 
         public async Task RunAsync(CancellationToken token)
         {
+            Console.WriteLine("Starting");
             await discordClient.LoginAsync(TokenType.Bot, config.Token)
                 .ConfigureAwait(false);
             await discordClient.StartAsync().ConfigureAwait(false);
+            Console.WriteLine("Started");
 
             while (!token.IsCancellationRequested)
             {
@@ -40,13 +43,18 @@ namespace Bichebot
             }
         }
 
-        private async Task HandleMessage(SocketMessage message)
+        private async Task HandleMessageAsync(SocketMessage message)
         {
-            Console.WriteLine(message);
-            if (message.Content.Contains("/t4"))
+            Console.WriteLine(message); //  /t4 7
+            var args = Regex.Split(message.Content, @"\s+");
+            if (args[0] == "/t4")
             {
-                var rates = GetEmoteReactionsRating(GetMessages(TimeSpan.FromDays(3), message.Channel))
-                    .OrderByDescending(r => r.Value)
+                var days = 3;
+                if (args.Length > 1)
+                    int.TryParse(args[1], out days);
+                
+                var rates = GetEmoteReactionsRating(GetMessages(TimeSpan.FromDays(days), message.Channel))
+                    .OrderByDescending(r => r.Count)
                     .Take(10);
                 
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
@@ -54,10 +62,14 @@ namespace Bichebot
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
                 
             }
-            else if (message.Content.Contains("/t5"))
+            else if (args[0] == "/t5")
             {
-                var rates = GetEmoteUsingsRating(GetMessages(TimeSpan.FromDays(3), message.Channel))
-                    .OrderByDescending(r => r.Value)
+                var days = 3;
+                if (args.Length > 1)
+                    int.TryParse(args[1], out days);
+                
+                var rates = GetEmoteUsingsRating(GetMessages(TimeSpan.FromDays(days), message.Channel))
+                    .OrderByDescending(r => r.Count)
                     .Take(10);
                 
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
@@ -92,8 +104,10 @@ namespace Bichebot
                         yield return userMessage;
                 }
 
+                Console.WriteLine(timestamp);
+
                 enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
-            } while (!isEmpty && timestamp.Add(period) < DateTime.UtcNow);
+            } while (!isEmpty && timestamp.Add(period) > DateTime.UtcNow);
         }
 
         private static IEnumerable<Statistic> GetEmoteUsingsRating(IEnumerable<IUserMessage> messages)
