@@ -14,7 +14,7 @@ namespace Bichebot
                 Token = token
             };
             
-            new Bot(config, new MongoEmoteStatisticsRepository(mongoPassword))
+            new Bot(config)
                 .RunAsync().Wait();
         }
 

@@ -19,13 +19,9 @@ namespace Bichebot
         private readonly DiscordSocketClient discordClient;
         
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
-
-        private readonly IEmoteStatisticsRepository statistics;
-
-        public Bot(BotConfig config, IEmoteStatisticsRepository statistics)
+        public Bot(BotConfig config)
         {
             this.config = config;
-            this.statistics = statistics;
             
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
@@ -47,15 +43,7 @@ namespace Bichebot
         private async Task HandleMessage(SocketMessage message)
         {
             Console.WriteLine(message);
-            if (message.Content.Contains("/stat")) // Костыль message.MentionedUsers.FirstOrDefault(u => u.IsBot) != null && 
-            {
-                var result = await statistics.GetAllStatisticsAsync().ConfigureAwait(false);
-
-                var response = result == null ? "Что-то не то..." : "Величайшие смайлы:\n" + string.Join("\n", result.OrderByDescending(e => e.ReactionCount).Select(e => $"{ToEmojiString(e.Name)}: {e.ReactionCount}"));
-
-                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
-            }
-            else if (message.Content.Contains("/t4"))
+            if (message.Content.Contains("/t4"))
             {
                 var rates = GetEmotesRateFor(TimeSpan.FromDays(3), message.Channel)
                     .OrderByDescending(r => r.Value)
@@ -169,20 +157,18 @@ namespace Bichebot
             {
                 await SendToBestChannelAsync(userMessage).ConfigureAwait(false);
             }
-            
-            await statistics.IncrementAsync(reaction.Emote.Name).ConfigureAwait(false);
-
-            //await channel.SendMessageAsync($"Хм, \"{message.Content}\" вызывает у тебя {ToEmojiString(reaction.Emote.Name)}? Понятно...").ConfigureAwait(false);
         }
 
         private async Task SendToBestChannelAsync(IUserMessage userMessage)
         {
-            if (!alreadyBest.Contains(userMessage.Id) && userMessage.Reactions.Values.Any(r => r.ReactionCount >= 4) && userMessage.Channel.Id != config.BestChannelId)
-            {
-                alreadyBest.Add(userMessage.Id);
-                await Guild.GetTextChannel(config.BestChannelId)
-                    .SendMessageAsync(userMessage.Content).ConfigureAwait(false);
-            }
+            if (alreadyBest.Contains(userMessage.Id) ||
+                !userMessage.Reactions.Values.Any(r => r.ReactionCount >= 4) ||
+                userMessage.Channel.Id == config.BestChannelId)
+                return;
+            
+            alreadyBest.Add(userMessage.Id);
+            await Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(userMessage.Content)
+                .ConfigureAwait(false);
         }
 
         private string ToEmojiString(string text)
