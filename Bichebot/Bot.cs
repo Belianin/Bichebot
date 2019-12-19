@@ -67,12 +67,10 @@ namespace Bichebot
             }
         }
 
-        private Dictionary<string, int> GetEmotesRateFor5(TimeSpan timeSpan, ISocketMessageChannel channel)
+        private IEnumerable<IUserMessage> GetMessages(TimeSpan period, ISocketMessageChannel channel)
         {
-            var result = new Dictionary<string, int>();
             var timestamp = DateTime.UtcNow;
             ulong lastId = 0;
-            var regex = new Regex(@":(.*?):");
             
             var messages = channel.GetMessagesAsync().Flatten();
             var enumerator = messages.GetEnumerator();
@@ -87,23 +85,35 @@ namespace Bichebot
                         timestamp = enumerator.Current.Timestamp.UtcDateTime;
                     if (enumerator.Current.Author.IsBot)
                         continue;
-                    if (!(enumerator.Current is IUserMessage userMessage))
-                        continue;
-                    foreach (var emote in regex.Matches(userMessage.Content))
+                    if (enumerator.Current is IUserMessage userMessage)
                     {
-                        // fuck it
-                        var value = emote.ToString().Substring(1, emote.ToString().Length - 2);
-                        if (!result.ContainsKey(value))
-                            result[value] = 0;
-
-                        result[value] += 1;
+                        yield return userMessage;
                     }
                 }
                 
-                if (isEmpty || timestamp.Add(timeSpan) < DateTime.UtcNow)
+                if (isEmpty || timestamp.Add(period) < DateTime.UtcNow)
                     break;
 
                 enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
+            }
+        }
+
+        private Dictionary<string, int> GetEmotesRateFor5(TimeSpan timeSpan, ISocketMessageChannel channel)
+        {
+            var result = new Dictionary<string, int>();
+            var regex = new Regex(@":(.*?):");
+
+            var emotes = GetMessages(timeSpan, channel)
+                .Where(m => !m.Author.IsBot)
+                .SelectMany(m => regex.Matches(m.Content));
+            
+            foreach (var emote in emotes)
+            {
+                var value = emote.ToString().Substring(1, emote.ToString().Length - 2);
+                if (!result.ContainsKey(value))
+                    result[value] = 0;
+
+                result[value] += 1;
             }
 
             return result;
@@ -112,35 +122,13 @@ namespace Bichebot
         private Dictionary<string, int> GetEmotesRateFor(TimeSpan timeSpan, ISocketMessageChannel channel)
         {
             var result = new Dictionary<string, int>();
-            var timestamp = DateTime.UtcNow;
-            ulong lastId = 0;
             
-            var messages = channel.GetMessagesAsync().Flatten();
-            var enumerator = messages.GetEnumerator();
-            while (true)
+            foreach (var reaction in GetMessages(timeSpan, channel).SelectMany(m => m.Reactions))
             {
-                var isEmpty = true;
-                while (enumerator.MoveNext().Result)
-                {
-                    isEmpty = false;
-                    lastId = enumerator.Current.Id;
-                    if (enumerator.Current.Timestamp.UtcDateTime < timestamp)
-                        timestamp = enumerator.Current.Timestamp.UtcDateTime;
-                    if (!(enumerator.Current is IUserMessage userMessage))
-                        break;
-                    foreach (var reaction in userMessage.Reactions)
-                    {
-                        if (!result.ContainsKey(reaction.Key.Name))
-                            result[reaction.Key.Name] = 0;
+                if (!result.ContainsKey(reaction.Key.Name))
+                    result[reaction.Key.Name] = 0;
 
-                        result[reaction.Key.Name] += reaction.Value.ReactionCount;
-                    }
-                }
-                
-                if (isEmpty || timestamp.Add(timeSpan) < DateTime.UtcNow)
-                    break;
-
-                enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
+                result[reaction.Key.Name] += reaction.Value.ReactionCount;
             }
 
             return result;
