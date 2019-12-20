@@ -31,6 +31,7 @@ namespace Bichebot
             discordClient.MessageReceived += HandleMessageAsync;
         }
 
+
         public async Task RunAsync(CancellationToken token)
         {
             Console.WriteLine("Starting");
@@ -47,7 +48,7 @@ namespace Bichebot
 
         private async Task HandleMessageAsync(SocketMessage message)
         {
-            Console.WriteLine(message); //  /t4 7
+            Console.WriteLine(message.Content); //  /t4 7
             var args = Regex.Split(message.Content, @"\s+");
             if (args[0] == "/t4")
             {
@@ -189,6 +190,7 @@ namespace Bichebot
             ISocketMessageChannel channel,
             SocketReaction reaction)
         {
+            Console.WriteLine("Reaction");
             var message = await channel.GetMessageAsync(reaction.MessageId).ConfigureAwait(false);
             
             if (message is RestUserMessage userMessage)
@@ -213,8 +215,9 @@ namespace Bichebot
 
             var embed = new EmbedBuilder()
                 .WithAuthor(userMessage.Author)
-                .WithTitle($"{userMessage.Content}\n{emotes}")
-                .WithFooter("#бичехосты");
+                .WithTitle(userMessage.Content)
+                .WithFooter("#бичехосты-лучшее")
+                .WithDescription(emotes);
 
             if (userMessage.Attachments.Count > 0)
                 embed.WithImageUrl(userMessage.Attachments.First().Url);
