@@ -217,7 +217,8 @@ namespace Bichebot
                 .WithAuthor(userMessage.Author)
                 .WithTitle(userMessage.Content)
                 .WithFooter("#бичехосты-лучшее")
-                .WithDescription(emotes);
+                .WithDescription(emotes)
+                .WithTimestamp(userMessage.Timestamp);
 
             if (userMessage.Attachments.Count > 0)
                 embed.WithImageUrl(userMessage.Attachments.First().Url);
