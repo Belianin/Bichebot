@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Bichebot
@@ -26,5 +27,6 @@ namespace Bichebot
             return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) ??
                    Environment.GetEnvironmentVariable(name);
         }
+
     }
 }

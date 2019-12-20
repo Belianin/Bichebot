@@ -205,7 +205,21 @@ namespace Bichebot
                 return;
             
             alreadyBest.Add(userMessage.Id);
-            await Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(userMessage.Content)
+
+            var emotes = string.Join("", userMessage
+                .Reactions
+                .OrderByDescending(r => r.Value.ReactionCount)
+                .SelectMany(e => Enumerable.Repeat(ToEmojiString(e.Key.Name), e.Value.ReactionCount)));
+
+            var embed = new EmbedBuilder()
+                .WithAuthor(userMessage.Author)
+                .WithTitle($"{userMessage.Content}\n{emotes}")
+                .WithFooter("#бичехосты");
+
+            if (userMessage.Attachments.Count > 0)
+                embed.WithImageUrl(userMessage.Attachments.First().Url);
+
+            await Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
         }
 
