@@ -233,7 +233,7 @@ namespace Bichebot
             if (emote == null)
                 return text;
             
-            return $"<:{emote.Name}:{emote.Id}>";
+            return emote.Animated ? $"<a:{emote.Name}:{emote.Id}>" : $"<:{emote.Name}:{emote.Id}>";
         }
     }
 }
