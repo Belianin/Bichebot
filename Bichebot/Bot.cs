@@ -50,6 +50,7 @@ namespace Bichebot
         {
             Console.WriteLine(message.Content); //  /t4 7
             var args = Regex.Split(message.Content, @"\s+");
+            var lower = message.Content.ToLower();
             
             if (args[0] == "/t4")
             {
@@ -81,8 +82,8 @@ namespace Bichebot
                 await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
                 
             }
-            else if (message.Content.ToLowerCase().Contains("Бот" && ("игра" || "гам" || " в ") && "суприм"))
-                {
+            else if (lower.Contains("бот") && lower.Contains("суприм") && lower.ContainsAny(new [] {"игра",  "гам",  " в "}))
+            {
                 
                 string[] Sugg = {"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
 
@@ -156,19 +157,19 @@ namespace Bichebot
                 var T5 = Tactics[0].Length+Tactics[1].Length+Tactics[2].Length+Tactics[3].Length+Tactics[4].Length;
 
                 var MSG = tact switch
-                    {
-                        var x when (x>=0 && x<=T1) => $"{Map[0][tact]} {Tactics[0][tact]}",
+                {
+                    var x when (x>=0 && x<=T1) => $"{Map[0][tact]} {Tactics[0][tact]}",
 
-                        var x when (x>T1 && x<=T2) => $"{Map[1][tact-T1]} {Tactics[1][tact-T1]}",
-                        var x when (x>T2 && x<=T3) => $"{Map[2][tact-T2]} {Tactics[1][tact-T2]}",
-                        var x when (x>T3 && x<=T4) => $"{Map[3][tact-T3]} {Tactics[1][tact-T3]}",
-                        var x when (x>T4 && x<=T5) => $"{Map[4][tact-T4]} {Tactics[1][tact-T4]}",
-                        var x when (x>T5) => $"{Map[5][tact-T5]} {Tactics[1][tact-T5]}",
-                    };
+                    var x when (x>T1 && x<=T2) => $"{Map[1][tact-T1]} {Tactics[1][tact-T1]}",
+                    var x when (x>T2 && x<=T3) => $"{Map[2][tact-T2]} {Tactics[1][tact-T2]}",
+                    var x when (x>T3 && x<=T4) => $"{Map[3][tact-T3]} {Tactics[1][tact-T3]}",
+                    var x when (x>T4 && x<=T5) => $"{Map[4][tact-T4]} {Tactics[1][tact-T4]}",
+                    var x when (x>T5) => $"{Map[5][tact-T5]} {Tactics[1][tact-T5]}",
+                };
                
-                    await message.Channel.SendMessageAsync(
-                    $"{Sugg[rnd.Next(0, Sugg.Length-1)]} {MSG}")
-                     .ConfigureAwait(false);               
+                await message.Channel.SendMessageAsync(
+                        $"{Sugg[rnd.Next(0, Sugg.Length-1)]} {MSG}")
+                    .ConfigureAwait(false);               
             }
             else if (message.Content.Contains("лол"))
             {
