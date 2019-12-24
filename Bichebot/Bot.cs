@@ -50,6 +50,12 @@ namespace Bichebot
         {
             Console.WriteLine(message.Content); //  /t4 7
             var args = Regex.Split(message.Content, @"\s+");
+            var msg = new Message
+            {
+                DiscordMessage = message,
+                Tts = message.Content.Contains("tts")
+            };
+            
             if (args[0] == "/t4")
             {
                 var days = 3;
@@ -62,7 +68,7 @@ namespace Bichebot
                 
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
-                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
             }
             else if (args[0] == "/t5")
@@ -74,30 +80,32 @@ namespace Bichebot
                 var rates = GetEmoteUsingsRating(GetMessages(TimeSpan.FromDays(days), message.Channel))
                     .OrderByDescending(r => r.Count)
                     .Take(10);
-                
+            
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
-                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
             }
+            else if (IsSupremeAsked(message))
+                await TrySupremeSuggestionAsync(msg).ConfigureAwait(false);
             else if (message.Content.Contains("лол"))
             {
                 if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?")
+                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?")
+                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("valera")} ну лан")
+                            $"{ToEmojiString("valera")} ну лан", msg.Tts)
                         .ConfigureAwait(false);
                 }
             }
@@ -105,9 +113,134 @@ namespace Bichebot
             {
                 if (rnd.Next(0, 1000) == 999)
                 {
-                    await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
+                    await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
                 }
             }
+        }
+
+        private bool IsSupremeAsked(IMessage message)
+        {
+            var lower = message.Content.ToLower();
+            return lower.ContainsAny(new [] {"бот ", "бот,"}) &&
+                   lower.Contains("суприм") &&
+                   lower.ContainsAny(new[] {"игра", "гам", " в ", "го "});
+        }
+
+        private async Task TrySupremeSuggestionAsync(Message message)
+        {
+            var sugg = new []{"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
+
+            var maps = new List<SupremeMap>
+            {
+                new SupremeMap
+                {
+                    Names = new[] {"на дуалгепе", "дуалгеп", "поиграть дуалгеп", "DualGap"},
+                    Tactics = new[]
+                    {
+                        $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
+                        $"мид (спутники{ToEmojiString("qwirchamp")}, толстяки{ToEmojiString("dobrobamboe")}{ToEmojiString("ocean")}",
+                        $"на аире (БОМБИИМ{ToEmojiString("oroobamboe")}), главное вовремя перейди в {ToEmojiString("t3")} {ToEmojiString("dobrobamboe")}",
+                        $"не важно какой слот, главное в конце не забудь телесакушки{ToEmojiString("vasyanbamboe")}",
+                        $"не важно какой слот, главное в конце ЭОН телесакушки{ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")})",
+                        $"и снайп корсарами НЫЫААААА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
+                        $"на эко фаст {ToEmojiString("t3")} арта {ToEmojiString("dobrobamboe")}{ToEmojiString("thumbup")}",
+                        $"и ТОПИТЬ за навального {ToEmojiString("coolstory")} (ВЗОРВЕМ либерах {ToEmojiString("deadinside")})",
+                        $"c фаст телемазером {ToEmojiString("kripotabamboe")}{ToEmojiString("point_right")}{ToEmojiString("ok_hand")}",
+                        $"c дропом двух комов в тылы противника {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}",
+                        $"с дропом кома с клоакой+лазер {ToEmojiString("qwirchamp")}",
+                        $"с дропом ПАУКА {ToEmojiString("valera")}{ToEmojiString("oroobamboe")}",
+                        $"мид за серафим ИТОТА{ToEmojiString("heart")}{ToEmojiString("lyabamboe")}",
+                        $"с дропом рембо{ToEmojiString("bombitbamboe")} командира за серафим {ToEmojiString("supremebamboe")}",
+                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
+                    }
+                },
+                new SupremeMap
+                {
+                    Names = new[]
+                    {
+                        "на астрократере", "астрократер", "поиграть астрократер", "на кратере", "кратер", "гантельку",
+                        "на гантельке", "на ПРОЦИКЛОНЕ"
+                    },
+                    Tactics = new[]
+                    {
+                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} с блокпостом + Т2 арта",
+                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
+                        $"с гетто ганшипом {ToEmojiString("qwirchamp")}{ToEmojiString("call_me_tone1")}",
+                        $"с фаст рембо командиром{ToEmojiString("supremebamboe")}"
+                    }
+                },
+                new SupremeMap
+                {
+                    Names = new[] {"на сетоне", "сетон", "поиграть сетон", "СЕТОООН", "СЕТОООООООН"},
+                    Tactics = new[]
+                    {
+                        $"на аир позиции. ТРЕНИРУЙСЯ {ToEmojiString("supremebamboe")}{ToEmojiString("lejatbamboe")}",
+                        $"на позиции ROCK{ToEmojiString("shark")}, захватывай остров (так лееень((()()",
+                        $"на позиции пляж{ToEmojiString("cup_with_straw")}{ToEmojiString("lootecbamboe")}",
+                        $"мид РЕКЛЕЙМИ ВОЮЙ СПАМЬ  УБИТЬ           УБИВААЙ {ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}"
+                    }
+                },
+                new SupremeMap
+                {
+                    Names = new[]
+                    {
+                        "канис (или ченить такое)", "пирамиду (или подобную)", "норм карту", "на норм карте",
+                        "хилли плато",
+                        "поиграть норм карту", "на какой-нибудь норм карте"
+                    },
+                    Tactics = new[]
+                    {
+                        $"давай не сцы надо поднимать скилл уже {ToEmojiString("qwirnbamboe")}",
+                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}"
+                    }
+                },
+                new SupremeMap
+                {
+                    Names = new[]
+                    {
+                        "юшелнотпас", "на юшелнотпасе", "поиграть юшелнотпас", "ну эту карту где ноу аир",
+                        "youshallnotpass",
+                        "8vs8 YouShallNotPass", "ULTINATE you shall not pass"
+                    },
+                    Tactics = new[]
+                    {
+                        $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
+                        $"за кебран с фаст пауком{ToEmojiString("lootecbamboe")}",
+                        $"с тактикой на двоих - ФАСТ {ToEmojiString("t3")} АРТА {ToEmojiString("dobrobamboe")}",
+                        $"с нагиб тактикой на четверых - ЯДЕРКА{ToEmojiString("radioactive")}+ПАУК{ToEmojiString("lootecbamboe")}+ИТОТА{ToEmojiString("bombitbamboe")}+FATBOY{ToEmojiString("oldbamboe")}",
+                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {ToEmojiString("spongebamboe")}"
+                    },
+                },
+                new SupremeMap
+                {
+                    Names = new[] {string.Empty},
+                    Tactics = new[]
+                    {
+                        $"2vs2 или 3vs3 НАГИИБ (слив) {ToEmojiString("supremebamboe")}",
+                    }
+                }
+            };
+
+            var map = GetRandomMap(maps);
+            var discord = message.DiscordMessage;
+            await discord.Channel.SendMessageAsync(
+                    $"{discord.Author.Username}, {sugg.Random(rnd)} {map.Names.Random(rnd)} {map.Tactics.Random(rnd)}",
+                    message.Tts)
+                .ConfigureAwait(false);
+        }
+
+        private SupremeMap GetRandomMap(IEnumerable<SupremeMap> collection)
+        {
+            var rates = new Dictionary<int, SupremeMap>();
+            var sum = 0;
+            foreach (var c in collection)
+            {
+                rates[sum] = c;
+                sum += c.Tactics.Count;
+            }
+            
+            var rate = rnd.Next(0, sum);
+            return rates.OrderByDescending(r => r.Key).First(k => k.Key < rate).Value;
         }
 
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
@@ -231,7 +364,7 @@ namespace Bichebot
         {
             var emote = Guild.Emotes.FirstOrDefault(e => e.Name == text);
             if (emote == null)
-                return text;
+                return $":{text}:";
             
             return emote.Animated ? $"<a:{emote.Name}:{emote.Id}>" : $"<:{emote.Name}:{emote.Id}>";
         }
