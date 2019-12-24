@@ -50,6 +50,11 @@ namespace Bichebot
         {
             Console.WriteLine(message.Content); //  /t4 7
             var args = Regex.Split(message.Content, @"\s+");
+            var msg = new Message
+            {
+                DiscordMessage = message,
+                Tts = message.Content.Contains("tts")
+            };
             
             if (args[0] == "/t4")
             {
@@ -63,7 +68,7 @@ namespace Bichebot
                 
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
-                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
             }
             else if (args[0] == "/t5")
@@ -78,29 +83,29 @@ namespace Bichebot
             
                 var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
-                await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
             }
             else if (IsSupremeAsked(message))
-                await TrySupremeSuggestionAsync(message).ConfigureAwait(false);
+                await TrySupremeSuggestionAsync(msg).ConfigureAwait(false);
             else if (message.Content.Contains("лол"))
             {
                 if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?")
+                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?")
+                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("valera")} ну лан")
+                            $"{ToEmojiString("valera")} ну лан", msg.Tts)
                         .ConfigureAwait(false);
                 }
             }
@@ -108,20 +113,20 @@ namespace Bichebot
             {
                 if (rnd.Next(0, 1000) == 999)
                 {
-                    await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
+                    await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
                 }
             }
         }
 
         private bool IsSupremeAsked(IMessage message)
         {
-            var lower = message.Content;
-            return lower.Contains("бот") &&
+            var lower = message.Content.ToLower();
+            return lower.ContainsAny(new [] {"бот ", "бот,"}) &&
                    lower.Contains("суприм") &&
-                   lower.ContainsAny(new[] {"игра", "гам", " в "});
+                   lower.ContainsAny(new[] {"игра", "гам", " в ", "го "});
         }
 
-        private async Task TrySupremeSuggestionAsync(SocketMessage message)
+        private async Task TrySupremeSuggestionAsync(Message message)
         {
             var sugg = new []{"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
 
@@ -186,11 +191,7 @@ namespace Bichebot
                     Tactics = new[]
                     {
                         $"давай не сцы надо поднимать скилл уже {ToEmojiString("qwirnbamboe")}",
-                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}",
-                        $"",
-                        $"",
-                        $"",
-                        $"",
+                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}"
                     }
                 },
                 new SupremeMap
@@ -216,22 +217,19 @@ namespace Bichebot
                     Tactics = new[]
                     {
                         $"2vs2 или 3vs3 НАГИИБ (слив) {ToEmojiString("supremebamboe")}",
-                        $"",
-                        $"",
-                        $"",
-                        $"",
                     }
                 }
             };
 
             var map = GetRandomMap(maps);
-            
-            await message.Channel.SendMessageAsync(
-                    $"{sugg.Random(rnd)} {map.Names.Random(rnd)} {map.Tactics.Random(rnd)}")
+            var discord = message.DiscordMessage;
+            await discord.Channel.SendMessageAsync(
+                    $"{discord.Author.Username}, {sugg.Random(rnd)} {map.Names.Random(rnd)} {map.Tactics.Random(rnd)}",
+                    message.Tts)
                 .ConfigureAwait(false);
         }
 
-        private SupremeMap GetRandomMap(ICollection<SupremeMap> collection)
+        private SupremeMap GetRandomMap(IEnumerable<SupremeMap> collection)
         {
             var rates = new Dictionary<int, SupremeMap>();
             var sum = 0;
