@@ -139,7 +139,7 @@ namespace Bichebot
                     {
                         $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
                         $"мид (спутники{ToEmojiString("qwirchamp")}, толстяки{ToEmojiString("dobrobamboe")}{ToEmojiString("ocean")}",
-                        $"на аире (БОМБИИМ{ToEmojiString("oroobamboe")}), главное вовремя перейди в {ToEmojiString("t3")} {ToEmojiString("dobrobamboe")}",
+                        $"на аире (БОМБИИМ{ToEmojiString("gif")}), главное вовремя перейди в {ToEmojiString("t3")} {ToEmojiString("dobrobamboe")}",
                         $"не важно какой слот, главное в конце не забудь телесакушки{ToEmojiString("vasyanbamboe")}",
                         $"не важно какой слот, главное в конце ЭОН телесакушки{ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")})",
                         $"и снайп корсарами НЫЫААААА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
@@ -148,10 +148,10 @@ namespace Bichebot
                         $"c фаст телемазером {ToEmojiString("kripotabamboe")}{ToEmojiString("point_right")}{ToEmojiString("ok_hand")}",
                         $"c дропом двух комов в тылы противника {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}",
                         $"с дропом кома с клоакой+лазер {ToEmojiString("qwirchamp")}",
-                        $"с дропом ПАУКА {ToEmojiString("valera")}{ToEmojiString("oroobamboe")}",
+                        $"с дропом ПАУКА {ToEmojiString("valera")}{ToEmojiString("gif")}",
                         $"мид за серафим ИТОТА{ToEmojiString("heart")}{ToEmojiString("lyabamboe")}",
                         $"с дропом рембо{ToEmojiString("bombitbamboe")} командира за серафим {ToEmojiString("supremebamboe")}",
-                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
+                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {ToEmojiString("gif")}{ToEmojiString("gif")}{ToEmojiString("gif")}",
                     }
                 },
                 new SupremeMap
@@ -164,7 +164,7 @@ namespace Bichebot
                     Tactics = new[]
                     {
                         $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} с блокпостом + Т2 арта",
-                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
+                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{ToEmojiString("gif")}{ToEmojiString("gif")}",
                         $"с гетто ганшипом {ToEmojiString("qwirchamp")}{ToEmojiString("call_me_tone1")}",
                         $"с фаст рембо командиром{ToEmojiString("supremebamboe")}"
                     }
