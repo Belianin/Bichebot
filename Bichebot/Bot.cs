@@ -109,13 +109,8 @@ namespace Bichebot
                         .ConfigureAwait(false);
                 }
             }
-            else
-            {
-                if (rnd.Next(0, 1000) == 999)
-                {
-                    await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
-                }
-            }
+            else if (rnd.Next(0, 1000) == 999)
+                await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
         }
 
         private bool IsSupremeAsked(IMessage message)
@@ -221,26 +216,12 @@ namespace Bichebot
                 }
             };
 
-            var map = GetRandomMap(maps);
+            var map = maps.Random(rnd, m => m.Tactics.Count);
             var discord = message.DiscordMessage;
             await discord.Channel.SendMessageAsync(
                     $"{discord.Author.Username}, {sugg.Random(rnd)} {map.Names.Random(rnd)} {map.Tactics.Random(rnd)}",
                     message.Tts)
                 .ConfigureAwait(false);
-        }
-
-        private SupremeMap GetRandomMap(IEnumerable<SupremeMap> collection)
-        {
-            var rates = new Dictionary<int, SupremeMap>();
-            var sum = 0;
-            foreach (var c in collection)
-            {
-                rates[sum] = c;
-                sum += c.Tactics.Count;
-            }
-            
-            var rate = rnd.Next(0, sum);
-            return rates.OrderByDescending(r => r.Key).First(k => k.Key < rate).Value;
         }
 
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
