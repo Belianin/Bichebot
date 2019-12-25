@@ -11,26 +11,23 @@ namespace Bichebot
             return strings.Any(row.Contains);
         }
 
-        public static T Random<T>(this IList<T> source, Random random)
+        public static T Random<T>(this ICollection<T> source, Random random)
         {
-            return source[random.Next(0, source.Count - 1)];
+            return source.ElementAt(random.Next(0, source.Count - 1));
         }
         
-        public static T Random<T>(this IEnumerable<T> collection, Random rnd, Func<T, int> weight = null)
+        public static T Random<T>(this IEnumerable<T> source, Random random, Func<T, int> weight)
         {
-            if (weight == null)
-                return collection.ToList().Random(rnd);
-            
             var rates = new Dictionary<int, T>();
             var sum = 0;
-            foreach (var c in collection)
+            foreach (var c in source)
             {
-                rates[sum] = c;
                 sum += weight(c);
+                rates[sum] = c;
             }
             
-            var rate = rnd.Next(0, sum);
-            return rates.OrderByDescending(r => r.Key).First(k => k.Key < rate).Value;
+            var rate = random.Next(0, sum);
+            return rates.First(k => k.Key >= rate).Value;
         }
     }
 }
