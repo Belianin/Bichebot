@@ -13,7 +13,7 @@ namespace Bichebot
 
         public static T Random<T>(this ICollection<T> source, Random random)
         {
-            return source.ElementAt(random.Next(0, source.Count - 1));
+            return source.ElementAt(random.Next(0, source.Count));
         }
         
         public static T Random<T>(this IEnumerable<T> source, Random random, Func<T, int> weight)
