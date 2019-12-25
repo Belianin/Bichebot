@@ -39,7 +39,7 @@ namespace Bichebot
                 .ConfigureAwait(false);
             await discordClient.StartAsync().ConfigureAwait(false);
             Console.WriteLine("Started");
-
+            
             while (!token.IsCancellationRequested)
             {
                 Thread.Sleep(1000);
@@ -305,6 +305,8 @@ namespace Bichebot
             SocketReaction reaction)
         {
             Console.WriteLine("Reaction");
+            Console.WriteLine(ReplaceEmojiStrings("c фаст ЯДЕРКОЙ:lejatbamboe::lejatbamboe::lejatbamboe:"));
+            
             var message = await channel.GetMessageAsync(reaction.MessageId).ConfigureAwait(false);
             
             if (message is RestUserMessage userMessage)
@@ -339,6 +341,11 @@ namespace Bichebot
 
             await Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
+        }
+
+        private string ReplaceEmojiStrings(string text)
+        {
+            return Regex.Replace(text, @":.*?:", x => ToEmojiString(x.Value.Substring(1, x.Value.Length - 2)));
         }
 
         private string ToEmojiString(string text)
