@@ -57,7 +57,20 @@ namespace Bichebot
             };
             var discord = msg.DiscordMessage;
 
-            if (args[0] == "/t4")
+            if (message is IUserMessage userMessage)
+            {
+                if (IsDeservingLike(message, out var reaction))
+                    await userMessage.AddReactionAsync(Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
+
+                if (rnd.Next(0, 100) > 90)
+                    await userMessage.AddReactionAsync(Guild.Emotes.RandomReadonly(rnd)).ConfigureAwait(false);
+            }
+            
+            if (message.Content.Contains("бот") && message.Content.Contains("удали"))
+            {
+                await DeletePreviousMessageAsync(message).ConfigureAwait(false);
+            }
+            else if (args[0] == "/t4")
             {
                 var days = 3;
                 if (args.Length > 1)
@@ -259,6 +272,39 @@ namespace Bichebot
                 .ConfigureAwait(false);
         }
 
+        private bool IsDeservingLike(IMessage message, out string emoji)
+        {
+            var lower = message.Content.ToLower();
+            var goodWords = new[] {"красавчик", "молор", "найс", "дядя", "мужик", "васян", "гунирал", "ля", "какой"};
+            var emojies = new []
+            {
+                "valera", "oldbamboe", "kadikbamboe", "dobrobamboe"
+            };
+            if (lower.Contains("бот") && !lower.Contains("не") && lower.ContainsAny(goodWords))
+            {
+                emoji = emojies.Random(rnd);
+                return true;
+            }
+
+            emoji = null;
+            return false;
+        }
+
+        private static async Task DeletePreviousMessageAsync(SocketMessage message)
+        {
+            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 1).FlattenAsync()
+                .ConfigureAwait(false);
+
+            var messageToDelete = messages.FirstOrDefault();
+            
+            if (messageToDelete is IUserMessage userMessage && !userMessage.Content.Contains("~~"))
+            {
+                await userMessage.DeleteAsync().ConfigureAwait(false);
+                await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
+                    .ConfigureAwait(false);
+            }
+        }
+
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
         {
             return string.Join("\n", statistics.Select(e => $"{ToEmojiString(e.Value)}: {e.Count}"));
@@ -340,8 +386,6 @@ namespace Bichebot
             SocketReaction reaction)
         {
             Console.WriteLine("Reaction");
-            Console.WriteLine(ReplaceEmojiStrings("c фаст ЯДЕРКОЙ:lejatbamboe::lejatbamboe::lejatbamboe:"));
-            
             var message = await channel.GetMessageAsync(reaction.MessageId).ConfigureAwait(false);
             
             if (message is RestUserMessage userMessage)
