@@ -11,4 +11,13 @@
       <PackageReference Include="MongoDB.Driver" Version="2.10.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="libsodium.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="opus.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

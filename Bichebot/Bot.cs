@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Audio;
+using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
 
@@ -21,6 +24,8 @@ namespace Bichebot
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
         
         private readonly Random rnd = new Random();
+
+        private bool flag = true;
         
         public Bot(BotConfig config)
         {
@@ -29,8 +34,51 @@ namespace Bichebot
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessageAsync;
+           // discordClient.UserVoiceStateUpdated += HandleVoiceAsync;
+        }
+//
+//        private async Task HandleVoiceAsync(SocketUser user, SocketVoiceState state1, SocketVoiceState state2)
+//        {
+//            if (user.IsBot)
+//                return;
+//            
+//            Console.WriteLine("Voice");
+//            
+//            if (state1.VoiceChannel == null && state2.VoiceChannel != null)
+//            {
+//                ConnectToVoice(state2.VoiceChannel).Wait();
+//            }
+//
+//            if (state1.VoiceChannel != null && flag)
+//            {
+//                flag = false;
+//                ConnectToVoice(state2.VoiceChannel).Wait();
+//            }
+//        }
+
+        private async Task ConnectToVoice(SocketVoiceChannel voiceChannel)
+        {
+            if (voiceChannel == null)
+                return;
+            try
+            {
+                new Thread(() => A(voiceChannel)).Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
+        private void A(SocketVoiceChannel voiceChannel)
+        {
+            Console.WriteLine("Connecting");
+            voiceChannel.ConnectAsync().Wait();
+            //await voiceChannel.ConnectAsync();
+            Console.WriteLine("Connected");
+        }
+        
+        
 
         public async Task RunAsync(CancellationToken token)
         {
@@ -55,6 +103,36 @@ namespace Bichebot
                 DiscordMessage = message,
                 Tts = message.Content.Contains("tts")
             };
+
+            if (message.Content == "go")
+            {
+                var channel = Guild.VoiceChannels.First(c => c.Name.Contains("Набег"));
+                await ConnectToVoice(channel);
+            }
+            else if (message.Content == "ilidan")
+            {
+                Console.WriteLine("PSI");
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "ffmpeg",
+                    Arguments = $@"-hide_banner -loglevel panic -i ""ilidan.mp3"" -ac 2 -f s16le -ar 48000 pipe:1",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
+
+                Console.WriteLine("FFMPEG");
+                using (var ffmpeg = Process.Start(psi))
+                using (var output = ffmpeg.StandardOutput.BaseStream)
+                using (var discord = Guild.AudioClient.CreatePCMStream(AudioApplication.Mixed))
+                    try
+                    {
+                        await output.CopyToAsync(discord);
+                    }
+                    finally
+                    {
+                        await discord.FlushAsync();
+                    }
+            }
 
             if (message is IUserMessage userMessage)
             {
