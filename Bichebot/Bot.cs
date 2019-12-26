@@ -128,12 +128,14 @@ namespace Bichebot
             else if (rnd.Next(0, 1000) == 999)
                 await discord.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
         }
-         private bool IsBotHello(IMessage message)
+        
+        private bool IsBotHello(IMessage message)
         {
             var lower = message.Content.ToLower();
             return lower.ContainsAny(new [] {"бот ", "бот,", " бот"}) &&
                    lower.ContainsAny(new[] {"привет", "здаров", " хай "});
         }
+        
         private bool IsSupremeAsked(IMessage message)
         {
             var lower = message.Content.ToLower();
