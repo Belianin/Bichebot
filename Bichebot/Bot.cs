@@ -50,6 +50,10 @@ namespace Bichebot
         {
             Console.WriteLine(message.Content); //  /t4 7
             var args = Regex.Split(message.Content, @"\s+");
+            if (message.Content.Contains("бот") && message.Content.Contains("удали"))
+            {
+                await DeletePreviousMessageAsync(message).ConfigureAwait(false);
+            }
             if (args[0] == "/t4")
             {
                 var days = 3;
@@ -107,6 +111,21 @@ namespace Bichebot
                 {
                     await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
                 }
+            }
+        }
+
+        private static async Task DeletePreviousMessageAsync(SocketMessage message)
+        {
+            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 1).FlattenAsync()
+                .ConfigureAwait(false);
+
+            var messageToDelete = messages.FirstOrDefault();
+            
+            if (messageToDelete is IUserMessage userMessage && !message.Content.StartsWith("~~"))
+            {
+                await userMessage.DeleteAsync().ConfigureAwait(false);
+                await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
+                    .ConfigureAwait(false);
             }
         }
 
