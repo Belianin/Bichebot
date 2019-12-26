@@ -11,9 +11,14 @@ namespace Bichebot
             return strings.Any(row.Contains);
         }
 
-        public static T Random<T>(this IList<T> source, Random random)
+        public static T RandomReadonly<T>(this IReadOnlyCollection<T> source, Random random)
         {
-            return source[random.Next(0, source.Count - 1)];
+            return source.ElementAt(random.Next(0, source.Count - 1));
+        }
+        
+        public static T Random<T>(this ICollection<T> source, Random random)
+        {
+            return source.ElementAt(random.Next(0, source.Count - 1));
         }
     }
 }

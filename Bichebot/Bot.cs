@@ -56,9 +56,13 @@ namespace Bichebot
                 Tts = message.Content.Contains("tts")
             };
 
-            if (message is IUserMessage userMessage && IsDeservingLike(message, out var reaction))
+            if (message is IUserMessage userMessage)
             {
-                await userMessage.AddReactionAsync(Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
+                if (IsDeservingLike(message, out var reaction))
+                    await userMessage.AddReactionAsync(Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
+
+                if (rnd.Next(0, 100) > 90)
+                    await userMessage.AddReactionAsync(Guild.Emotes.RandomReadonly(rnd)).ConfigureAwait(false);
             }
             
             if (message.Content.Contains("бот") && message.Content.Contains("удали"))
@@ -272,7 +276,7 @@ namespace Bichebot
 
         private static async Task DeletePreviousMessageAsync(SocketMessage message)
         {
-            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 2).FlattenAsync()
+            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 1).FlattenAsync()
                 .ConfigureAwait(false);
 
             var messageToDelete = messages.FirstOrDefault();
