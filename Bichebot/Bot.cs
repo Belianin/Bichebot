@@ -55,7 +55,7 @@ namespace Bichebot
                 DiscordMessage = message,
                 Tts = message.Content.Contains("tts")
             };
-            var discord = message.DiscordMessage.ToLower();
+            var discord = msg.DiscordMessage;
 
             if (args[0] == "/t4")
             {
@@ -111,38 +111,16 @@ namespace Bichebot
                 }
             }
             else if (IsBotHello(message))
+            {
+                await discord.Channel.SendMessageAsync(new []
                 {
-                if (rnd.Next(0, 100) < 20)
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username} Здарова Бро {ToEmojiString("dobrobamboe")}", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else if (rnd.Next(0, 100) < 40)
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"Привет {discord.Author.Username}", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else if (rnd.Next(0, 100) < 60)
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username}, я приветсвую тебя", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                 else if (rnd.Next(0, 100) < 80)
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username} Добро пожаловать в Бухту Бичехостов", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                 else
-                {
-                     
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username} Как дела ?", msg.Tts)
-                        .ConfigureAwait(false);
-                }
+                    $"{discord.Author.Username} Здарова Бро {ToEmojiString("dobrobamboe")}",
+                    $"Привет {discord.Author.Username}",
+                    $"{discord.Author.Username}, я приветсвую тебя",
+                    $"{discord.Author.Username} Добро пожаловать в Бухту Бичехостов",
+                    $"{discord.Author.Username} Как дела ?"
+                }.Random(rnd), msg.Tts)
+                    .ConfigureAwait(false);
             }
             else if (discord.Content.Contains("бот лох")) 
                 await discord.Channel.SendMessageAsync($"{discord.Author.Username} Удали", msg.Tts).ConfigureAwait(false);
