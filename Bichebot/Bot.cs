@@ -272,12 +272,12 @@ namespace Bichebot
 
         private static async Task DeletePreviousMessageAsync(SocketMessage message)
         {
-            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 1).FlattenAsync()
+            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 2).FlattenAsync()
                 .ConfigureAwait(false);
 
             var messageToDelete = messages.FirstOrDefault();
             
-            if (messageToDelete is IUserMessage userMessage && !message.Author.IsBot)
+            if (messageToDelete is IUserMessage userMessage && !userMessage.Content.Contains("~~"))
             {
                 await userMessage.DeleteAsync().ConfigureAwait(false);
                 await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
