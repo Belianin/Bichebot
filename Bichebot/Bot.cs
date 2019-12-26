@@ -277,7 +277,7 @@ namespace Bichebot
 
             var messageToDelete = messages.FirstOrDefault();
             
-            if (messageToDelete is IUserMessage userMessage && !message.Content.Contains("~~"))
+            if (messageToDelete is IUserMessage userMessage && !message.Author.IsBot)
             {
                 await userMessage.DeleteAsync().ConfigureAwait(false);
                 await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
