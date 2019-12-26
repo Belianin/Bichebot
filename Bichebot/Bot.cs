@@ -55,7 +55,8 @@ namespace Bichebot
                 DiscordMessage = message,
                 Tts = message.Content.Contains("tts")
             };
-            
+            var discord = message.DiscordMessage.ToLower();
+
             if (args[0] == "/t4")
             {
                 var days = 3;
@@ -92,27 +93,69 @@ namespace Bichebot
             {
                 if (rnd.Next(0, 100) > 50)
                 {
-                    await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username}, {ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else if (rnd.Next(0, 100) > 50)
                 {
-                    await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username}, {ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    await message.Channel.SendMessageAsync(
+                    await discord.Channel.SendMessageAsync(
                             $"{ToEmojiString("valera")} ну лан", msg.Tts)
                         .ConfigureAwait(false);
                 }
             }
+            else if (IsBotHello(message))
+                {
+                if (rnd.Next(0, 100) < 20)
+                {
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username} Здарова Бро {ToEmojiString("dobrobamboe")}", msg.Tts)
+                        .ConfigureAwait(false);
+                }
+                else if (rnd.Next(0, 100) < 40)
+                {
+                    await discord.Channel.SendMessageAsync(
+                            $"Привет {discord.Author.Username}", msg.Tts)
+                        .ConfigureAwait(false);
+                }
+                else if (rnd.Next(0, 100) < 60)
+                {
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username}, я приветсвую тебя", msg.Tts)
+                        .ConfigureAwait(false);
+                }
+                 else if (rnd.Next(0, 100) < 80)
+                {
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username} Добро пожаловать в Бухту Бичехостов", msg.Tts)
+                        .ConfigureAwait(false);
+                }
+                 else
+                {
+                     
+                    await discord.Channel.SendMessageAsync(
+                            $"{discord.Author.Username} Как дела ?", msg.Tts)
+                        .ConfigureAwait(false);
+                }
+            }
+            else if (discord.Content.Contains("бот лох")) 
+                await discord.Channel.SendMessageAsync($"{discord.Author.Username} Удали", msg.Tts).ConfigureAwait(false);
+            
             else if (rnd.Next(0, 1000) == 999)
-                await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
+                await discord.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
         }
-
+         private bool IsBotHello(IMessage message)
+        {
+            var lower = message.Content.ToLower();
+            return lower.ContainsAny(new [] {"бот ", "бот,", " бот"}) &&
+                   lower.ContainsAny(new[] {"привет", "здаров", " хай "});
+        }
         private bool IsSupremeAsked(IMessage message)
         {
             var lower = message.Content.ToLower();
@@ -133,7 +176,7 @@ namespace Bichebot
                     Tactics = new[]
                     {
                         $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
-                        $"мид (спутники{ToEmojiString("qwirchamp")}, толстяки{ToEmojiString("dobrobamboe")}{ToEmojiString("ocean")}",
+                        $"мид (спутники{ToEmojiString("qwirchamp")}, толстяки{ToEmojiString("dobrobamboe")}{ToEmojiString("ocean")})",
                         $"на аире (БОМБИИМ{ToEmojiString("gif")}), главное вовремя перейди в {ToEmojiString("t3")} {ToEmojiString("dobrobamboe")}",
                         $"не важно какой слот, главное в конце не забудь телесакушки{ToEmojiString("vasyanbamboe")}",
                         $"не важно какой слот, главное в конце ЭОН телесакушки{ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")})",
@@ -147,6 +190,8 @@ namespace Bichebot
                         $"мид за серафим ИТОТА{ToEmojiString("heart")}{ToEmojiString("lyabamboe")}",
                         $"с дропом рембо{ToEmojiString("bombitbamboe")} командира за серафим {ToEmojiString("supremebamboe")}",
                         $"с ТРЕМЯ фаст ЯДЕРКАМИ {ToEmojiString("gif")}{ToEmojiString("gif")}{ToEmojiString("gif")}",
+                        $"и твори НАГИБ с АИРА фаст бомберами{ToEmojiString("gif")} + {ToEmojiString("t3")} ASF",
+                        $"с фаст{ToEmojiString("supremebamboe")} АХВАААССООЙЙ{ToEmojiString("supremebamboe")}"
                     }
                 },
                 new SupremeMap
@@ -179,14 +224,19 @@ namespace Bichebot
                 {
                     Names = new[]
                     {
-                        "канис (или ченить такое)", "пирамиду (или подобную)", "норм карту", "на норм карте",
+                        "канис (или ченить такое)", "пирамиду (или подобную)", "норм карту", "поиграть на норм карте",
                         "хилли плато",
                         "поиграть норм карту", "на какой-нибудь норм карте"
                     },
                     Tactics = new[]
                     {
-                        $"давай не сцы надо поднимать скилл уже {ToEmojiString("qwirnbamboe")}",
-                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}"
+                        $"давай не сцы надо поднимать скилл уже {ToEmojiString("qwirbamboe")}",
+                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}",
+                        $"там хоть научишься играть в настоящий суприм{ToEmojiString("supremebamboe")}",
+                        $", а лучше на Big Bang Lake супер карта и очень динамичная{ToEmojiString("jet")}",
+                        $"ведь намного веселее когда бой идет постоянно, надоели геймендеры {ToEmojiString("qwirbamboe")}",
+                        $", а то разве не задолбало 10 минут смотреть на экстракторы?{ToEmojiString("newfagbamboe")}",
+                        $"ПОРА НА ФРОНТ{ToEmojiString("hitlerbamboe")}{ToEmojiString("raised_hand_tone5")}"
                     }
                 },
                 new SupremeMap
@@ -203,7 +253,8 @@ namespace Bichebot
                         $"за кебран с фаст пауком{ToEmojiString("lootecbamboe")}",
                         $"с тактикой на двоих - ФАСТ {ToEmojiString("t3")} АРТА {ToEmojiString("dobrobamboe")}",
                         $"с нагиб тактикой на четверых - ЯДЕРКА{ToEmojiString("radioactive")}+ПАУК{ToEmojiString("lootecbamboe")}+ИТОТА{ToEmojiString("bombitbamboe")}+FATBOY{ToEmojiString("oldbamboe")}",
-                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {ToEmojiString("spongebamboe")}"
+                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {ToEmojiString("spongebamboe")}",
+                        $"и забань {ToEmojiString("t3")}радар потом го распиливать с клоакой {ToEmojiString("qwirbamboe")}"
                     },
                 },
                 new SupremeMap
@@ -212,6 +263,10 @@ namespace Bichebot
                     Tactics = new[]
                     {
                         $"2vs2 или 3vs3 НАГИИБ (слив) {ToEmojiString("supremebamboe")}",
+                        $"поиграть ладдер (no greys{ToEmojiString("face_with_monocle")})",
+                        $"сыграть уже в ладдер че как нуб серый{ToEmojiString("qwirchamp")}",
+                        $"Ctrl+K и в лол{ToEmojiString("lol2")}",
+                        $"смотреть каст с Сидом играть как-то лень"
                     }
                 }
             };
