@@ -55,6 +55,11 @@ namespace Bichebot
                 DiscordMessage = message,
                 Tts = message.Content.Contains("tts")
             };
+
+            if (message is IUserMessage userMessage && IsDeservingLike(message, out var reaction))
+            {
+                await userMessage.AddReactionAsync(Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
+            }
             
             if (message.Content.Contains("бот") && message.Content.Contains("удали"))
             {
@@ -245,6 +250,24 @@ namespace Bichebot
             
             var rate = rnd.Next(0, sum);
             return rates.OrderByDescending(r => r.Key).First(k => k.Key < rate).Value;
+        }
+
+        private bool IsDeservingLike(IMessage message, out string emoji)
+        {
+            var lower = message.Content.ToLower();
+            var goodWords = new[] {"красавчик", "молор", "найс", "дядя", "мужик", "васян", "гунирал", "ля", "какой"};
+            var emojies = new []
+            {
+                "valera", "oldbamboe", "kadikbamboe", "dobrobamboe"
+            };
+            if (lower.Contains("бот") && !lower.Contains("не") && lower.ContainsAny(goodWords))
+            {
+                emoji = emojies.Random(rnd);
+                return true;
+            }
+
+            emoji = null;
+            return false;
         }
 
         private static async Task DeletePreviousMessageAsync(SocketMessage message)
