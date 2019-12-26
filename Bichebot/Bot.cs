@@ -60,7 +60,7 @@ namespace Bichebot
             {
                 await DeletePreviousMessageAsync(message).ConfigureAwait(false);
             }
-            if (args[0] == "/t4")
+            else if (args[0] == "/t4")
             {
                 var days = 3;
                 if (args.Length > 1)
