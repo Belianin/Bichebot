@@ -77,8 +77,6 @@ namespace Bichebot
             //await voiceChannel.ConnectAsync();
             Console.WriteLine("Connected");
         }
-        
-        
 
         public async Task RunAsync(CancellationToken token)
         {
@@ -340,7 +338,7 @@ namespace Bichebot
             var goodWords = new[] {"красавчик", "молор", "найс", "дядя", "мужик", "васян", "гунирал", "ля", "какой"};
             var emojies = new []
             {
-                "valera", "oldbamboe", "kadikbamboe", "dobrobamboe"
+                "valera", "oldbamboe", "kadikbamboe", "dobrobamboe", "lejatbabmoe"
             };
             if (lower.Contains("бот") && !lower.Contains("не") && lower.ContainsAny(goodWords))
             {
