@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Audio;
 
-namespace Bichebot
+namespace Bichebot.Modules
 {
     public class AudioModule
     {
-        private const string FFMPEG = "ffmpeg"; // Windows, Linux
+        private const string FFMPEG = "ffmpeg"; // Windows, Linux; opus.dll and libsodium.dll?
 
         private readonly IBotCore core;
 

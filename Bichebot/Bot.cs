@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Bichebot.Modules;
+using Bichebot.Utilities;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -247,7 +249,7 @@ namespace Bichebot
                 }
             };
 
-            var map = GetRandomMap(maps);
+            var map = rnd.GetRandom(maps, m => m.Tactics.Count);
             var discord = message.DiscordMessage;
             await discord.Channel.SendMessageAsync(
                     $"{discord.Author.Username}, {sugg.Random(rnd)} {map.Names.Random(rnd)} {map.Tactics.Random(rnd)}",
