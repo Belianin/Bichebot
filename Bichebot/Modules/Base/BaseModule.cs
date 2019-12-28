@@ -1,17 +1,25 @@
 using System.Threading.Tasks;
 using Bichebot.Core;
+using Discord;
 using Discord.WebSocket;
 
-namespace Bichebot.Modules
+namespace Bichebot.Modules.Base
 {
-    public abstract class BaseMessageModule : IBotModule
+    public abstract class BaseModule : IBotModule
     {
         protected readonly IBotCore Core;
-        protected abstract Task HandleMessageAsync(SocketMessage message);
-        protected BaseMessageModule(IBotCore core)
+
+        protected BaseModule(IBotCore core)
         {
             Core = core;
         }
+
+        protected virtual async Task HandleMessageAsync(SocketMessage message) {}
+
+        protected virtual async Task HandleReactionAsync(
+            Cacheable<IUserMessage, ulong> cachedMessage,
+            ISocketMessageChannel channel,
+            SocketReaction reaction) {}
 
         public bool IsRunning { get; private set; }
         
@@ -21,6 +29,7 @@ namespace Bichebot.Modules
                 return;
             
             Core.Client.MessageReceived += HandleMessageAsync;
+            Core.Client.ReactionAdded += HandleReactionAsync;
             IsRunning = true;
         }
 
@@ -30,6 +39,7 @@ namespace Bichebot.Modules
                 return;
             
             Core.Client.MessageReceived -= HandleMessageAsync;
+            Core.Client.ReactionAdded -= HandleReactionAsync;
             IsRunning = false;
         }
     }

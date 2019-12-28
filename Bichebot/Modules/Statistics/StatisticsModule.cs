@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bichebot.Core;
+using Bichebot.Modules.Base;
 using Discord;
 using Discord.WebSocket;
 

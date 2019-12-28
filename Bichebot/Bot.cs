@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules;
+using Bichebot.Modules.Best;
 using Bichebot.Modules.Statistics;
 using Bichebot.Utilities;
 using Discord;
@@ -20,12 +21,10 @@ namespace Bichebot
 
         private readonly AudioSpeaker audio;
 
-        private readonly StatisticsModule statistics;
+        private readonly ICollection<IBotModule> modules;
 
         private readonly BotConfig config;
-        
-        private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
-        
+
         private readonly Random rnd = new Random();
 
         public Bot(BotConfig config)
@@ -35,18 +34,26 @@ namespace Bichebot
             
             core = new BotCore(config.GuildId, discordClient);
             audio = new AudioSpeaker(core);
-            statistics = new StatisticsModule(core);
-            statistics.Run();
+            modules = new List<IBotModule>
+            {
+                new StatisticsModule(core),
+                new BestModule(core, new BestModuleSettings
+                {
+                    BestChannelId = config.BestChannelId,
+                    ReactionCountToBeBest = config.ReactionCountToBeBest
+                })
+            };
             
-            discordClient.ReactionAdded += HandleReactionAsync;
+            foreach (var module in modules)
+                module.Run();
+
             discordClient.MessageReceived += HandleMessageAsync;
         }
 
         public async Task RunAsync(CancellationToken token)
         {
             Console.WriteLine("Starting");
-            await core.Client.LoginAsync(TokenType.Bot, config.Token)
-                .ConfigureAwait(false);
+            await core.Client.LoginAsync(TokenType.Bot, config.Token).ConfigureAwait(false);
             await core.Client.StartAsync().ConfigureAwait(false);
             Console.WriteLine("Started");
 
@@ -262,48 +269,6 @@ namespace Bichebot
                 await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
                     .ConfigureAwait(false);
             }
-        }
-
-        private async Task HandleReactionAsync(
-            Cacheable<IUserMessage, ulong> cachedMessage,
-            ISocketMessageChannel channel,
-            SocketReaction reaction)
-        {
-            Console.WriteLine("Reaction");
-            var message = await channel.GetMessageAsync(reaction.MessageId).ConfigureAwait(false);
-            
-            if (message is RestUserMessage userMessage)
-            {
-                await SendToBestChannelAsync(userMessage).ConfigureAwait(false);
-            }
-        }
-
-        private async Task SendToBestChannelAsync(IUserMessage userMessage)
-        {
-            if (alreadyBest.Contains(userMessage.Id) ||
-                !userMessage.Reactions.Values.Any(r => r.ReactionCount >= config.ReactionCountToBeBest) ||
-                userMessage.Channel.Id == config.BestChannelId)
-                return;
-            
-            alreadyBest.Add(userMessage.Id);
-
-            var emotes = string.Join("", userMessage
-                .Reactions
-                .OrderByDescending(r => r.Value.ReactionCount)
-                .SelectMany(e => Enumerable.Repeat(core.ToEmojiString(e.Key.Name), e.Value.ReactionCount)));
-
-            var embed = new EmbedBuilder()
-                .WithAuthor(userMessage.Author)
-                .WithTitle(userMessage.Content)
-                .WithFooter("#бичехосты-лучшее")
-                .WithDescription(emotes)
-                .WithTimestamp(userMessage.Timestamp);
-
-            if (userMessage.Attachments.Count > 0)
-                embed.WithImageUrl(userMessage.Attachments.First().Url);
-
-            await core.Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(embed: embed.Build())
-                .ConfigureAwait(false);
         }
     }
 }

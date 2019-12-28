@@ -7,6 +7,16 @@ namespace Bichebot.Utilities
     [Obsolete]
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var e in source)
+            {
+                action(e);
+
+                yield return e;
+            }
+        }
+        
         public static bool ContainsAny(this string row, IEnumerable<string> strings)
         {
             return strings.Any(row.Contains);
