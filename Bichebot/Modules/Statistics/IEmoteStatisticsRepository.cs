@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
-namespace Bichebot
+namespace Bichebot.Modules.Statistics
 {
     public interface IEmoteStatisticsRepository
     {

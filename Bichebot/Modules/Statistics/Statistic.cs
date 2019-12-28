@@ -1,4 +1,4 @@
-namespace Bichebot
+namespace Bichebot.Modules.Statistics
 {
     public class Statistic
     {

@@ -1,6 +1,6 @@
 using Discord.WebSocket;
 
-namespace Bichebot
+namespace Bichebot.Core
 {
     public class Message
     {

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Bichebot.Core;
 using Bichebot.Modules;
+using Bichebot.Modules.Statistics;
 using Bichebot.Utilities;
 using Discord;
 using Discord.Rest;
@@ -90,7 +92,7 @@ namespace Bichebot
                 if (args.Length > 1)
                     int.TryParse(args[1], out days);
                 
-                var rates = GetEmoteReactionsRating(GetMessages(TimeSpan.FromDays(days), message.Channel))
+                var rates = StatisticsModule.GetEmoteReactionsRating(core.GetMessages(message.Channel, TimeSpan.FromDays(days)))
                     .OrderByDescending(r => r.Count)
                     .Take(10);
                 
@@ -105,7 +107,7 @@ namespace Bichebot
                 if (args.Length > 1)
                     int.TryParse(args[1], out days);
                 
-                var rates = GetEmoteUsingsRating(GetMessages(TimeSpan.FromDays(days), message.Channel))
+                var rates = StatisticsModule.GetEmoteUsageRating(core.GetMessages(message.Channel, TimeSpan.FromDays(days)))
                     .OrderByDescending(r => r.Count)
                     .Take(10);
             
@@ -307,76 +309,6 @@ namespace Bichebot
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
         {
             return string.Join("\n", statistics.Select(e => $"{core.ToEmojiString(e.Value)}: {e.Count}"));
-        }
-
-        private static IEnumerable<IUserMessage> GetMessages(TimeSpan period, IMessageChannel channel)
-        {
-            var timestamp = DateTime.UtcNow;
-            ulong lastId = 0;
-            
-            var messages = channel.GetMessagesAsync().Flatten();
-            var enumerator = messages.GetEnumerator();
-            var isEmpty = true;
-            do
-            {
-                while (enumerator.MoveNext().Result)
-                {
-                    isEmpty = false;
-                    lastId = enumerator.Current.Id;
-                    if (enumerator.Current.Timestamp.UtcDateTime < timestamp)
-                        timestamp = enumerator.Current.Timestamp.UtcDateTime;
-                    if (enumerator.Current is IUserMessage userMessage)
-                        yield return userMessage;
-                }
-
-                Console.WriteLine(timestamp);
-
-                enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
-            } while (!isEmpty && timestamp.Add(period) > DateTime.UtcNow);
-        }
-
-        private static IEnumerable<Statistic> GetEmoteUsingsRating(IEnumerable<IUserMessage> messages)
-        {
-            var result = new Dictionary<string, int>();
-            var regex = new Regex(@":(.*?):");
-
-            var emotes = messages
-                .Where(m => !m.Author.IsBot)
-                .SelectMany(m => regex.Matches(m.Content));
-            
-            foreach (var emote in emotes)
-            {
-                var value = emote.ToString().Substring(1, emote.ToString().Length - 2);
-                if (!result.ContainsKey(value))
-                    result[value] = 0;
-
-                result[value] += 1;
-            }
-
-            return result.Select(v => new Statistic
-            {
-                Count = v.Value,
-                Value = v.Key
-            });
-        }
-
-        private static IEnumerable<Statistic> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
-        {
-            var result = new Dictionary<string, int>();
-            
-            foreach (var reaction in messages.SelectMany(m => m.Reactions))
-            {
-                if (!result.ContainsKey(reaction.Key.Name))
-                    result[reaction.Key.Name] = 0;
-
-                result[reaction.Key.Name] += reaction.Value.ReactionCount;
-            }
-
-            return result.Select(v => new Statistic
-            {
-                Count = v.Value,
-                Value = v.Key
-            });
         }
 
         private async Task HandleReactionAsync(
