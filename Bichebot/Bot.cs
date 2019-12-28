@@ -25,44 +25,28 @@ namespace Bichebot
 
         private readonly ICollection<IBotModule> modules;
 
-        private readonly BotConfig config;
+        private readonly string token;
 
-        private readonly Random rnd = new Random();
-
-        public Bot(BotConfig config)
+        internal Bot(IBotCore core, ICollection<IBotModule> modules, string token)
         {
-            this.config = config;
-            var discordClient = new DiscordSocketClient();
-            
-            core = new BotCore(config.GuildId, discordClient);
-            audio = new AudioSpeaker(core);
-            modules = new List<IBotModule>
-            {
-                new StatisticsModule(core),
-                new ReactModule(core),
-                new ModerateModule(core),
-                new SupremeModule(core),
-                new BestModule(core, new BestModuleSettings
-                {
-                    BestChannelId = config.BestChannelId,
-                    ReactionCountToBeBest = config.ReactionCountToBeBest
-                })
-            };
-            
-            foreach (var module in modules)
-                module.Run();
-
-            discordClient.MessageReceived += HandleMessageAsync;
+            this.core = core;
+            this.modules = modules;
+            this.token = token;
         }
 
-        public async Task RunAsync(CancellationToken token)
+        public void Run(CancellationToken cancellationToken)
         {
             Console.WriteLine("Starting");
-            await core.Client.LoginAsync(TokenType.Bot, config.Token).ConfigureAwait(false);
-            await core.Client.StartAsync().ConfigureAwait(false);
+            
+            core.Client.LoginAsync(TokenType.Bot, token).Wait(cancellationToken);
+            core.Client.StartAsync().Wait(cancellationToken);
+
+            foreach (var module in modules)
+                module.Run();
+            
             Console.WriteLine("Started");
 
-            while (!token.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 Thread.Sleep(1000);
             }

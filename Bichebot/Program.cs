@@ -7,6 +7,13 @@ namespace Bichebot
     {
         public static void Main(string[] args)
         {
+            var cts = new CancellationTokenSource();
+            
+            CreateBot().Run(cts.Token);
+        }
+
+        private static Bot CreateBot()
+        {
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN");
             var mongoPassword = GetEnvironmentVariable("MONGODB_PASSWORD");
 
@@ -14,11 +21,8 @@ namespace Bichebot
             {
                 Token = token
             };
-
-            var cts = new CancellationTokenSource();
             
-            new Bot(config)
-                .RunAsync(cts.Token).Wait(cts.Token);
+            return BotFactory.Create(config);
         }
 
         private static string GetEnvironmentVariable(string name)

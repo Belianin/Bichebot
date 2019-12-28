@@ -23,7 +23,7 @@ namespace Bichebot.Modules.Base
 
         public bool IsRunning { get; private set; }
         
-        public void Run()
+        public virtual void Run()
         {
             if (IsRunning)
                 return;
@@ -33,7 +33,7 @@ namespace Bichebot.Modules.Base
             IsRunning = true;
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             if (!IsRunning)
                 return;
