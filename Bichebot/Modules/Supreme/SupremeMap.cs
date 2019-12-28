@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Bichebot
+namespace Bichebot.Modules.Supreme
 {
     public class SupremeMap
     {

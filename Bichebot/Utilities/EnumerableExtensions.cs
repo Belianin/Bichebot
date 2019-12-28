@@ -29,12 +29,12 @@ namespace Bichebot.Utilities
         
         public static T Random<T>(this ICollection<T> source, Random random)
         {
-            return random.GetRandom(source);
+            return random.Choose(source);
         }
         
         public static T Random<T>(this IEnumerable<T> source, Random random, Func<T, int> weight)
         {
-            return random.GetRandom(source, weight);
+            return random.Choose(source, weight);
         }
     }
 }

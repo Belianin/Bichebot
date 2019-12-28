@@ -21,19 +21,19 @@ namespace Bichebot.Modules.React
                 await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == reaction))
                     .ConfigureAwait(false);
 
-            if (Core.Random.IsSuccess(10))
-                await userMessage.AddReactionAsync(Core.Random.GetRandomReadonly(Core.Guild.Emotes))
+            if (Core.Random.Roll(10))
+                await userMessage.AddReactionAsync(Core.Random.Choose(Core.Guild.Emotes))
                     .ConfigureAwait(false);
 
             if (message.Content.Contains("лол"))
             {
-                if (Core.Random.IsSuccess(2))
+                if (Core.Random.Roll(2))
                 {
                     await message.Channel.SendMessageAsync(
                             $"{Core.ToEmojiString("dobrobamboe")} может лучше в {Core.ToEmojiString("supremebamboe")}?")
                         .ConfigureAwait(false);
                 }
-                else if (Core.Random.IsSuccess(2))
+                else if (Core.Random.Roll(2))
                 {
                     await message.Channel.SendMessageAsync(
                             $"{Core.ToEmojiString("dobrobamboe")} ты хотел сказать {Core.ToEmojiString("supremebamboe")}?")
@@ -46,7 +46,7 @@ namespace Bichebot.Modules.React
                         .ConfigureAwait(false);
                 }
             }
-            else if (Core.Random.IsSuccess(1000))
+            else if (Core.Random.Roll(1000))
                 await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
         }
         
@@ -60,7 +60,7 @@ namespace Bichebot.Modules.React
             };
             if (lower.Contains("бот") && !lower.Contains("не") && lower.ContainsAny(goodWords))
             {
-                emoji = Core.Random.GetRandom(emojies);
+                emoji = Core.Random.Choose(emojies);
                 return true;
             }
 

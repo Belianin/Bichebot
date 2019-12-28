@@ -6,17 +6,13 @@ namespace Bichebot.Utilities
 {
     public static class RandomExtensions
     {
-        public static T GetRandomReadonly<T>(this Random random, IReadOnlyCollection<T> source)
+        public static T Choose<T>(this Random random, IEnumerable<T> source)
         {
-            return source.ElementAt(random.Next(0, source.Count));
+            var array = source.ToArray();
+            return array[random.Next(0, array.Length - 1)];
         }
         
-        public static T GetRandom<T>(this Random random, ICollection<T> source)
-        {
-            return source.ElementAt(random.Next(0, source.Count - 1));
-        }
-        
-        public static T GetRandom<T>(this Random random, IEnumerable<T> source, Func<T, int> weight)
+        public static T Choose<T>(this Random random, IEnumerable<T> source, Func<T, int> weight)
         {
             var rates = new Dictionary<int, T>();
             var sum = 0;
@@ -30,14 +26,14 @@ namespace Bichebot.Utilities
             return rates.First(k => k.Key >= rate).Value;
         }
 
-        public static bool IsSuccess(this Random random, int numerator, int denominator)
+        public static bool Roll(this Random random, int numerator, int denominator)
         {
             return random.Next(denominator) < numerator;
         }
         
-        public static bool IsSuccess(this Random random, int chance)
+        public static bool Roll(this Random random, int chance)
         {
-            return random.IsSuccess(1, chance);
+            return random.Roll(1, chance);
         }
     }
 }
