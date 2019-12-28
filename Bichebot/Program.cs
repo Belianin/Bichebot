@@ -21,10 +21,11 @@ namespace Bichebot
                 .RunAsync(cts.Token).Wait(cts.Token);
         }
 
-        static string GetEnvironmentVariable(string name)
+        private static string GetEnvironmentVariable(string name)
         {
-            return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) ??
-                   Environment.GetEnvironmentVariable(name);
+            return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process) ??
+                   Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) ??
+                   Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Machine);
         }
 
     }
