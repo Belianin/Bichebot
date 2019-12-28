@@ -1,19 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules;
-using Bichebot.Modules.Best;
-using Bichebot.Modules.Moderate;
-using Bichebot.Modules.React;
-using Bichebot.Modules.Statistics;
-using Bichebot.Modules.Supreme;
 using Discord;
-using Discord.Rest;
-using Discord.WebSocket;
 
 namespace Bichebot
 {

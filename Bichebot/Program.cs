@@ -17,12 +17,12 @@ namespace Bichebot
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN");
             var mongoPassword = GetEnvironmentVariable("MONGODB_PASSWORD");
 
-            var config = new BotConfig
+            var settings = new BotSettings
             {
                 Token = token
             };
             
-            return BotFactory.Create(config);
+            return BotFactory.Create(settings);
         }
 
         private static string GetEnvironmentVariable(string name)

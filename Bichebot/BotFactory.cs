@@ -13,10 +13,10 @@ namespace Bichebot
 {
     public static class BotFactory
     {
-        public static Bot Create(BotConfig config)
+        public static Bot Create(BotSettings settings)
         {
             var discordClient = new DiscordSocketClient();
-            var core = new BotCore(config.GuildId, discordClient);
+            var core = new BotCore(settings.GuildId, discordClient);
             var modules = new List<IBotModule>
             {
                 new StatisticsModule(core),
@@ -26,12 +26,12 @@ namespace Bichebot
                 new AudioModule(core),
                 new BestModule(core, new BestModuleSettings
                 {
-                    BestChannelId = config.BestChannelId,
-                    ReactionCountToBeBest = config.ReactionCountToBeBest
+                    BestChannelId = settings.BestChannelId,
+                    ReactionCountToBeBest = settings.ReactionCountToBeBest
                 })
             };
             
-            return new Bot(core, modules, config.Token);
+            return new Bot(core, modules, settings.Token);
         }
     }
 }

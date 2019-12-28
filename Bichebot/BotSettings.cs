@@ -1,6 +1,6 @@
 namespace Bichebot
 {
-    public class BotConfig
+    public class BotSettings
     {
         public string Token { get; set; }
 
