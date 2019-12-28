@@ -20,6 +20,8 @@ namespace Bichebot
 
         private readonly AudioModule audio;
 
+        private readonly StatisticsModule statistics;
+
         private readonly BotConfig config;
         
         private readonly DiscordSocketClient discordClient;
@@ -33,6 +35,7 @@ namespace Bichebot
             this.config = config;
             core = new BotCore(config.GuildId, discordClient);
             audio = new AudioModule(core);
+            statistics = new StatisticsModule(core);
             
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
@@ -56,7 +59,6 @@ namespace Bichebot
         private async Task HandleMessageAsync(SocketMessage message)
         {
             Console.WriteLine(message.Content); //  /t4 7
-            var args = Regex.Split(message.Content, @"\s+");
             var msg = new Message
             {
                 DiscordMessage = message,
@@ -85,36 +87,6 @@ namespace Bichebot
             if (message.Content.Contains("бот") && message.Content.Contains("удали"))
             {
                 await DeletePreviousMessageAsync(message).ConfigureAwait(false);
-            }
-            else if (args[0] == "/t4")
-            {
-                var days = 3;
-                if (args.Length > 1)
-                    int.TryParse(args[1], out days);
-                
-                var rates = StatisticsModule.GetEmoteReactionsRating(core.GetMessages(message.Channel, TimeSpan.FromDays(days)))
-                    .OrderByDescending(r => r.Count)
-                    .Take(10);
-                
-                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
-
-                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
-                
-            }
-            else if (args[0] == "/t5")
-            {
-                var days = 3;
-                if (args.Length > 1)
-                    int.TryParse(args[1], out days);
-                
-                var rates = StatisticsModule.GetEmoteUsageRating(core.GetMessages(message.Channel, TimeSpan.FromDays(days)))
-                    .OrderByDescending(r => r.Count)
-                    .Take(10);
-            
-                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
-
-                await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
-                
             }
             else if (IsSupremeAsked(message))
                 await TrySupremeSuggestionAsync(msg).ConfigureAwait(false);
@@ -259,20 +231,6 @@ namespace Bichebot
                 .ConfigureAwait(false);
         }
 
-        private SupremeMap GetRandomMap(IEnumerable<SupremeMap> collection)
-        {
-            var rates = new Dictionary<int, SupremeMap>();
-            var sum = 0;
-            foreach (var c in collection)
-            {
-                rates[sum] = c;
-                sum += c.Tactics.Count;
-            }
-            
-            var rate = rnd.Next(0, sum);
-            return rates.OrderByDescending(r => r.Key).First(k => k.Key < rate).Value;
-        }
-
         private bool IsDeservingLike(IMessage message, out string emoji)
         {
             var lower = message.Content.ToLower();
@@ -304,11 +262,6 @@ namespace Bichebot
                 await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
                     .ConfigureAwait(false);
             }
-        }
-
-        private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
-        {
-            return string.Join("\n", statistics.Select(e => $"{core.ToEmojiString(e.Value)}: {e.Count}"));
         }
 
         private async Task HandleReactionAsync(

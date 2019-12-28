@@ -10,16 +10,16 @@ namespace Bichebot.Core
     {
         private readonly ulong guildId;
 
-        private readonly DiscordSocketClient discordClient;
-
         public BotCore(ulong guildId, DiscordSocketClient discordClient)
         {
             this.guildId = guildId;
-            this.discordClient = discordClient;
+            this.Client = discordClient;
         }
 
-        public SocketGuild Guild => discordClient.Guilds.First(g => g.Id == guildId);
-
+        public DiscordSocketClient Client { get; }
+        
+        public SocketGuild Guild => Client.Guilds.First(g => g.Id == guildId);
+        
         public string ToEmojiString(string text)
         {
             var emote = Guild.Emotes.FirstOrDefault(e => e.Name == text);

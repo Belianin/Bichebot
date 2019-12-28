@@ -1,13 +1,60 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Bichebot.Core;
 using Discord;
+using Discord.WebSocket;
 
 namespace Bichebot.Modules.Statistics
 {
     public class StatisticsModule
     {
-        public static IEnumerable<Statistic> GetEmoteUsageRating(IEnumerable<IUserMessage> messages)
+        private readonly IBotCore core;
+        
+        private readonly Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>> statisticsFunctions;
+
+        private readonly TimeSpan defaultSearchPeriod = TimeSpan.FromDays(7);
+        
+        public StatisticsModule(IBotCore core)
+        {
+            this.core = core;
+            core.Client.MessageReceived += HandleAsync;
+            statisticsFunctions = new Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>>
+            {
+                {"/t4", GetEmoteReactionsRating},
+                {"/t5", GetEmoteUsageRating}
+            };
+        }
+
+        private async Task HandleAsync(SocketMessage message)
+        {
+            var args = Regex.Split(message.Content, @"\s+");
+            if (!statisticsFunctions.TryGetValue(args[0], out var statisticsFunction))
+                return;
+
+            var searchPeriod = defaultSearchPeriod;
+            if (args.Length > 1 && int.TryParse(args[1], out var days))
+                searchPeriod = TimeSpan.FromDays(days);
+
+            var messages = core.GetMessages(message.Channel, searchPeriod);
+            
+            var rates = statisticsFunction(messages)
+                .OrderByDescending(r => r.Count)
+                .Take(10);
+            
+            var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
+
+            await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
+        }
+
+        private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
+        {
+            return string.Join("\n", statistics.Select(e => $"{core.ToEmojiString(e.Value)}: {e.Count}"));
+        }
+
+        private static IEnumerable<Statistic> GetEmoteUsageRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             var regex = new Regex(@":(.*?):");
@@ -32,7 +79,7 @@ namespace Bichebot.Modules.Statistics
             });
         }
 
-        public static IEnumerable<Statistic> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
+        private static IEnumerable<Statistic> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
             
