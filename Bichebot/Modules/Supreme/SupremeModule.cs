@@ -10,7 +10,12 @@ namespace Bichebot.Modules.Supreme
 {
     public class SupremeModule : BaseModule
     {
-        public SupremeModule(IBotCore core) : base(core) {}
+        private readonly Dictionary<ulong, SupremeState> states;
+
+        public SupremeModule(IBotCore core) : base(core)
+        {
+            states = new Dictionary<ulong, SupremeState>();
+        }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
         {
@@ -26,8 +31,31 @@ namespace Bichebot.Modules.Supreme
                    lower.ContainsAny(new[] {"игра", "гам", " в ", "го "});
         }
 
+        private SupremeState GetUserState(IUser user)
+        {
+            if (states.TryGetValue(user.Id, out var result))
+                return result;
+            
+            var newState = new SupremeState();
+
+            states[user.Id] = newState;
+
+            return newState;
+        }
+
         private async Task TrySupremeSuggestionAsync(SocketMessage message)
         {
+            var state = GetUserState(message.Author);
+
+            if (state.DialogLevel == DialogLevel.Second)
+            {
+                state.DialogLevel = DialogLevel.First;
+                await message.Channel.SendMessageAsync("Ага").ConfigureAwait(false);
+                return;
+            }
+
+            state.DialogLevel = DialogLevel.Second;
+            
             var sugg = new []{"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
 
             var maps = new List<SupremeMap>
