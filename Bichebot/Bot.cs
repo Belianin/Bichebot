@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Audio;
-using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
 
@@ -15,7 +12,9 @@ namespace Bichebot
 {
     public class Bot
     {
-        private SocketGuild Guild => discordClient.Guilds.First(g => g.Id == config.GuildId);
+        private readonly IBotCore core;
+
+        private readonly AudioModule audio;
 
         private readonly BotConfig config;
         
@@ -25,57 +24,15 @@ namespace Bichebot
         
         private readonly Random rnd = new Random();
 
-        private bool flag = true;
-        
         public Bot(BotConfig config)
         {
             this.config = config;
+            core = new BotCore(config.GuildId, discordClient);
+            audio = new AudioModule(core);
             
             discordClient = new DiscordSocketClient();
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessageAsync;
-           // discordClient.UserVoiceStateUpdated += HandleVoiceAsync;
-        }
-//
-//        private async Task HandleVoiceAsync(SocketUser user, SocketVoiceState state1, SocketVoiceState state2)
-//        {
-//            if (user.IsBot)
-//                return;
-//            
-//            Console.WriteLine("Voice");
-//            
-//            if (state1.VoiceChannel == null && state2.VoiceChannel != null)
-//            {
-//                ConnectToVoice(state2.VoiceChannel).Wait();
-//            }
-//
-//            if (state1.VoiceChannel != null && flag)
-//            {
-//                flag = false;
-//                ConnectToVoice(state2.VoiceChannel).Wait();
-//            }
-//        }
-
-        private async Task ConnectToVoice(SocketVoiceChannel voiceChannel)
-        {
-            if (voiceChannel == null)
-                return;
-            try
-            {
-                new Thread(() => A(voiceChannel)).Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private void A(SocketVoiceChannel voiceChannel)
-        {
-            Console.WriteLine("Connecting");
-            voiceChannel.ConnectAsync().Wait();
-            //await voiceChannel.ConnectAsync();
-            Console.WriteLine("Connected");
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -104,41 +61,21 @@ namespace Bichebot
 
             if (message.Content == "go")
             {
-                var channel = Guild.VoiceChannels.First(c => c.Name.Contains("Набег"));
-                await ConnectToVoice(channel);
+                audio.Connect(message.Author);
             }
-            else if (message.Content == "ilidan")
+            
+            if (message.Content == "ilidan")
             {
-                Console.WriteLine("PSI");
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "ffmpeg",
-                    Arguments = $@"-hide_banner -loglevel panic -i ""ilidan.mp3"" -ac 2 -f s16le -ar 48000 pipe:1",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false
-                };
-
-                Console.WriteLine("FFMPEG");
-                using (var ffmpeg = Process.Start(psi))
-                using (var output = ffmpeg.StandardOutput.BaseStream)
-                using (var discord = Guild.AudioClient.CreatePCMStream(AudioApplication.Mixed))
-                    try
-                    {
-                        await output.CopyToAsync(discord);
-                    }
-                    finally
-                    {
-                        await discord.FlushAsync();
-                    }
+                await audio.SendMessageAsync("ilidan.mp3").ConfigureAwait(false);
             }
 
             if (message is IUserMessage userMessage)
             {
                 if (IsDeservingLike(message, out var reaction))
-                    await userMessage.AddReactionAsync(Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
+                    await userMessage.AddReactionAsync(core.Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
 
                 if (rnd.Next(0, 100) > 90)
-                    await userMessage.AddReactionAsync(Guild.Emotes.RandomReadonly(rnd)).ConfigureAwait(false);
+                    await userMessage.AddReactionAsync(core.Guild.Emotes.RandomReadonly(rnd)).ConfigureAwait(false);
             }
             
             if (message.Content.Contains("бот") && message.Content.Contains("удали"))
@@ -182,19 +119,19 @@ namespace Bichebot
                 if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
+                            $"{core.ToEmojiString("dobrobamboe")} может лучше в {core.ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else if (rnd.Next(0, 100) > 50)
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
+                            $"{core.ToEmojiString("dobrobamboe")} ты хотел сказать {core.ToEmojiString("supremebamboe")}?", msg.Tts)
                         .ConfigureAwait(false);
                 }
                 else
                 {
                     await message.Channel.SendMessageAsync(
-                            $"{ToEmojiString("valera")} ну лан", msg.Tts)
+                            $"{core.ToEmojiString("valera")} ну лан", msg.Tts)
                         .ConfigureAwait(false);
                 }
             }
@@ -226,21 +163,21 @@ namespace Bichebot
                     Names = new[] {"на дуалгепе", "дуалгеп", "поиграть дуалгеп", "DualGap"},
                     Tactics = new[]
                     {
-                        $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
-                        $"мид (спутники{ToEmojiString("qwirchamp")}, толстяки{ToEmojiString("dobrobamboe")}{ToEmojiString("ocean")}",
-                        $"на аире (БОМБИИМ{ToEmojiString("oroobamboe")}), главное вовремя перейди в {ToEmojiString("t3")} {ToEmojiString("dobrobamboe")}",
-                        $"не важно какой слот, главное в конце не забудь телесакушки{ToEmojiString("vasyanbamboe")}",
-                        $"не важно какой слот, главное в конце ЭОН телесакушки{ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")})",
-                        $"и снайп корсарами НЫЫААААА{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
-                        $"на эко фаст {ToEmojiString("t3")} арта {ToEmojiString("dobrobamboe")}{ToEmojiString("thumbup")}",
-                        $"и ТОПИТЬ за навального {ToEmojiString("coolstory")} (ВЗОРВЕМ либерах {ToEmojiString("deadinside")})",
-                        $"c фаст телемазером {ToEmojiString("kripotabamboe")}{ToEmojiString("point_right")}{ToEmojiString("ok_hand")}",
-                        $"c дропом двух комов в тылы противника {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}",
-                        $"с дропом кома с клоакой+лазер {ToEmojiString("qwirchamp")}",
-                        $"с дропом ПАУКА {ToEmojiString("valera")}{ToEmojiString("oroobamboe")}",
-                        $"мид за серафим ИТОТА{ToEmojiString("heart")}{ToEmojiString("lyabamboe")}",
-                        $"с дропом рембо{ToEmojiString("bombitbamboe")} командира за серафим {ToEmojiString("supremebamboe")}",
-                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
+                        $"c фаст ЯДЕРКОЙ{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}",
+                        $"мид (спутники{core.ToEmojiString("qwirchamp")}, толстяки{core.ToEmojiString("dobrobamboe")}{core.ToEmojiString("ocean")}",
+                        $"на аире (БОМБИИМ{core.ToEmojiString("oroobamboe")}), главное вовремя перейди в {core.ToEmojiString("t3")} {core.ToEmojiString("dobrobamboe")}",
+                        $"не важно какой слот, главное в конце не забудь телесакушки{core.ToEmojiString("vasyanbamboe")}",
+                        $"не важно какой слот, главное в конце ЭОН телесакушки{core.ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")})",
+                        $"и снайп корсарами НЫЫААААА{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}",
+                        $"на эко фаст {core.ToEmojiString("t3")} арта {core.ToEmojiString("dobrobamboe")}{core.ToEmojiString("thumbup")}",
+                        $"и ТОПИТЬ за навального {core.ToEmojiString("coolstory")} (ВЗОРВЕМ либерах {core.ToEmojiString("deadinside")})",
+                        $"c фаст телемазером {core.ToEmojiString("kripotabamboe")}{core.ToEmojiString("point_right")}{core.ToEmojiString("ok_hand")}",
+                        $"c дропом двух комов в тылы противника {core.ToEmojiString("coolstory")}{core.ToEmojiString("deadinside")}",
+                        $"с дропом кома с клоакой+лазер {core.ToEmojiString("qwirchamp")}",
+                        $"с дропом ПАУКА {core.ToEmojiString("valera")}{core.ToEmojiString("oroobamboe")}",
+                        $"мид за серафим ИТОТА{core.ToEmojiString("heart")}{core.ToEmojiString("lyabamboe")}",
+                        $"с дропом рембо{core.ToEmojiString("bombitbamboe")} командира за серафим {core.ToEmojiString("supremebamboe")}",
+                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {core.ToEmojiString("oroobamboe")}{core.ToEmojiString("oroobamboe")}{core.ToEmojiString("oroobamboe")}",
                     }
                 },
                 new SupremeMap
@@ -252,10 +189,10 @@ namespace Bichebot
                     },
                     Tactics = new[]
                     {
-                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} с блокпостом + Т2 арта",
-                        $"раш командирами с пушкой {ToEmojiString("coolstory")}{ToEmojiString("deadinside")}{ToEmojiString("vasyanbamboe")}{ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{ToEmojiString("oroobamboe")}{ToEmojiString("oroobamboe")}",
-                        $"с гетто ганшипом {ToEmojiString("qwirchamp")}{ToEmojiString("call_me_tone1")}",
-                        $"с фаст рембо командиром{ToEmojiString("supremebamboe")}"
+                        $"раш командирами с пушкой {core.ToEmojiString("coolstory")}{core.ToEmojiString("deadinside")}{core.ToEmojiString("vasyanbamboe")}{core.ToEmojiString("oldbamboe")} с блокпостом + Т2 арта",
+                        $"раш командирами с пушкой {core.ToEmojiString("coolstory")}{core.ToEmojiString("deadinside")}{core.ToEmojiString("vasyanbamboe")}{core.ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{core.ToEmojiString("oroobamboe")}{core.ToEmojiString("oroobamboe")}",
+                        $"с гетто ганшипом {core.ToEmojiString("qwirchamp")}{core.ToEmojiString("call_me_tone1")}",
+                        $"с фаст рембо командиром{core.ToEmojiString("supremebamboe")}"
                     }
                 },
                 new SupremeMap
@@ -263,10 +200,10 @@ namespace Bichebot
                     Names = new[] {"на сетоне", "сетон", "поиграть сетон", "СЕТОООН", "СЕТОООООООН"},
                     Tactics = new[]
                     {
-                        $"на аир позиции. ТРЕНИРУЙСЯ {ToEmojiString("supremebamboe")}{ToEmojiString("lejatbamboe")}",
-                        $"на позиции ROCK{ToEmojiString("shark")}, захватывай остров (так лееень((()()",
-                        $"на позиции пляж{ToEmojiString("cup_with_straw")}{ToEmojiString("lootecbamboe")}",
-                        $"мид РЕКЛЕЙМИ ВОЮЙ СПАМЬ  УБИТЬ           УБИВААЙ {ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}"
+                        $"на аир позиции. ТРЕНИРУЙСЯ {core.ToEmojiString("supremebamboe")}{core.ToEmojiString("lejatbamboe")}",
+                        $"на позиции ROCK{core.ToEmojiString("shark")}, захватывай остров (так лееень((()()",
+                        $"на позиции пляж{core.ToEmojiString("cup_with_straw")}{core.ToEmojiString("lootecbamboe")}",
+                        $"мид РЕКЛЕЙМИ ВОЮЙ СПАМЬ  УБИТЬ           УБИВААЙ {core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}"
                     }
                 },
                 new SupremeMap
@@ -279,8 +216,8 @@ namespace Bichebot
                     },
                     Tactics = new[]
                     {
-                        $"давай не сцы надо поднимать скилл уже {ToEmojiString("qwirnbamboe")}",
-                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {ToEmojiString("hitlerbamboe")}"
+                        $"давай не сцы надо поднимать скилл уже {core.ToEmojiString("qwirnbamboe")}",
+                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {core.ToEmojiString("hitlerbamboe")}"
                     }
                 },
                 new SupremeMap
@@ -293,11 +230,11 @@ namespace Bichebot
                     },
                     Tactics = new[]
                     {
-                        $"c фаст ЯДЕРКОЙ{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}{ToEmojiString("lejatbamboe")}",
-                        $"за кебран с фаст пауком{ToEmojiString("lootecbamboe")}",
-                        $"с тактикой на двоих - ФАСТ {ToEmojiString("t3")} АРТА {ToEmojiString("dobrobamboe")}",
-                        $"с нагиб тактикой на четверых - ЯДЕРКА{ToEmojiString("radioactive")}+ПАУК{ToEmojiString("lootecbamboe")}+ИТОТА{ToEmojiString("bombitbamboe")}+FATBOY{ToEmojiString("oldbamboe")}",
-                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {ToEmojiString("spongebamboe")}"
+                        $"c фаст ЯДЕРКОЙ{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}{core.ToEmojiString("lejatbamboe")}",
+                        $"за кебран с фаст пауком{core.ToEmojiString("lootecbamboe")}",
+                        $"с тактикой на двоих - ФАСТ {core.ToEmojiString("t3")} АРТА {core.ToEmojiString("dobrobamboe")}",
+                        $"с нагиб тактикой на четверых - ЯДЕРКА{core.ToEmojiString("radioactive")}+ПАУК{core.ToEmojiString("lootecbamboe")}+ИТОТА{core.ToEmojiString("bombitbamboe")}+FATBOY{core.ToEmojiString("oldbamboe")}",
+                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {core.ToEmojiString("spongebamboe")}"
                     },
                 },
                 new SupremeMap
@@ -305,7 +242,7 @@ namespace Bichebot
                     Names = new[] {string.Empty},
                     Tactics = new[]
                     {
-                        $"2vs2 или 3vs3 НАГИИБ (слив) {ToEmojiString("supremebamboe")}",
+                        $"2vs2 или 3vs3 НАГИИБ (слив) {core.ToEmojiString("supremebamboe")}",
                     }
                 }
             };
@@ -367,7 +304,7 @@ namespace Bichebot
 
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
         {
-            return string.Join("\n", statistics.Select(e => $"{ToEmojiString(e.Value)}: {e.Count}"));
+            return string.Join("\n", statistics.Select(e => $"{core.ToEmojiString(e.Value)}: {e.Count}"));
         }
 
         private static IEnumerable<IUserMessage> GetMessages(TimeSpan period, IMessageChannel channel)
@@ -466,7 +403,7 @@ namespace Bichebot
             var emotes = string.Join("", userMessage
                 .Reactions
                 .OrderByDescending(r => r.Value.ReactionCount)
-                .SelectMany(e => Enumerable.Repeat(ToEmojiString(e.Key.Name), e.Value.ReactionCount)));
+                .SelectMany(e => Enumerable.Repeat(core.ToEmojiString(e.Key.Name), e.Value.ReactionCount)));
 
             var embed = new EmbedBuilder()
                 .WithAuthor(userMessage.Author)
@@ -478,17 +415,8 @@ namespace Bichebot
             if (userMessage.Attachments.Count > 0)
                 embed.WithImageUrl(userMessage.Attachments.First().Url);
 
-            await Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(embed: embed.Build())
+            await core.Guild.GetTextChannel(config.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
-        }
-
-        private string ToEmojiString(string text)
-        {
-            var emote = Guild.Emotes.FirstOrDefault(e => e.Name == text);
-            if (emote == null)
-                return $":{text}:";
-            
-            return emote.Animated ? $"<a:{emote.Name}:{emote.Id}>" : $"<:{emote.Name}:{emote.Id}>";
         }
     }
 }
