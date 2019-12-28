@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Discord;
@@ -19,7 +20,7 @@ namespace Bichebot
 
         public AudioSpeaker(IBotCore core)
         {
-            if (!File.Exists(FFMPEG))
+            if (!File.Exists(FFMPEG + ".exe"))
                 throw new FileNotFoundException($"{FFMPEG} is not found");
 
             this.core = core;
@@ -35,8 +36,7 @@ namespace Bichebot
             if (channel == null)
                 return;
             
-            //new Thread(() => ConnectToChannel(channel)).Start();
-            Task.Run(() => ConnectToChannel(channel)).Wait();
+            new Thread(() => ConnectToChannel(channel)).Start();
         }
 
         public async Task SendMessageAsync(string fileName)
