@@ -8,18 +8,13 @@ using Discord.WebSocket;
 
 namespace Bichebot.Modules.Supreme
 {
-    public class SupremeModule : BaseModule
+    public class SupremeModule : StatefulBaseModule<SupremeState>
     {
-        private readonly Dictionary<ulong, SupremeState> states;
-
-        public SupremeModule(IBotCore core) : base(core)
-        {
-            states = new Dictionary<ulong, SupremeState>();
-        }
+        public SupremeModule(IBotCore core) : base(core, () => new SupremeState()) {}
 
         protected override async Task HandleMessageAsync(SocketMessage message)
         {
-            var state = GetUserState(message.Author);
+            var state = GetState(message.Author.Id);
             if (IsSupremeAsked(message))
             {
                 await TrySupremeSuggestionAsync(message).ConfigureAwait(false);
@@ -38,18 +33,6 @@ namespace Bichebot.Modules.Supreme
             return lower.ContainsAny(new [] {"бот ", "бот,"}) &&
                    lower.Contains("суприм") &&
                    lower.ContainsAny(new[] {"игра", "гам", " в ", "го "});
-        }
-
-        private SupremeState GetUserState(IUser user)
-        {
-            if (states.TryGetValue(user.Id, out var result))
-                return result;
-            
-            var newState = new SupremeState();
-
-            states[user.Id] = newState;
-
-            return newState;
         }
 
         private async Task TrySupremeSuggestionAsync(SocketMessage message)
