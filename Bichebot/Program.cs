@@ -16,14 +16,6 @@ namespace Bichebot
 
         private static Bot CreateBot()
         {
-            var directories = Directory.GetDirectories(Directory.GetCurrentDirectory());
-            Console.WriteLine(string.Join("\n", directories));
-            
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/Bichebot");
-            Console.WriteLine(string.Join("\n", files));
-            
-            var d = Directory.GetDirectories(Directory.GetCurrentDirectory() + "/Bichebot");
-            Console.WriteLine(string.Join("\n", d));
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN");
             var mongoPassword = GetEnvironmentVariable("MONGODB_PASSWORD");
 
