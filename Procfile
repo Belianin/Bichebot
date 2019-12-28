@@ -1,2 +1,2 @@
 
-app cd $HOME/heroku_output && dotnet
+app cd $HOME/heroku_output && ./Bichebot
