@@ -19,8 +19,17 @@ namespace Bichebot.Modules.Supreme
 
         protected override async Task HandleMessageAsync(SocketMessage message)
         {
+            var state = GetUserState(message.Author);
             if (IsSupremeAsked(message))
+            {
                 await TrySupremeSuggestionAsync(message).ConfigureAwait(false);
+                state.DialogLevel = DialogLevel.Second;
+            }
+            else if (state.DialogLevel == DialogLevel.Second && message.Content.Contains("не"))
+            {
+                await message.Channel.SendMessageAsync("Ага").ConfigureAwait(false);
+                state.DialogLevel = DialogLevel.First;
+            }
         }
 
         private bool IsSupremeAsked(IMessage message)
@@ -45,17 +54,6 @@ namespace Bichebot.Modules.Supreme
 
         private async Task TrySupremeSuggestionAsync(SocketMessage message)
         {
-            var state = GetUserState(message.Author);
-
-            if (state.DialogLevel == DialogLevel.Second)
-            {
-                state.DialogLevel = DialogLevel.First;
-                await message.Channel.SendMessageAsync("Ага").ConfigureAwait(false);
-                return;
-            }
-
-            state.DialogLevel = DialogLevel.Second;
-            
             var sugg = new []{"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
 
             var maps = new List<SupremeMap>
