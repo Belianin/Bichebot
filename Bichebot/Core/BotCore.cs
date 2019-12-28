@@ -19,7 +19,9 @@ namespace Bichebot.Core
         public DiscordSocketClient Client { get; }
         
         public SocketGuild Guild => Client.Guilds.First(g => g.Id == guildId);
-        
+
+        public Random Random { get; } = new Random();
+
         public string ToEmojiString(string text)
         {
             var emote = Guild.Emotes.FirstOrDefault(e => e.Name == text);

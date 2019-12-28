@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules;
 using Bichebot.Modules.Best;
+using Bichebot.Modules.React;
 using Bichebot.Modules.Statistics;
 using Bichebot.Utilities;
 using Discord;
@@ -37,6 +38,7 @@ namespace Bichebot
             modules = new List<IBotModule>
             {
                 new StatisticsModule(core),
+                new ReactModule(core),
                 new BestModule(core, new BestModuleSettings
                 {
                     BestChannelId = config.BestChannelId,
@@ -65,7 +67,7 @@ namespace Bichebot
 
         private async Task HandleMessageAsync(SocketMessage message)
         {
-            Console.WriteLine(message.Content); //  /t4 7
+            Console.WriteLine(message.Content);
             var msg = new Message
             {
                 DiscordMessage = message,
@@ -73,58 +75,14 @@ namespace Bichebot
             };
 
             if (message.Content == "go")
-            {
                 audio.Connect(message.Author);
-            }
-            
-            if (message.Content == "ilidan")
-            {
+            else if (message.Content == "ilidan")
                 await audio.SendMessageAsync("ilidan.mp3").ConfigureAwait(false);
-            }
-
-            if (message is IUserMessage userMessage)
-            {
-                if (IsDeservingLike(message, out var reaction))
-                    await userMessage.AddReactionAsync(core.Guild.Emotes.First(n => n.Name == reaction)).ConfigureAwait(false);
-
-                if (rnd.Next(0, 100) > 90)
-                    await userMessage.AddReactionAsync(core.Guild.Emotes.RandomReadonly(rnd)).ConfigureAwait(false);
-            }
-            
-            if (message.Content.Contains("бот") && message.Content.Contains("удали"))
-            {
+            else if (message.Content.Contains("бот") && message.Content.Contains("удали"))
                 await DeletePreviousMessageAsync(message).ConfigureAwait(false);
-            }
             else if (IsSupremeAsked(message))
                 await TrySupremeSuggestionAsync(msg).ConfigureAwait(false);
-            else if (message.Content.Contains("лол"))
-            {
-                if (rnd.Next(0, 100) > 50)
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{core.ToEmojiString("dobrobamboe")} может лучше в {core.ToEmojiString("supremebamboe")}?", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else if (rnd.Next(0, 100) > 50)
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{core.ToEmojiString("dobrobamboe")} ты хотел сказать {core.ToEmojiString("supremebamboe")}?", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{core.ToEmojiString("valera")} ну лан", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                if (rnd.Next(0, 1000) == 999)
-                {
-                    await message.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
-                }
-            }
+            
         }
 
         private bool IsSupremeAsked(IMessage message)

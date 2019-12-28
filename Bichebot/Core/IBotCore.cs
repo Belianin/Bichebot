@@ -10,6 +10,8 @@ namespace Bichebot.Core
         DiscordSocketClient Client { get; }
         
         SocketGuild Guild { get; }
+        
+        Random Random { get; }
 
         string ToEmojiString(string text);
 
