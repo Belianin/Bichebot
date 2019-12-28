@@ -80,7 +80,7 @@ namespace Bichebot
                     .OrderByDescending(r => r.Count)
                     .Take(10);
                 
-                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
+                var response = $"Величайшие смайлы в реакциях за {ToString(days)} дней:\n{JoinEmoteStatistics(rates)}";
 
                 await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
@@ -95,7 +95,7 @@ namespace Bichebot
                     .OrderByDescending(r => r.Count)
                     .Take(10);
             
-                var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
+                var response = $"Величайшие смайлы за {ToString(days)} дней:\n{JoinEmoteStatistics(rates)}";
 
                 await message.Channel.SendMessageAsync(response, msg.Tts).ConfigureAwait(false);
                 
@@ -104,24 +104,14 @@ namespace Bichebot
                 await TrySupremeSuggestionAsync(msg).ConfigureAwait(false);
             else if (message.Content.Contains("лол"))
             {
-                if (rnd.Next(0, 100) > 50)
+                await discord.Channel.SendMessageAsync(new []
                 {
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username}, {ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else if (rnd.Next(0, 100) > 50)
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"{discord.Author.Username}, {ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}?", msg.Tts)
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    await discord.Channel.SendMessageAsync(
-                            $"{ToEmojiString("valera")} ну лан", msg.Tts)
-                        .ConfigureAwait(false);
-                }
+                    $"{discord.Author.Username} {ToEmojiString("dobrobamboe")} может лучше в {ToEmojiString("supremebamboe")}?",
+                    $"{discord.Author.Username} {ToEmojiString("dobrobamboe")} ты хотел сказать {ToEmojiString("supremebamboe")}",
+                    $"{ToEmojiString("valera")} ну лан",
+                    $"{discord.Author.Username} а я за блицкранка куушкой не попадаю {ToEmojiString("liquidbamboe")}А?{ToEmojiString("liquidbamboe")}А?",
+                }.Random(rnd), msg.Tts)
+                    .ConfigureAwait(false);
             }
             else if (IsBotHello(message))
             {
@@ -131,22 +121,28 @@ namespace Bichebot
                     $"Привет {discord.Author.Username}",
                     $"{discord.Author.Username}, я приветсвую тебя",
                     $"{discord.Author.Username} Добро пожаловать в Бухту Бичехостов",
-                    $"{discord.Author.Username} Как дела ?"
+                    $"{discord.Author.Username} Как дела ?",
+                    $"{discord.Author.Username} Добро пожаловать. Добро пожаловать в Бухту Бичехостов. Сами вы её выбрали или её выбрали за вас, это лучшее место из оставшихся."
                 }.Random(rnd), msg.Tts)
                     .ConfigureAwait(false);
             }
             else if (discord.Content.Contains("бот лох")) 
-                await discord.Channel.SendMessageAsync($"{discord.Author.Username} Удали", msg.Tts).ConfigureAwait(false);
+                await discord.Channel.SendMessageAsync(new []
+                {
+                    $"{discord.Author.Username} Удали",
+                    $"{discord.Author.Username} Ты в муте"
+                }.Random(rnd), msg.Tts)
+                    .ConfigureAwait(false);
             
             else if (rnd.Next(0, 1000) == 999)
-                await discord.Channel.SendMessageAsync("Скатился...", msg.Tts).ConfigureAwait(false);
+                await discord.Channel.SendMessageAsync($"{discord.Author.Username} Скатился...", msg.Tts).ConfigureAwait(false);
         }
         
         private bool IsBotHello(IMessage message)
         {
             var lower = message.Content.ToLower();
             return lower.ContainsAny(new [] {"бот ", "бот,", " бот"}) &&
-                   lower.ContainsAny(new[] {"привет", "здаров", " хай "});
+                   lower.ContainsAny(new[] {"привет", "здаров", " хай ", "доброе утро", "добрый вечер", "добрый день"});
         }
         
         private bool IsSupremeAsked(IMessage message)
