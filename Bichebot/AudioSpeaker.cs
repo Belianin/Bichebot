@@ -7,17 +7,17 @@ using Bichebot.Core;
 using Discord;
 using Discord.Audio;
 
-namespace Bichebot.Modules
+namespace Bichebot
 {
-    public class AudioModule
+    public class AudioSpeaker
     {
         private const string FFMPEG = "ffmpeg"; // Windows, Linux; opus.dll and libsodium.dll?
 
         private readonly IBotCore core;
 
-        public bool IsConnected => core.Guild.AudioClient != null;
+        private bool IsConnected => core.Guild.AudioClient != null;
 
-        public AudioModule(IBotCore core)
+        public AudioSpeaker(IBotCore core)
         {
             if (!File.Exists(FFMPEG))
                 throw new FileNotFoundException($"{FFMPEG} is not found");
@@ -30,7 +30,7 @@ namespace Bichebot.Modules
             Connect(core.Guild.VoiceChannels.FirstOrDefault(c => c.Users.Contains(user)));
         }
 
-        public void Connect(IAudioChannel channel)
+        private void Connect(IAudioChannel channel)
         {
             if (channel == null)
                 return;
@@ -65,7 +65,7 @@ namespace Bichebot.Modules
             }
         }
         
-        private void ConnectToChannel(IAudioChannel channel)
+        private static void ConnectToChannel(IAudioChannel channel)
         {
             Console.WriteLine("Connecting");
             channel.ConnectAsync().Wait();

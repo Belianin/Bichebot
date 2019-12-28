@@ -18,13 +18,11 @@ namespace Bichebot
     {
         private readonly IBotCore core;
 
-        private readonly AudioModule audio;
+        private readonly AudioSpeaker audio;
 
         private readonly StatisticsModule statistics;
 
         private readonly BotConfig config;
-        
-        private readonly DiscordSocketClient discordClient;
         
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
         
@@ -33,11 +31,13 @@ namespace Bichebot
         public Bot(BotConfig config)
         {
             this.config = config;
-            core = new BotCore(config.GuildId, discordClient);
-            audio = new AudioModule(core);
-            statistics = new StatisticsModule(core);
+            var discordClient = new DiscordSocketClient();
             
-            discordClient = new DiscordSocketClient();
+            core = new BotCore(config.GuildId, discordClient);
+            audio = new AudioSpeaker(core);
+            statistics = new StatisticsModule(core);
+            statistics.Run();
+            
             discordClient.ReactionAdded += HandleReactionAsync;
             discordClient.MessageReceived += HandleMessageAsync;
         }
@@ -45,9 +45,9 @@ namespace Bichebot
         public async Task RunAsync(CancellationToken token)
         {
             Console.WriteLine("Starting");
-            await discordClient.LoginAsync(TokenType.Bot, config.Token)
+            await core.Client.LoginAsync(TokenType.Bot, config.Token)
                 .ConfigureAwait(false);
-            await discordClient.StartAsync().ConfigureAwait(false);
+            await core.Client.StartAsync().ConfigureAwait(false);
             Console.WriteLine("Started");
 
             while (!token.IsCancellationRequested)

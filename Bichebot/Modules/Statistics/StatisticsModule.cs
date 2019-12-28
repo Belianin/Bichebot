@@ -9,18 +9,14 @@ using Discord.WebSocket;
 
 namespace Bichebot.Modules.Statistics
 {
-    public class StatisticsModule
+    public class StatisticsModule : BaseMessageModule
     {
-        private readonly IBotCore core;
-        
         private readonly Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>> statisticsFunctions;
 
         private readonly TimeSpan defaultSearchPeriod = TimeSpan.FromDays(7);
         
-        public StatisticsModule(IBotCore core)
+        public StatisticsModule(IBotCore core) : base(core)
         {
-            this.core = core;
-            core.Client.MessageReceived += HandleAsync;
             statisticsFunctions = new Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>>
             {
                 {"/t4", GetEmoteReactionsRating},
@@ -28,7 +24,7 @@ namespace Bichebot.Modules.Statistics
             };
         }
 
-        private async Task HandleAsync(SocketMessage message)
+        protected override async Task HandleMessageAsync(SocketMessage message)
         {
             var args = Regex.Split(message.Content, @"\s+");
             if (!statisticsFunctions.TryGetValue(args[0], out var statisticsFunction))
@@ -38,7 +34,7 @@ namespace Bichebot.Modules.Statistics
             if (args.Length > 1 && int.TryParse(args[1], out var days))
                 searchPeriod = TimeSpan.FromDays(days);
 
-            var messages = core.GetMessages(message.Channel, searchPeriod);
+            var messages = Core.GetMessages(message.Channel, searchPeriod);
             
             var rates = statisticsFunction(messages)
                 .OrderByDescending(r => r.Count)
@@ -51,7 +47,7 @@ namespace Bichebot.Modules.Statistics
 
         private string JoinEmoteStatistics(IEnumerable<Statistic> statistics)
         {
-            return string.Join("\n", statistics.Select(e => $"{core.ToEmojiString(e.Value)}: {e.Count}"));
+            return string.Join("\n", statistics.Select(e => $"{Core.ToEmojiString(e.Value)}: {e.Count}"));
         }
 
         private static IEnumerable<Statistic> GetEmoteUsageRating(IEnumerable<IUserMessage> messages)
