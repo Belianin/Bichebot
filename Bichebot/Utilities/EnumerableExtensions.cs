@@ -16,9 +16,9 @@ namespace Bichebot.Utilities
             }
         }
         
-        public static bool ContainsAny(this string row, IEnumerable<string> strings)
+        public static bool ContainsAny(this string row, IEnumerable<string> rows)
         {
-            return strings.Any(row.Contains);
+            return rows.Any(row.Contains);
         }
     }
 }

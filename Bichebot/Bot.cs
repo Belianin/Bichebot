@@ -78,23 +78,6 @@ namespace Bichebot
                 audio.Connect(message.Author);
             else if (message.Content == "ilidan")
                 await audio.SendMessageAsync("ilidan.mp3").ConfigureAwait(false);
-            else if (message.Content.Contains("бот") && message.Content.Contains("удали"))
-                await DeletePreviousMessageAsync(message).ConfigureAwait(false);
-        }
-
-        private static async Task DeletePreviousMessageAsync(SocketMessage message)
-        {
-            var messages = await message.Channel.GetMessagesAsync(message, Direction.Before, 1).FlattenAsync()
-                .ConfigureAwait(false);
-
-            var messageToDelete = messages.FirstOrDefault();
-            
-            if (messageToDelete is IUserMessage userMessage && !userMessage.Content.Contains("~~"))
-            {
-                await userMessage.DeleteAsync().ConfigureAwait(false);
-                await message.Channel.SendMessageAsync($"||~~{userMessage.Content}~~||")
-                    .ConfigureAwait(false);
-            }
         }
     }
 }
