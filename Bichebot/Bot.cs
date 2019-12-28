@@ -21,8 +21,6 @@ namespace Bichebot
     {
         private readonly IBotCore core;
 
-        private readonly AudioSpeaker audio;
-
         private readonly ICollection<IBotModule> modules;
 
         private readonly string token;
@@ -50,21 +48,6 @@ namespace Bichebot
             {
                 Thread.Sleep(1000);
             }
-        }
-
-        private async Task HandleMessageAsync(SocketMessage message)
-        {
-            Console.WriteLine(message.Content);
-            var msg = new Message
-            {
-                DiscordMessage = message,
-                Tts = message.Content.Contains("tts")
-            };
-
-            if (message.Content == "go")
-                audio.Connect(message.Author);
-            else if (message.Content == "ilidan")
-                await audio.SendMessageAsync("ilidan.mp3").ConfigureAwait(false);
         }
     }
 }

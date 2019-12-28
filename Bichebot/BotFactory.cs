@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Bichebot.Core;
 using Bichebot.Modules;
+using Bichebot.Modules.Audio;
 using Bichebot.Modules.Best;
 using Bichebot.Modules.Moderate;
 using Bichebot.Modules.React;
@@ -22,6 +23,7 @@ namespace Bichebot
                 new ReactModule(core),
                 new ModerateModule(core),
                 new SupremeModule(core),
+                new AudioModule(core),
                 new BestModule(core, new BestModuleSettings
                 {
                     BestChannelId = config.BestChannelId,
