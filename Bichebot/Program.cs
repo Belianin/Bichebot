@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 
 namespace Bichebot
@@ -14,6 +15,7 @@ namespace Bichebot
 
         private static Bot CreateBot()
         {
+            Console.WriteLine(Directory.GetCurrentDirectory());
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN");
             var mongoPassword = GetEnvironmentVariable("MONGODB_PASSWORD");
 
