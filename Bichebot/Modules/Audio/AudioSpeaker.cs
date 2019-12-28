@@ -8,11 +8,11 @@ using Bichebot.Core;
 using Discord;
 using Discord.Audio;
 
-namespace Bichebot
+namespace Bichebot.Modules.Audio
 {
     public class AudioSpeaker
     {
-        private const string FFMPEG = "ffmpeg"; // Windows, Linux; opus.dll and libsodium.dll?
+        private const string FFMPEG = "ffmpeg";
 
         private readonly IBotCore core;
 
@@ -20,9 +20,6 @@ namespace Bichebot
 
         public AudioSpeaker(IBotCore core)
         {
-            if (!File.Exists(FFMPEG + ".exe"))
-                throw new FileNotFoundException($"{FFMPEG} is not found");
-
             this.core = core;
         }
         
@@ -53,6 +50,10 @@ namespace Bichebot
             };
 
             using var ffmpeg = Process.Start(psi);
+            
+            if (ffmpeg == null)
+                return;
+            
             await using var output = ffmpeg.StandardOutput.BaseStream;
             await using var discord = core.Guild.AudioClient.CreatePCMStream(AudioApplication.Mixed);
             try
