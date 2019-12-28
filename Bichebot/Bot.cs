@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules;
 using Bichebot.Modules.Best;
+using Bichebot.Modules.Moderate;
 using Bichebot.Modules.React;
 using Bichebot.Modules.Statistics;
 using Bichebot.Modules.Supreme;
@@ -39,6 +40,8 @@ namespace Bichebot
             {
                 new StatisticsModule(core),
                 new ReactModule(core),
+                new ModerateModule(core),
+                new SupremeModule(core),
                 new BestModule(core, new BestModuleSettings
                 {
                     BestChannelId = config.BestChannelId,
