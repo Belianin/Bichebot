@@ -38,8 +38,8 @@ namespace Bichebot.Modules.Supreme
                     Tactics = new[]
                     {
                         $"c фаст ЯДЕРКОЙ{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}",
-                        $"мид (спутники{Core.ToEmojiString("qwirchamp")}, толстяки{Core.ToEmojiString("dobrobamboe")}{Core.ToEmojiString("ocean")}",
-                        $"на аире (БОМБИИМ{Core.ToEmojiString("oroobamboe")}), главное вовремя перейди в {Core.ToEmojiString("t3")} {Core.ToEmojiString("dobrobamboe")}",
+                        $"мид (спутники{Core.ToEmojiString("qwirchamp")}, толстяки{Core.ToEmojiString("dobrobamboe")}{Core.ToEmojiString("ocean")})",
+                        $"на аире (БОМБИИМ{Core.ToEmojiString("gif")}), главное вовремя перейди в {Core.ToEmojiString("t3")} {Core.ToEmojiString("dobrobamboe")}",
                         $"не важно какой слот, главное в конце не забудь телесакушки{Core.ToEmojiString("vasyanbamboe")}",
                         $"не важно какой слот, главное в конце ЭОН телесакушки{Core.ToEmojiString("vasyanbamboe")} (ТЕЛЕПОРТ КОЛОССА{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")})",
                         $"и снайп корсарами НЫЫААААА{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}{Core.ToEmojiString("lejatbamboe")}",
@@ -48,10 +48,12 @@ namespace Bichebot.Modules.Supreme
                         $"c фаст телемазером {Core.ToEmojiString("kripotabamboe")}{Core.ToEmojiString("point_right")}{Core.ToEmojiString("ok_hand")}",
                         $"c дропом двух комов в тылы противника {Core.ToEmojiString("coolstory")}{Core.ToEmojiString("deadinside")}",
                         $"с дропом кома с клоакой+лазер {Core.ToEmojiString("qwirchamp")}",
-                        $"с дропом ПАУКА {Core.ToEmojiString("valera")}{Core.ToEmojiString("oroobamboe")}",
+                        $"с дропом ПАУКА {Core.ToEmojiString("valera")}{Core.ToEmojiString("gif")}",
                         $"мид за серафим ИТОТА{Core.ToEmojiString("heart")}{Core.ToEmojiString("lyabamboe")}",
                         $"с дропом рембо{Core.ToEmojiString("bombitbamboe")} командира за серафим {Core.ToEmojiString("supremebamboe")}",
-                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {Core.ToEmojiString("oroobamboe")}{Core.ToEmojiString("oroobamboe")}{Core.ToEmojiString("oroobamboe")}",
+                        $"с ТРЕМЯ фаст ЯДЕРКАМИ {Core.ToEmojiString("gif")}{Core.ToEmojiString("gif")}{Core.ToEmojiString("gif")}",
+                        $"и твори НАГИБ с АИРА фаст бомберами{Core.ToEmojiString("gif")} + {Core.ToEmojiString("t3")} ASF",
+                        $"с фаст{Core.ToEmojiString("supremebamboe")} АХВАААССООЙЙ{Core.ToEmojiString("supremebamboe")}"
                     }
                 },
                 new SupremeMap
@@ -64,7 +66,7 @@ namespace Bichebot.Modules.Supreme
                     Tactics = new[]
                     {
                         $"раш командирами с пушкой {Core.ToEmojiString("coolstory")}{Core.ToEmojiString("deadinside")}{Core.ToEmojiString("vasyanbamboe")}{Core.ToEmojiString("oldbamboe")} с блокпостом + Т2 арта",
-                        $"раш командирами с пушкой {Core.ToEmojiString("coolstory")}{Core.ToEmojiString("deadinside")}{Core.ToEmojiString("vasyanbamboe")}{Core.ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{Core.ToEmojiString("oroobamboe")}{Core.ToEmojiString("oroobamboe")}",
+                        $"раш командирами с пушкой {Core.ToEmojiString("coolstory")}{Core.ToEmojiString("deadinside")}{Core.ToEmojiString("vasyanbamboe")}{Core.ToEmojiString("oldbamboe")} ИДЕМ ДО КОНЦА{Core.ToEmojiString("gif")}{Core.ToEmojiString("gif")}",
                         $"с гетто ганшипом {Core.ToEmojiString("qwirchamp")}{Core.ToEmojiString("call_me_tone1")}",
                         $"с фаст рембо командиром{Core.ToEmojiString("supremebamboe")}"
                     }
@@ -84,14 +86,19 @@ namespace Bichebot.Modules.Supreme
                 {
                     Names = new[]
                     {
-                        "канис (или ченить такое)", "пирамиду (или подобную)", "норм карту", "на норм карте",
+                        "канис (или ченить такое)", "пирамиду (или подобную)", "норм карту", "поиграть на норм карте",
                         "хилли плато",
                         "поиграть норм карту", "на какой-нибудь норм карте"
                     },
                     Tactics = new[]
                     {
-                        $"давай не сцы надо поднимать скилл уже {Core.ToEmojiString("qwirnbamboe")}",
-                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {Core.ToEmojiString("hitlerbamboe")}"
+                        $"давай не сцы надо поднимать скилл уже {Core.ToEmojiString("qwirbamboe")}",
+                        $"ВПЕРЕЕЕД на фронт главное чтобы не забанили за Т1 спам {Core.ToEmojiString("hitlerbamboe")}",
+                        $"там хоть научишься играть в настоящий суприм{Core.ToEmojiString("supremebamboe")}",
+                        $", а лучше на Big Bang Lake супер карта и очень динамичная{Core.ToEmojiString("jet")}",
+                        $"ведь намного веселее когда бой идет постоянно, надоели геймендеры {Core.ToEmojiString("qwirbamboe")}",
+                        $", а то разве не задолбало 10 минут смотреть на экстракторы?{Core.ToEmojiString("newfagbamboe")}",
+                        $"ПОРА НА ФРОНТ{Core.ToEmojiString("hitlerbamboe")}{Core.ToEmojiString("raised_hand_tone5")}"
                     }
                 },
                 new SupremeMap
@@ -108,7 +115,8 @@ namespace Bichebot.Modules.Supreme
                         $"за кебран с фаст пауком{Core.ToEmojiString("lootecbamboe")}",
                         $"с тактикой на двоих - ФАСТ {Core.ToEmojiString("t3")} АРТА {Core.ToEmojiString("dobrobamboe")}",
                         $"с нагиб тактикой на четверых - ЯДЕРКА{Core.ToEmojiString("radioactive")}+ПАУК{Core.ToEmojiString("lootecbamboe")}+ИТОТА{Core.ToEmojiString("bombitbamboe")}+FATBOY{Core.ToEmojiString("oldbamboe")}",
-                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {Core.ToEmojiString("spongebamboe")}"
+                        $"просто почилить главное не забудь антинюку и турели к 15 минуте {Core.ToEmojiString("spongebamboe")}",
+                        $"и забань {Core.ToEmojiString("t3")}радар потом го распиливать с клоакой {Core.ToEmojiString("qwirbamboe")}"
                     },
                 },
                 new SupremeMap
@@ -117,6 +125,10 @@ namespace Bichebot.Modules.Supreme
                     Tactics = new[]
                     {
                         $"2vs2 или 3vs3 НАГИИБ (слив) {Core.ToEmojiString("supremebamboe")}",
+                        $"поиграть ладдер (no greys{Core.ToEmojiString("face_with_monocle")})",
+                        $"сыграть уже в ладдер че как нуб серый{Core.ToEmojiString("qwirchamp")}",
+                        $"Ctrl+K и в лол{Core.ToEmojiString("lol2")}",
+                        $"смотреть каст с Сидом играть как-то лень"
                     }
                 }
             };

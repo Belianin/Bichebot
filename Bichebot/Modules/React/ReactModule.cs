@@ -27,24 +27,36 @@ namespace Bichebot.Modules.React
 
             if (message.Content.Contains("лол"))
             {
-                if (Core.Random.Roll(2))
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{Core.ToEmojiString("dobrobamboe")} может лучше в {Core.ToEmojiString("supremebamboe")}?")
-                        .ConfigureAwait(false);
-                }
-                else if (Core.Random.Roll(2))
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{Core.ToEmojiString("dobrobamboe")} ты хотел сказать {Core.ToEmojiString("supremebamboe")}?")
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    await message.Channel.SendMessageAsync(
-                            $"{Core.ToEmojiString("valera")} ну лан")
-                        .ConfigureAwait(false);
-                }
+                await message.Channel.SendMessageAsync(Core.Random.Choose(new []
+                    {
+                        $"{message.Author.Username} {Core.ToEmojiString("dobrobamboe")} может лучше в {Core.ToEmojiString("supremebamboe")}?",
+                        $"{message.Author.Username} {Core.ToEmojiString("dobrobamboe")} ты хотел сказать {Core.ToEmojiString("supremebamboe")}",
+                        $"{Core.ToEmojiString("valera")} ну лан",
+                        $"{message.Author.Username} а я за блицкранка куушкой не попадаю {Core.ToEmojiString("liquidbamboe")}А?{Core.ToEmojiString("liquidbamboe")}А?",
+                    }))
+                    .ConfigureAwait(false);
+            }
+            else if (IsBotHello(message))
+            {
+                await message.Channel.SendMessageAsync(Core.Random.Choose(new []
+                    {
+                        $"{message.Author.Username} Здарова Бро {Core.ToEmojiString("dobrobamboe")}",
+                        $"Привет {message.Author.Username}",
+                        $"{message.Author.Username}, я приветсвую тебя",
+                        $"{message.Author.Username} Добро пожаловать в Бухту Бичехостов",
+                        $"{message.Author.Username} Как дела ?",
+                        $"{message.Author.Username} Добро пожаловать. Добро пожаловать в Бухту Бичехостов. Сами вы её выбрали или её выбрали за вас, это лучшее место из оставшихся."
+                    }))
+                    .ConfigureAwait(false);
+            }
+            else if (message.Content.Contains("бот лох"))
+            {
+                await message.Channel.SendMessageAsync(Core.Random.Choose(new[]
+                    {
+                        $"{message.Author.Username} Удали",
+                        $"{message.Author.Username} Ты в муте"
+                    }))
+                    .ConfigureAwait(false);
             }
             else if (Core.Random.Roll(1000))
                 await message.Channel.SendMessageAsync("Скатился...").ConfigureAwait(false);
@@ -66,6 +78,13 @@ namespace Bichebot.Modules.React
 
             emoji = null;
             return false;
+        }
+        
+        private static bool IsBotHello(IMessage message)
+        {
+            var lower = message.Content.ToLower();
+            return lower.ContainsAny(new [] {"бот ", "бот,", " бот"}) &&
+                   lower.ContainsAny(new[] {"привет", "здаров", " хай ", "доброе утро", "добрый вечер", "добрый день"});
         }
     }
 }
