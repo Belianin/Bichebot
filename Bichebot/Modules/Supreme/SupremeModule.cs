@@ -8,14 +8,23 @@ using Discord.WebSocket;
 
 namespace Bichebot.Modules.Supreme
 {
-    public class SupremeModule : BaseModule
+    public class SupremeModule : StatefulBaseModule<SupremeState>
     {
-        public SupremeModule(IBotCore core) : base(core) {}
+        public SupremeModule(IBotCore core) : base(core, () => new SupremeState()) {}
 
         protected override async Task HandleMessageAsync(SocketMessage message)
         {
+            var state = GetState(message.Author.Id);
             if (IsSupremeAsked(message))
+            {
                 await TrySupremeSuggestionAsync(message).ConfigureAwait(false);
+                state.DialogLevel = DialogLevel.Second;
+            }
+            else if (state.DialogLevel == DialogLevel.Second && message.Content.Contains("не"))
+            {
+                await message.Channel.SendMessageAsync("Ага").ConfigureAwait(false);
+                state.DialogLevel = DialogLevel.First;
+            }
         }
 
         private bool IsSupremeAsked(IMessage message)
