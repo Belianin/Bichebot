@@ -9,9 +9,9 @@ namespace Bichebot.Modules.Audio
     {
         private readonly AudioSpeaker audio;
         
-        public AudioModule(IBotCore core) : base(core)
+        public AudioModule(IBotCore core, AudioSpeaker audio) : base(core)
         {
-            audio = new AudioSpeaker(core);    
+            this.audio = audio;
         }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
