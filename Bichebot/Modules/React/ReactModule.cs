@@ -29,10 +29,10 @@ namespace Bichebot.Modules.React
             {
                 await message.Channel.SendMessageAsync(Core.Random.Choose(new []
                     {
-                        $"{message.Author.Username} {Core.ToEmojiString("dobrobamboe")} может лучше в {Core.ToEmojiString("supremebamboe")}?",
-                        $"{message.Author.Username} {Core.ToEmojiString("dobrobamboe")} ты хотел сказать {Core.ToEmojiString("supremebamboe")}",
+                        $"{message.Author.Username}, {Core.ToEmojiString("dobrobamboe")} может лучше в {Core.ToEmojiString("supremebamboe")}?",
+                        $"{message.Author.Username}, {Core.ToEmojiString("dobrobamboe")} ты хотел сказать {Core.ToEmojiString("supremebamboe")}",
                         $"{Core.ToEmojiString("valera")} ну лан",
-                        $"{message.Author.Username} а я за блицкранка куушкой не попадаю {Core.ToEmojiString("liquidbamboe")}А?{Core.ToEmojiString("liquidbamboe")}А?",
+                        $"{message.Author.Username}, а я за блицкранка куушкой не попадаю {Core.ToEmojiString("liquidbamboe")}А?{Core.ToEmojiString("liquidbamboe")}А?",
                     }))
                     .ConfigureAwait(false);
             }
@@ -40,12 +40,12 @@ namespace Bichebot.Modules.React
             {
                 await message.Channel.SendMessageAsync(Core.Random.Choose(new []
                     {
-                        $"{message.Author.Username} Здарова Бро {Core.ToEmojiString("dobrobamboe")}",
+                        $"{message.Author.Username}, здарова Бро {Core.ToEmojiString("dobrobamboe")}",
                         $"Привет {message.Author.Username}",
                         $"{message.Author.Username}, я приветсвую тебя",
-                        $"{message.Author.Username} Добро пожаловать в Бухту Бичехостов",
-                        $"{message.Author.Username} Как дела ?",
-                        $"{message.Author.Username} Добро пожаловать. Добро пожаловать в Бухту Бичехостов. Сами вы её выбрали или её выбрали за вас, это лучшее место из оставшихся."
+                        $"{message.Author.Username}, добро пожаловать в Бухту Бичехостов",
+                        $"{message.Author.Username}, как дела ?",
+                        $"{message.Author.Username}, добро пожаловать. Добро пожаловать в Бухту Бичехостов. Сами вы её выбрали или её выбрали за вас, это лучшее место из оставшихся."
                     }))
                     .ConfigureAwait(false);
             }
@@ -53,8 +53,8 @@ namespace Bichebot.Modules.React
             {
                 await message.Channel.SendMessageAsync(Core.Random.Choose(new[]
                     {
-                        $"{message.Author.Username} Удали",
-                        $"{message.Author.Username} Ты в муте"
+                        $"{message.Author.Username}, удали",
+                        $"{message.Author.Username}, ты в муте"
                     }))
                     .ConfigureAwait(false);
             }
