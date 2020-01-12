@@ -9,7 +9,7 @@ namespace Bichebot.Utilities
         public static T Choose<T>(this Random random, IEnumerable<T> source)
         {
             var array = source.ToArray();
-            return array[random.Next(0, array.Length - 1)];
+            return array[random.Next(0, array.Length)];
         }
         
         public static T Choose<T>(this Random random, IEnumerable<T> source, Func<T, int> weight)
