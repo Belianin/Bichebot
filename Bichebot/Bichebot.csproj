@@ -12,25 +12,25 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="libsodium.dll">
+      <None Update="Resources\aler.mp3">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="opus.dll">
+      <None Update="Resources\ffmpeg.exe">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ffmpeg.exe">
+      <None Update="Resources\host.mp3">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ilidan.mp3">
+      <None Update="Resources\ilidan.mp3">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="aler.mp3">
+      <None Update="Resources\libsodium.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="host.mp3">
+      <None Update="Resources\opus.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="qwear.mp3">
+      <None Update="Resources\qwear.mp3">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
