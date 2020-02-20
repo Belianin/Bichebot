@@ -16,6 +16,12 @@ namespace Bichebot.Modules.React
         {
             if (!(message is IUserMessage userMessage))
                 return;
+            if (message.Content.Contains("?"))
+            {
+                var emotion = Core.Random.Choose(new[] {"thinkingbamboe", "papich"});
+                await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == emotion))
+                    .ConfigureAwait(false);
+            }
 
             if (IsDeservingLike(message, out var reaction))
                 await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == reaction))
