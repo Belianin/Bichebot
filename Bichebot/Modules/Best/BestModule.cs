@@ -47,11 +47,15 @@ namespace Bichebot.Modules.Best
                 .OrderByDescending(r => r.Value.ReactionCount)
                 .SelectMany(e => Enumerable.Repeat(Core.ToEmojiString(e.Key.Name), e.Value.ReactionCount)));
 
+            var description = userMessage.Content.StartsWith("https://")
+                ? userMessage.Content
+                : $"[оригинал]({userMessage.GetJumpUrl()})\n{emotes}";
+
             var embed = new EmbedBuilder()
                 .WithAuthor(userMessage.Author)
                 .WithTitle(userMessage.Content)
                 .WithFooter("#бичехосты-лучшее")
-                .WithDescription(emotes)
+                .WithDescription(description)
                 .WithTimestamp(userMessage.Timestamp);
 
             if (userMessage.Attachments.Count > 0)
