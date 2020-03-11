@@ -47,12 +47,64 @@ namespace Bichebot
             
             return new Bot(core, modules, settings.Token);
         }
-        
+        private static List<string> Questions3 => new List<string>
+        {
+            "lootecbamboe",
+            "jet",
+            "lifer"
+        };
         private static List<string> Questions => new List<string>
         {
+            "lootecbamboe",
+            "jet",
             "lifer",
-            "igorbamboe",
-            "alohabamboe"
+            "supremebamboe",
+            "alohabamboe",
+            "lejatbamboe",
+            "roflanbamboe",
+            "quasilegend",
+            "badoobamboe",
+            "spongebamboe",
+            "hitlerbamboe",
+            "dobrobamboe",
+            "oldbamboe",
+            "qwirbamboe",
+            "kadikbamboe",
+            "kripotabamboe",
+            "lyabamboe",
+            "liquidbamboe",
+            "igorbamboe2",
+            "slivbamboe",
+            "vasyanbamboe",
+            "newfagbamboe",
+            "deadinside",
+            "bombitbamboe",
+            "fbamboe",
+            "coolstory",
+            "imbabamboe",
+            "qwirchamp",
+            "mujikbamboe",
+            "nolifer",
+            "t3",
+            "valera",
+            "oroobamboe",
+            "lol2",
+            "dota",
+            "lol",
+            "lejatbamboe2",
+            "oldigorbamboe",
+            "olddobrobamboe",
+            "oldlejatbamboe",
+            "nesspride3",
+            "ohrenelbamboe",
+            "papichbamboe",
+            "thinkingbamboe",
+            "hellobamboe",
+            "thonkbamboe",
+            "thonkbamboe2",
+            "kislenkobamboe",
+            "nivgbamboe",
+            "likebamboe"
         };
     }
 }

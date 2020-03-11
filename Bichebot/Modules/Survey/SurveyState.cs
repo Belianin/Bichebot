@@ -7,7 +7,7 @@ namespace Bichebot.Modules.Survey
         public ulong LastMessageId { get; set; }
         public SurveyStatus Status { get; set; }
         public int CurrentQuestion { get; set; }
-        public List<UserAnswer> Answers { get; set; }
+        public List<UserAnswer> Answers { get; set; } = new List<UserAnswer>();
     }
 
     public enum SurveyStatus
