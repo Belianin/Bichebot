@@ -20,7 +20,8 @@ namespace Bichebot.Modules.Survey
         
         public SurveyModule(IBotCore core, Func<SurveyState> createDefault, List<string> questions) : base(core, createDefault)
         {
-            this.questions = questions;
+            //this.questions = questions;
+            questions = Core.Guild.Emotes.Select(e => e.Name).ToList();
         }
 
         protected override async Task HandleReactionAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
@@ -69,6 +70,7 @@ namespace Bichebot.Modules.Survey
             var message = await user.SendMessageAsync(Core.ToEmojiString(questions[state.CurrentQuestion]))
                 .ConfigureAwait(false);
 
+            // bug here
             await message.AddReactionsAsync(possibleAnswers.Select(Emote.Parse).ToArray(), RequestOptions.Default)
                 .ConfigureAwait(false);
 
