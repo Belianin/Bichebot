@@ -8,6 +8,7 @@ using Bichebot.Modules.Moderate;
 using Bichebot.Modules.React;
 using Bichebot.Modules.Statistics;
 using Bichebot.Modules.Supreme;
+using Bichebot.Modules.Survey;
 using Discord.WebSocket;
 
 namespace Bichebot
@@ -26,6 +27,7 @@ namespace Bichebot
                 new ModerateModule(core),
                 new SupremeModule(core),
                 new AudioModule(core, audio),
+                new SurveyModule(core, () => new SurveyState(), Questions),
                 new BestModule(core, new BestModuleSettings
                 {
                     BestChannelId = settings.BestChannelId,
@@ -45,5 +47,12 @@ namespace Bichebot
             
             return new Bot(core, modules, settings.Token);
         }
+        
+        private static List<string> Questions => new List<string>
+        {
+            "lifer",
+            "igorbamboe",
+            "alohabamboe"
+        };
     }
 }

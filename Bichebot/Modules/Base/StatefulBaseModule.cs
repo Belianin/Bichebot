@@ -7,18 +7,18 @@ using Discord;
 
 namespace Bichebot.Modules.Base
 {
-    public class StatefulBaseModule<T> : BaseModule // where T : class
+    public class StatefulBaseModule<TState> : BaseModule // where T : class
     {
-        private readonly IRepository<ulong, T> repository;
+        private readonly IRepository<ulong, TState> repository;
         
-        private readonly Dictionary<ulong, T> states;
+        private readonly Dictionary<ulong, TState> states;
 
-        private readonly Func<T> createDefault;
+        private readonly Func<TState> createDefault;
 
-        protected StatefulBaseModule(IBotCore core, Func<T> createDefault) : base(core)
+        protected StatefulBaseModule(IBotCore core, Func<TState> createDefault) : base(core)
         {
-            repository = new FakeRepository<ulong, T>();
-            states = new Dictionary<ulong, T>();
+            repository = new FakeRepository<ulong, TState>();
+            states = new Dictionary<ulong, TState>();
             this.createDefault = createDefault;
 
             var data = repository.GetAllAsync().Result;
@@ -28,7 +28,7 @@ namespace Bichebot.Modules.Base
             Task.Run(SaveStates);
         }
 
-        internal T GetState(ulong id)
+        internal TState GetState(ulong id)
         {
             if (states.TryGetValue(id, out var result))
                 return result;
@@ -38,6 +38,12 @@ namespace Bichebot.Modules.Base
             states[id] = newState;
 
             return newState;
+        }
+
+        internal TState SetState(ulong id, TState state)
+        {
+            states[id] = state;
+            return state;
         }
 
         private async Task SaveStates()
