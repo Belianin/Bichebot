@@ -61,11 +61,6 @@ namespace Bichebot.Modules.Survey
                     .ConfigureAwait(false);
                 return;
             }
-            else
-            {
-                state.CurrentQuestion++;
-            }
-
 
             var message = await user.SendMessageAsync(Core.ToEmojiString(questions[state.CurrentQuestion]))
                 .ConfigureAwait(false);
@@ -75,6 +70,8 @@ namespace Bichebot.Modules.Survey
                 .ConfigureAwait(false);
 
             state.LastMessageId = message.Id;
+            
+            state.CurrentQuestion++;
         }
     }
 }
