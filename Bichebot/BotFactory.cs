@@ -23,7 +23,7 @@ namespace Bichebot
             var modules = new List<IBotModule>
             {
                 new StatisticsModule(core),
-                new ReactModule(core),
+                new ReactModule(core, new ReactModuleSettings()),
                 new ModerateModule(core),
                 new SupremeModule(core),
                 new AudioModule(core, audio),

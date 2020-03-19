@@ -10,11 +10,15 @@ namespace Bichebot.Modules.React
 {
     public class ReactModule : BaseModule
     {
-        public ReactModule(IBotCore core) : base(core) {}
+        private readonly ReactModuleSettings settings;
+        public ReactModule(IBotCore core, ReactModuleSettings settings) : base(core)
+        {
+            this.settings = settings;
+        }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
         {
-            if (!(message is IUserMessage userMessage))
+            if (!(message is IUserMessage userMessage) || !settings.ReactChannels.Contains(message.Channel.Id))
                 return;
             if (message.Content.Contains("?") && Core.Random.Roll(10))
             {
