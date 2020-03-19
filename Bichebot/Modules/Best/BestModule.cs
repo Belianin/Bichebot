@@ -36,6 +36,7 @@ namespace Bichebot.Modules.Best
         private async Task SendToBestChannelAsync(IUserMessage userMessage)
         {
             if (alreadyBest.Contains(userMessage.Id) ||
+                !settings.SourceChannelIds.Contains(userMessage.Channel.Id) ||
                 !userMessage.Reactions.Values.Any(r => r.ReactionCount >= settings.ReactionCountToBeBest) ||
                 userMessage.Channel.Id == settings.BestChannelId)
                 return;

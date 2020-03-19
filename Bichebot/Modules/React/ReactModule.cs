@@ -16,7 +16,7 @@ namespace Bichebot.Modules.React
         {
             if (!(message is IUserMessage userMessage))
                 return;
-            if (message.Content.Contains("?"))
+            if (message.Content.Contains("?") && Core.Random.Roll(10))
             {
                 var emotion = Core.Random.Choose(new[] {"thinkingbamboe", "papich"});
                 await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == emotion))
@@ -27,7 +27,7 @@ namespace Bichebot.Modules.React
                 await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == reaction))
                     .ConfigureAwait(false);
 
-            if (Core.Random.Roll(10))
+            if (Core.Random.Roll(50))
                 await userMessage.AddReactionAsync(Core.Random.Choose(Core.Guild.Emotes))
                     .ConfigureAwait(false);
 
