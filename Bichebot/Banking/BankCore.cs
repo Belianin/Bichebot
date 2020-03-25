@@ -1,29 +1,55 @@
 using Bichebot.Modules.Base;
+using Bichebot.Utilities;
 
 namespace Bichebot.Banking
 {
-    public class BankCore : IBankCore<ulong>
+    public class BankCore : IBankCore
     {
         private readonly IRepository<ulong, int> repository;
-        
+
+        public BankCore(IRepository<ulong, int> repository)
+        {
+            this.repository = repository;
+        }
+
         public int GetBalance(ulong id)
         {
-            throw new System.NotImplementedException();
+            return repository.GetOrCreateAsync(id, 0).Result;
         }
 
-        public int SetBalance(ulong id, int value)
+        public Result<int> SetBalance(ulong id, int value)
         {
-            throw new System.NotImplementedException();
+            if (value < 0)
+                return "Negative value";
+            
+            repository.CreateOrUpdateAsync(id, value);
+            return value;
         }
 
-        public int Add(ulong id, int value)
+        public Result<int> Add(ulong id, int value)
         {
-            throw new System.NotImplementedException();
+            var balance = repository.GetOrCreateAsync(id, 0).Result + value;
+            if (balance < 0)
+                balance = 0;
+            
+            repository.CreateOrUpdateAsync(id, balance);
+
+            return balance;
         }
 
-        public bool TryTransact(ulong @from, ulong to, int value)
+        // В теории конечно потокобезопастности бы
+        public Result TryTransact(ulong @from, ulong to, int value)
         {
-            throw new System.NotImplementedException();
+            if (GetBalance(from) >= value)
+            {
+                Add(from, -value);
+                Add(to, value);
+                
+                return Result.Ok();
+            }
+
+
+            return "Not enough balance";
         }
     }
 }

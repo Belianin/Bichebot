@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using Bichebot.Banking;
 using Bichebot.Core;
 using Bichebot.Modules;
 using Bichebot.Modules.Audio;
+using Bichebot.Modules.Bank;
+using Bichebot.Modules.Base;
 using Bichebot.Modules.Best;
 using Bichebot.Modules.Greeter;
 using Bichebot.Modules.Moderate;
@@ -19,6 +22,7 @@ namespace Bichebot
         {
             var discordClient = new DiscordSocketClient();
             var core = new BotCore(settings.GuildId, discordClient);
+            var bankCore = new BankCore(new CachingRepository<ulong, int>(new FakeRepository<ulong, int>()));
             var audio = new AudioSpeaker(core);
             var modules = new List<IBotModule>
             {
@@ -28,6 +32,7 @@ namespace Bichebot
                 new SupremeModule(core),
                 new AudioModule(core, audio),
                 new SurveyModule(core, () => new SurveyState(), Questions),
+                new BankModule(core, bankCore, new BankModuleSettings(new List<ulong>{272446177163608066})),
                 new BestModule(core, new BestModuleSettings
                 {
                     BestChannelId = settings.BestChannelId,

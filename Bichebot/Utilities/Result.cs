@@ -66,14 +66,9 @@ namespace Bichebot.Utilities
             };
         }
 
-        public static Result<T> Ok<T>(T value)
+        public static implicit operator Result(string error)
         {
-            return Result<T>.Ok(value);
-        }
-
-        public static Result<T> Fail<T>(string error)
-        {
-            return Result<T>.Fail(error);
+            return Fail(error);
         }
         
         private Result() {}

@@ -22,7 +22,7 @@ namespace Bichebot.Modules.Base
 
         internal TState GetState(ulong id)
         {
-            return repository.GetOrCreate(id, createDefault()).Result;
+            return repository.GetOrCreateAsync(id, createDefault()).Result;
         }
 
         internal TState SetState(ulong id, TState state)

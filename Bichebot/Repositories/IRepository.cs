@@ -14,7 +14,7 @@ namespace Bichebot.Modules.Base
 
     public static class RepositoryExtensions
     {
-        public static async Task<TValue> GetOrCreate<TKey, TValue>(this IRepository<TKey, TValue> repo, TKey key, TValue value)
+        public static async Task<TValue> GetOrCreateAsync<TKey, TValue>(this IRepository<TKey, TValue> repo, TKey key, TValue value)
         {
             var getResult = await repo.TryGetAsync(key).ConfigureAwait(false);
             if (getResult.IsSuccess)
