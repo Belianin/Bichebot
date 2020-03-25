@@ -1,21 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Bichebot.Utilities;
 
 namespace Bichebot.Modules.Base
 {
-    public interface IRepository<TKey, TValue>
-    {
-        Task<TValue> GetAsync(TKey key);
-        Task<IEnumerable<(TKey key, TValue value)>> GetAllAsync();
-        Task CreateOrUpdateAsync(TKey key, TValue item);
-        Task DeleteAsync(TKey key);
-    }
-
     public class FakeRepository<TKey, TValue> : IRepository<TKey, TValue>
     {
-        public async Task<IEnumerable<(TKey key, TValue value)>> GetAllAsync()
+        public async Task<IDictionary<TKey, TValue>> GetAllAsync()
         {
-            return new (TKey, TValue)[0];
+            return new Dictionary<TKey, TValue>();
         }
 
         public async Task CreateOrUpdateAsync(TKey key, TValue item)
@@ -23,7 +16,7 @@ namespace Bichebot.Modules.Base
             
         }
 
-        public async Task<TValue> GetAsync(TKey key)
+        public async Task<Result<TValue>> TryGetAsync(TKey key)
         {
             return default;
         }
