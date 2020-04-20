@@ -27,6 +27,13 @@ namespace Bichebot.Modules.React
                     .ConfigureAwait(false);
             }
 
+            if (Core.Random.Roll(25))
+                await message.Channel.SendMessageAsync(Core.Random.Choose(
+                        "Сейчас бы в Фолач...",
+                        "[МИНУТКА ПРОПАГАНДЫ]: GO FO",
+                        "А помните как мы тащили? А помните как было хорошо? В Фолаче, конечно"))
+                    .ConfigureAwait(false);
+
             if (IsDeservingLike(message, out var reaction))
                 await userMessage.AddReactionAsync(Core.Guild.Emotes.First(n => n.Name == reaction))
                     .ConfigureAwait(false);

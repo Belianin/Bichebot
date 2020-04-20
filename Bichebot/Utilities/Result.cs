@@ -1,3 +1,5 @@
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace Bichebot.Utilities
 {
     public class Result<T>

@@ -6,6 +6,18 @@ namespace Bichebot.Utilities
 {
     public static class RandomExtensions
     {
+        public static T Choose<T>(this Random random, params T[] source)
+        {
+            var array = source.ToArray();
+            return array[random.Next(0, array.Length)];
+        } 
+        
+        public static T Choose<T>(this Random random, IReadOnlyCollection<T> source)
+        {
+            var array = source.ToArray();
+            return array[random.Next(0, array.Length)];
+        }
+        
         public static T Choose<T>(this Random random, IEnumerable<T> source)
         {
             var array = source.ToArray();
