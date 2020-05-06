@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bichebot.Utilities;
 
-namespace Bichebot.Modules.Base
+namespace Bichebot.Repositories
 {
     public class FakeRepository<TKey, TValue> : IRepository<TKey, TValue>
     {

@@ -1,4 +1,4 @@
-using Bichebot.Modules.Base;
+using Bichebot.Repositories;
 using Bichebot.Utilities;
 
 namespace Bichebot.Banking

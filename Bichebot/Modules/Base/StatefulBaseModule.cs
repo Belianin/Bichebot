@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Bichebot.Core;
-using Discord;
+using Bichebot.Repositories;
 
 namespace Bichebot.Modules.Base
 {

@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bichebot.Utilities;
 
-namespace Bichebot.Modules.Base
+namespace Bichebot.Repositories
 {
     public class CachingRepository<TKey, TValue> : IRepository<TKey, TValue>
     {
