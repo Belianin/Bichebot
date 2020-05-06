@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules.Base;
 using Bichebot.Modules.React.Triggers;
-using Bichebot.Utilities;
 using Discord;
 using Discord.WebSocket;
 
