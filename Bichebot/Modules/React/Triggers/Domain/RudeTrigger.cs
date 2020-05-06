@@ -18,11 +18,9 @@ namespace Bichebot.Modules.React.Triggers.Domain
 
         public override ReactionReply GetReply(IMessage message)
         {
-            return new ReactionReply(core.Random.Choose(new[]
-            {
+            return new ReactionReply(core.Random.Choose(
                 $"{message.Author.Username}, удали",
-                $"{message.Author.Username}, ты в муте"
-            }));
+                $"{message.Author.Username}, ты в муте"));
         }
     }
 }

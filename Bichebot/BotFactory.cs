@@ -6,6 +6,7 @@ using Bichebot.Modules.Audio;
 using Bichebot.Modules.Bank;
 using Bichebot.Modules.Best;
 using Bichebot.Modules.Greeter;
+using Bichebot.Modules.MemeGenerator;
 using Bichebot.Modules.Moderate;
 using Bichebot.Modules.React;
 using Bichebot.Modules.React.Triggers;
@@ -60,7 +61,8 @@ namespace Bichebot
                         {272446177163608066, "aler.mp3"},
                         {490208786036948994, "ilidan.mp3"}
                     }
-                })
+                }),
+                new MemeGeneratorModule(core, new MemeGeneratorModuleSettings())
             };
 
             return new Bot(core, modules, settings.Token);

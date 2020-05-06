@@ -37,11 +37,11 @@ namespace Bichebot.Core
             ulong lastId = 0;
             
             var messages = channel.GetMessagesAsync().Flatten();
-            var enumerator = messages.GetEnumerator();
+            var enumerator = messages.GetAsyncEnumerator();
             var isEmpty = true;
             do
             {
-                while (enumerator.MoveNext().Result)
+                while (enumerator.MoveNextAsync().Result)
                 {
                     isEmpty = false;
                     lastId = enumerator.Current.Id;
@@ -53,7 +53,7 @@ namespace Bichebot.Core
 
                 Console.WriteLine(timestamp);
 
-                enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetEnumerator();
+                enumerator = channel.GetMessagesAsync(lastId, Direction.Before).Flatten().GetAsyncEnumerator();
             } while (!isEmpty && timestamp.Add(period) > DateTime.UtcNow);
         }
     }
