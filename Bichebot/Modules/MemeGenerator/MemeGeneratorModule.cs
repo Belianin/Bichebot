@@ -9,6 +9,7 @@ using Bichebot.Modules.Base;
 using Bichebot.Utilities;
 using Discord;
 using Discord.WebSocket;
+using Image = System.Drawing.Image;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace Bichebot.Modules.MemeGenerator
@@ -30,18 +31,30 @@ namespace Bichebot.Modules.MemeGenerator
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment == null)
                 return;
-            
-            using var client = new HttpClient();
-            var picture = await client.GetAsync(attachment.Url).ConfigureAwait(false);
 
-            await using var stream = await picture.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var bitmap = new Bitmap(stream);
+            var bitmap = await DownloadImageAsync(attachment.Url);
 
             var meme = generator.GenerateMeme(bitmap);
+
+            await SendMemeAsync(message, meme).ConfigureAwait(false);
+        }
+
+        private static async Task<Image> DownloadImageAsync(string url)
+        {
+            using var client = new HttpClient();
+            var picture = await client.GetAsync(url).ConfigureAwait(false);
+
+            await using var stream = await picture.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            return new Bitmap(stream);
+        }
+
+        private static async Task SendMemeAsync(IMessage message, Image meme)
+        {
+            var stream = new MemoryStream();
+            meme.Save(stream, ImageFormat.Jpeg);
+            stream.Position = 0;
             
-            meme.Save("meme.jpeg", ImageFormat.Jpeg);
-            await message.Channel.SendFileAsync("meme.jpeg", "готово").ConfigureAwait(false);
-            File.Delete("meme.jpeg");
+            await message.Channel.SendFileAsync(stream, "meme.jpeg", "готово").ConfigureAwait(false);
         }
     }
 }
