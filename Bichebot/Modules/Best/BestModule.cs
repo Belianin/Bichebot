@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bichebot.Banking;
 using Bichebot.Core;
 using Bichebot.Modules.Base;
 using Discord;
@@ -12,12 +13,13 @@ namespace Bichebot.Modules.Best
     public class BestModule : BaseModule
     {
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
-        
         private readonly BestModuleSettings settings;
+        private readonly IBankCore bank;
         
-        public BestModule(IBotCore core, BestModuleSettings settings) : base(core)
+        public BestModule(IBotCore core, IBankCore bank, BestModuleSettings settings) : base(core)
         {
             this.settings = settings;
+            this.bank = bank;
         }
         
         protected override async Task HandleReactionAsync(
@@ -64,6 +66,8 @@ namespace Bichebot.Modules.Best
 
             await Core.Guild.GetTextChannel(settings.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
+
+            bank.Add(userMessage.Author.Id, settings.Reward);
         }
     }
 }

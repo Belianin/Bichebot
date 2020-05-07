@@ -48,7 +48,7 @@ namespace Bichebot
                 new SupremeModule(core),
                 new AudioModule(core, audio),
                 new BankModule(core, bankCore, new BankModuleSettings(new List<ulong> {272446177163608066})),
-                new BestModule(core, new BestModuleSettings
+                new BestModule(core, bankCore, new BestModuleSettings
                 {
                     BestChannelId = settings.BestChannelId,
                     ReactionCountToBeBest = settings.ReactionCountToBeBest
