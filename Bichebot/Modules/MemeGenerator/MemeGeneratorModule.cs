@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -14,12 +15,11 @@ namespace Bichebot.Modules.MemeGenerator
 {
     public class MemeGeneratorModule : BaseModule
     {
-        private readonly HttpClient client = new HttpClient();
-        private readonly MemeGeneratorModuleSettings settings;
+        private readonly MemeGenerator generator;
         
         public MemeGeneratorModule(IBotCore core, MemeGeneratorModuleSettings settings) : base(core)
         {
-            this.settings = settings;
+            generator = new MemeGenerator(settings.MemePhrases);
         }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
@@ -27,28 +27,20 @@ namespace Bichebot.Modules.MemeGenerator
             if (!message.Content.ToLower().Contains("сделай мем"))
                 return;
             
-            var attachments = message.Attachments.FirstOrDefault();
-            if (attachments == null)
+            var attachment = message.Attachments.FirstOrDefault();
+            if (attachment == null)
                 return;
             
-
-            var picture = await client.GetAsync(attachments.Url).ConfigureAwait(false);
+            using var client = new HttpClient();
+            var picture = await client.GetAsync(attachment.Url).ConfigureAwait(false);
 
             await using var stream = await picture.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            
             var bitmap = new Bitmap(stream);
 
-            var graphics = Graphics.FromImage(bitmap);
-
-            var phrase = Core.Random.Choose(settings.MemePhrases);
-            graphics.DrawString(phrase, settings.Font, Brushes.Red, 0, bitmap.Height - settings.Font.Height * 2);
-
-            //graphics.Save();
+            var meme = generator.GenerateMeme(bitmap);
             
-            bitmap.Save("meme.jpeg", ImageFormat.Jpeg);
-            
+            meme.Save("meme.jpeg", ImageFormat.Jpeg);
             await message.Channel.SendFileAsync("meme.jpeg", "готово").ConfigureAwait(false);
-            
             File.Delete("meme.jpeg");
         }
     }

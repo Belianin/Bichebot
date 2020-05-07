@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Bichebot.Banking;
 using Bichebot.Core;
 using Bichebot.Modules;
@@ -62,7 +63,7 @@ namespace Bichebot
                         {490208786036948994, "ilidan.mp3"}
                     }
                 }),
-                new MemeGeneratorModule(core, new MemeGeneratorModuleSettings())
+                new MemeGeneratorModule(core, new MemeGeneratorModuleSettings{MemePhrases = File.ReadAllLines("Resources/memes.txt")})
             };
 
             return new Bot(core, modules, settings.Token);
