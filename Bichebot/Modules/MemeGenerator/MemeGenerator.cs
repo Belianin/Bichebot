@@ -40,7 +40,7 @@ namespace Bichebot.Modules.MemeGenerator
             var point = new PointF(imageSize.Width / 2, imageSize.Height - border - scaledSize.Height);
             var textGraphicOptions = new TextGraphicsOptions(true) {
                 HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Center
             };
 
             var shadowPoint = new PointF(point.X + scaledFont.Size / 20, point.Y + scaledFont.Size / 20);
