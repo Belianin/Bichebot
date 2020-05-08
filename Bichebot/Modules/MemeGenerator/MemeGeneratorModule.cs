@@ -35,6 +35,7 @@ namespace Bichebot.Modules.MemeGenerator
 
             var meme = generator.GenerateMeme(bitmap);
 
+            await message.DeleteAsync().ConfigureAwait(false);
             await SendMemeAsync(message, meme).ConfigureAwait(false);
         }
 
