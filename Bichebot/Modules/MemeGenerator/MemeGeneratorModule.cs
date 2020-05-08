@@ -9,8 +9,7 @@ using Bichebot.Modules.Base;
 using Bichebot.Utilities;
 using Discord;
 using Discord.WebSocket;
-using Image = System.Drawing.Image;
-using ImageFormat = System.Drawing.Imaging.ImageFormat;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace Bichebot.Modules.MemeGenerator
 {
@@ -39,19 +38,19 @@ namespace Bichebot.Modules.MemeGenerator
             await SendMemeAsync(message, meme).ConfigureAwait(false);
         }
 
-        private static async Task<Image> DownloadImageAsync(string url)
+        private static async Task<SixLabors.ImageSharp.Image> DownloadImageAsync(string url)
         {
             using var client = new HttpClient();
             var picture = await client.GetAsync(url).ConfigureAwait(false);
 
             await using var stream = await picture.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return new Bitmap(stream);
+            return SixLabors.ImageSharp.Image.Load(stream);
         }
 
-        private static async Task SendMemeAsync(IMessage message, Image meme)
+        private static async Task SendMemeAsync(IMessage message, SixLabors.ImageSharp.Image meme)
         {
             var stream = new MemoryStream();
-            meme.Save(stream, ImageFormat.Jpeg);
+            meme.Save(stream, new JpegEncoder());
             stream.Position = 0;
             
             await message.Channel.SendFileAsync(stream, "meme.jpeg", "готово").ConfigureAwait(false);
