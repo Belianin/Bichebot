@@ -33,17 +33,17 @@ namespace Bichebot.Modules.MemeGenerator
             
             var size = TextMeasurer.Measure(phrase, new RendererOptions(font));
 
-            var scalingFactor = Math.Min(imageSize.Width / size.Width, imageSize.Height / size.Height);
+            var scalingFactor = Math.Min((imageSize.Width - border * 2) / size.Width, imageSize.Height / size.Height);
             var scaledFont = new Font(font, scalingFactor * font.Size);
             var scaledSize = TextMeasurer.Measure(phrase, new RendererOptions(scaledFont));
 
             var point = new PointF(imageSize.Width / 2, imageSize.Height - border - scaledSize.Height);
             var textGraphicOptions = new TextGraphicsOptions(true) {
                 HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Top
             };
 
-            var shadowPoint = new PointF(point.X + scaledFont.Size / 10, point.Y + scaledFont.Size / 10);
+            var shadowPoint = new PointF(point.X + scaledFont.Size / 20, point.Y + scaledFont.Size / 20);
             
             image.Mutate(i => i
                 .DrawText(textGraphicOptions, phrase, scaledFont, Color.Black, shadowPoint)
