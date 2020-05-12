@@ -11,7 +11,7 @@ namespace Bichebot.Modules.React.Triggers.Domain
         public LeagueOfLegendsTrigger(IBotCore core) : base(
             new []
             {
-                new [] {"лол", "lol", "лол,", "lol,", "лол.", "lol."}
+                new [] {"лол", "lol", "лол,", "lol,", "лол.", "lol."} // вроде излишне
             })
         {
             this.core = core;

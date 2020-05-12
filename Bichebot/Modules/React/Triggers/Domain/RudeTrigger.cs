@@ -10,7 +10,8 @@ namespace Bichebot.Modules.React.Triggers.Domain
         
         public RudeTrigger(IBotCore core) : base(new []
         {
-            new [] {"бот лох"}
+            new [] {"бот"},
+            new [] {"лох", "деб", "твар"} 
         })
         {
             this.core = core;

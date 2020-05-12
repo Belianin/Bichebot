@@ -11,12 +11,16 @@ namespace Bichebot.Modules.React.Triggers
 
         protected ReactionTrigger(ICollection<ICollection<string>> conditions)
         {
-            this.conditions = conditions;
+            this.conditions = conditions
+                .Select(c => c.Select(x => x.ToLower()).ToArray())
+                .ToArray();
         }
         
         public virtual bool IsNeedReaction(IMessage message)
         {
-            return conditions.All(c => message.Content.ContainsAny(c));
+            var content = message.Content.ToLower();
+            
+            return conditions.All(c => content.ContainsAny(c));
         }
 
         public abstract ReactionReply GetReply(IMessage message);
