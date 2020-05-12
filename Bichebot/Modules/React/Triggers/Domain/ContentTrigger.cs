@@ -15,10 +15,10 @@ namespace Bichebot.Modules.React.Triggers.Domain
 
         public bool IsNeedReaction(IMessage message)
         {
-            if (message.Attachments.Count > 0 && message.Content.Length >= 100)
+            if (message.Attachments.Count > 0 || message.Content.Length >= 100)
                 return true;
 
-            return core.Random.Roll(message.Content.Length, 100);
+            return core.Random.Roll(message.Content.Length, 500);
         }
 
         public ReactionReply GetReply(IMessage message)
