@@ -24,17 +24,17 @@ namespace Bichebot.Utilities
             return array[random.Next(0, array.Length)];
         }
         
-        public static T Choose<T>(this Random random, IEnumerable<T> source, Func<T, int> weight)
+        public static T Choose<T>(this Random random, IEnumerable<T> source, Func<T, double> weight)
         {
-            var rates = new Dictionary<int, T>();
-            var sum = 0;
+            var rates = new Dictionary<double, T>();
+            var sum = 0d;
             foreach (var c in source)
             {
                 sum += weight(c);
                 rates[sum] = c;
             }
             
-            var rate = random.Next(0, sum);
+            var rate = random.NextDouble() * sum;
             return rates.First(k => k.Key >= rate).Value;
         }
 
