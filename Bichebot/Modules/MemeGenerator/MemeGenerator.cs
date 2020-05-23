@@ -14,19 +14,23 @@ namespace Bichebot.Modules.MemeGenerator
         private readonly FontFamily memeFont;
         private readonly int border = 8;
         private readonly string[] phrases;
+        private readonly Dictionary<string, int> usage;
 
         public MemeGenerator(IEnumerable<string> phrases)
         {
             this.phrases = phrases.ToArray();
+            usage = this.phrases.ToDictionary(p => p, _ => 1);
             
             var fontCollection = new FontCollection();
             fontCollection.Install("Resources/lobster.ttf");
             memeFont = fontCollection.Families.First();
         }
 
-        public Image GenerateMeme(Image image, string phrase = null)
+        public Image GenerateMeme(Image image, string customPhrase = null)
         {
-            phrase ??= new Random().Choose(phrases.ToArray());
+            var phrase = customPhrase ?? new Random().Choose(phrases.ToArray(), p => 1d / usage[p]);
+            if (customPhrase == null)
+                usage[phrase]++;
             
             var font = new Font(memeFont, 40);
             var imageSize = image.Size();
