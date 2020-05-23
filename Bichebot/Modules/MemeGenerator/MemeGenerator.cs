@@ -24,9 +24,9 @@ namespace Bichebot.Modules.MemeGenerator
             memeFont = fontCollection.Families.First();
         }
 
-        public Image GenerateMeme(Image image)
+        public Image GenerateMeme(Image image, string phrase = null)
         {
-            var phrase = new Random().Choose(phrases.ToArray());
+            phrase ??= new Random().Choose(phrases.ToArray());
             
             var font = new Font(memeFont, 40);
             var imageSize = image.Size();

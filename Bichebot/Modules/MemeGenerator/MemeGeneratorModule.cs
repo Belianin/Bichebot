@@ -3,6 +3,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules.Base;
@@ -30,10 +31,14 @@ namespace Bichebot.Modules.MemeGenerator
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment == null)
                 return;
+            
+            var regex = new Regex("\"(.*?)\"");
+            var phrase = regex.Match(message.Content).Value;
+            phrase = string.IsNullOrEmpty(phrase) ? null : phrase[1..^1];
 
             var bitmap = await DownloadImageAsync(attachment.Url);
 
-            var meme = generator.GenerateMeme(bitmap);
+            var meme = generator.GenerateMeme(bitmap, phrase);
 
             await message.DeleteAsync().ConfigureAwait(false);
             await SendMemeAsync(message, meme).ConfigureAwait(false);
