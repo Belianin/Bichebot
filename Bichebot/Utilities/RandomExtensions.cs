@@ -12,6 +12,17 @@ namespace Bichebot.Utilities
             return array[random.Next(0, array.Length)];
         } 
         
+        public static T Choose<T>(this Random random, IList<T> source)
+        {
+            return source[random.Next(0, source.Count)];
+        }
+        
+        public static T Choose<T>(this Random random, ICollection<T> source)
+        {
+            var array = source.ToArray();
+            return array[random.Next(0, array.Length)];
+        }
+
         public static T Choose<T>(this Random random, IReadOnlyCollection<T> source)
         {
             var array = source.ToArray();
