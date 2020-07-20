@@ -10,9 +10,7 @@ namespace Bichebot
     public class Bot
     {
         private readonly IBotCore core;
-
         private readonly ICollection<IBotModule> modules;
-
         private readonly string token;
 
         internal Bot(IBotCore core, ICollection<IBotModule> modules, string token)

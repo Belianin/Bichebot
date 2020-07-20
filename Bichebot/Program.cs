@@ -23,7 +23,7 @@ namespace Bichebot
                 Token = token
             };
             
-            return BotFactory.Create(settings);
+            return BotFactory.Instance.Create(settings);
         }
 
         private static string GetEnvironmentVariable(string name)

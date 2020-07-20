@@ -4,11 +4,6 @@ namespace Bichebot.Modules.Bank
 {
     public class BankModuleSettings
     {
-        public ICollection<ulong> Admins { get; }
-
-        public BankModuleSettings(ICollection<ulong> admins = null)
-        {
-            Admins = admins ?? new List<ulong>();
-        }
+        public ICollection<ulong> Admins { get; set; }
     }
 }
