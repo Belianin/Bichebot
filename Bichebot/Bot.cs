@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules;
 using Discord;
+using Nexus.Logging;
 
 namespace Bichebot
 {
@@ -11,18 +13,20 @@ namespace Bichebot
     {
         private readonly IBotCore core;
         private readonly ICollection<IBotModule> modules;
+        private readonly ILog log;
         private readonly string token;
 
-        internal Bot(IBotCore core, ICollection<IBotModule> modules, string token)
+        internal Bot(IBotCore core, ICollection<IBotModule> modules, string token, ILog log)
         {
             this.core = core;
             this.modules = modules;
             this.token = token;
+            this.log = log;
         }
 
-        public void Run(CancellationToken cancellationToken)
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Starting");
+            log.Info("Starting");
 
             core.Client.LoginAsync(TokenType.Bot, token).Wait(cancellationToken);
             core.Client.StartAsync().Wait(cancellationToken);
@@ -30,12 +34,11 @@ namespace Bichebot
             foreach (var module in modules)
                 module.Run();
 
-            Console.WriteLine("Started");
+            log.Info("Started");
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Thread.Sleep(1000);
-            }
+            await Task.Delay(-1, cancellationToken).ConfigureAwait(false);
+            
+            log.Info("Stopping");
         }
     }
 }

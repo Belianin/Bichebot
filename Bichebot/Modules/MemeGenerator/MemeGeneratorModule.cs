@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -7,9 +5,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Modules.Base;
-using Bichebot.Utilities;
 using Discord;
 using Discord.WebSocket;
+using Nexus.Logging;
 using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace Bichebot.Modules.MemeGenerator
@@ -17,9 +15,11 @@ namespace Bichebot.Modules.MemeGenerator
     public class MemeGeneratorModule : BaseModule
     {
         private readonly MemeGenerator generator;
+        private readonly ILog log; 
         
-        public MemeGeneratorModule(IBotCore core, MemeGeneratorModuleSettings settings) : base(core)
+        public MemeGeneratorModule(MemeGeneratorModuleSettings settings, IBotCore core, ILog log) : base(core)
         {
+            this.log = log.ForContext(GetType().Name);
             generator = new MemeGenerator(settings.MemePhrases);
         }
 
@@ -27,14 +27,20 @@ namespace Bichebot.Modules.MemeGenerator
         {
             if (!message.Content.ToLower().Contains("сделай мем"))
                 return;
+
+            log.Info("Received a meme-request");
             
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment == null)
+            {
+                log.Info("No attachments found");
                 return;
+            }
             
             var regex = new Regex("\"(.*?)\"");
             var phrase = regex.Match(message.Content).Value;
             phrase = string.IsNullOrEmpty(phrase) ? null : phrase[1..^1];
+            log.Info(phrase == null ? "No meme phrase required" : $"Meme phrase is \'{phrase}\'");
 
             var bitmap = await DownloadImageAsync(attachment.Url);
 

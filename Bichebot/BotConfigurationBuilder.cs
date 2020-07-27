@@ -1,14 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Bichebot.Banking;
 using Bichebot.Core;
 using Bichebot.Modules;
 using Bichebot.Modules.Audio;
 using Bichebot.Repositories;
-using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using Nexus.Logging;
 
 namespace Bichebot
 {
@@ -16,11 +15,14 @@ namespace Bichebot
     {
         private readonly IServiceCollection serviceCollection = new ServiceCollection();
         private readonly BotSettings botSettings;
+        private readonly ILog log;
 
-        public BotConfigurationBuilder(BotSettings botSettings)
+        public BotConfigurationBuilder(BotSettings botSettings, ILog log)
         {
             this.botSettings = botSettings;
+            this.log = log;
 
+            serviceCollection.AddSingleton<ILog>(log);
             serviceCollection.AddSingleton<DiscordSocketClient>();
             serviceCollection.AddSingleton<IBotCore>(sp => 
                 new BotCore(botSettings.GuildId, sp.GetService<DiscordSocketClient>()));
@@ -64,7 +66,8 @@ namespace Bichebot
             return new Bot(
                 serviceProvider.GetRequiredService<IBotCore>(),
                 serviceProvider.GetServices<IBotModule>().ToArray(),
-                botSettings.Token);
+                botSettings.Token,
+                log);
         }
     }
 

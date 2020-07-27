@@ -5,15 +5,18 @@ using Bichebot.Modules.Base;
 using Bichebot.Modules.React.Triggers;
 using Discord;
 using Discord.WebSocket;
+using Nexus.Logging;
 
 namespace Bichebot.Modules.React
 {
     public class ReactModule : BaseModule
     {
         private readonly ReactModuleSettings settings;
-        public ReactModule(IBotCore core, ReactModuleSettings settings) : base(core)
+        private readonly ILog log;
+        public ReactModule(ReactModuleSettings settings, IBotCore core, ILog log) : base(core)
         {
             this.settings = settings;
+            this.log = log.ForContext(GetType().Name);
         }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
@@ -25,6 +28,7 @@ namespace Bichebot.Modules.React
             {
                 if (!trigger.TryGetReaction(message, out var reaction))
                     continue;
+                log.Info($"Reacting with {reaction} by {trigger.GetType().Name} on '{message.Content ?? "attachment"}'");
                 
                 if (reaction.Text != null)
                     await message.Channel.SendMessageAsync(reaction.Text).ConfigureAwait(false);

@@ -7,6 +7,7 @@ using Bichebot.Modules.MemeGenerator;
 using Bichebot.Modules.Moderate;
 using Bichebot.Modules.Statistics;
 using Bichebot.Modules.Supreme;
+using Nexus.Logging.Console;
 
 namespace Bichebot
 {
@@ -14,7 +15,7 @@ namespace Bichebot
     {
         public Bot Create(BotSettings settings)
         {
-            return new BotConfigurationBuilder(settings)
+            return new BotConfigurationBuilder(settings, new ColourConsoleLog())
                 .Use<MemeGeneratorModule>(new MemeGeneratorModuleSettings{MemePhrases = File.ReadAllLines("Resources/memes.txt")})
                 .Use<StatisticsModule>()
                 .UseReactModule()

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Discord;
 
 namespace Bichebot.Modules.React.Triggers
@@ -17,11 +18,17 @@ namespace Bichebot.Modules.React.Triggers
         public ReactionReply(string text)
         {
             Text = text;
+            Emotes = new IEmote[0];
         }
 
         public ReactionReply(params IEmote[] emotes)
         {
             Emotes = emotes;
+        }
+
+        public override string ToString()
+        {
+            return $"text: '{Text ?? ""}'; emotes: [{string.Join(", ", Emotes.Select(e => e.Name))}]";
         }
     }
 }

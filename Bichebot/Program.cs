@@ -9,8 +9,10 @@ namespace Bichebot
         public static void Main(string[] args)
         {
             var cts = new CancellationTokenSource();
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => cts.Cancel();
             
-            CreateBot().Run(cts.Token);
+            CreateBot().RunAsync(cts.Token).Wait(cts.Token);
         }
 
         private static Bot CreateBot()
