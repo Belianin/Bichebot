@@ -8,9 +8,9 @@ namespace Bichebot.Repositories
 {
     public class CachingRepository<TKey, TValue> : IRepository<TKey, TValue>
     {
-        private IRepository<TKey, TValue> innerRepository;
+        private readonly IRepository<TKey, TValue> innerRepository;
 
-        private IDictionary<TKey, TValue> memory;
+        private readonly IDictionary<TKey, TValue> memory;
 
         public CachingRepository(IRepository<TKey, TValue> innerRepository)
         {
