@@ -67,7 +67,7 @@ namespace Bichebot.Modules.Best
             await Core.Guild.GetTextChannel(settings.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
 
-            bank.Add(userMessage.Author.Id, settings.Reward);
+            bank.AddAsync(userMessage.Author.Id, settings.Reward);
         }
     }
 }

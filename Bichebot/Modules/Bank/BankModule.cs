@@ -46,8 +46,9 @@ namespace Bichebot.Modules.Bank
 
         private async Task ShowBalanceAsync(SocketMessage message)
         {
+            var balance = await bank.GetBalanceAsync(message.Author.Id).ConfigureAwait(false);
             await message.Channel
-                .SendMessageAsync($"{message.Author.Username}: {bank.GetBalance(message.Author.Id)}.0")
+                .SendMessageAsync($"{message.Author.Username}: {balance}.0")
                 .ConfigureAwait(false);
         }
 

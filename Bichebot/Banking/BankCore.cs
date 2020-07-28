@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bichebot.Repositories;
 using Bichebot.Utilities;
 
@@ -5,51 +7,65 @@ namespace Bichebot.Banking
 {
     public class BankCore : IBankCore
     {
-        private readonly IRepository<ulong, int> repository;
+        private readonly BichemansRepository repository;
+        private readonly Dictionary<ulong, Bicheman> bichemans = new Dictionary<ulong, Bicheman>();
 
-        public BankCore(IRepository<ulong, int> repository)
+        public BankCore(BichemansRepository repository)
         {
             this.repository = repository;
         }
 
-        public int GetBalance(ulong id)
+        public async Task<int> GetBalanceAsync(ulong id)
         {
-            return repository.GetOrCreateAsync(id, 0).Result;
+            var user = await GetUser(id).ConfigureAwait(false);
+            
+            return user.Bichecoins;
         }
 
-        public Result<int> SetBalance(ulong id, int value)
+        public async Task<Result<int>> SetBalanceAsync(ulong id, int value)
         {
             if (value < 0)
                 return "Negative value";
+
+            var user = await GetUser(id).ConfigureAwait(false);
+            user.Bichecoins = value;
             
-            repository.CreateOrUpdateAsync(id, value);
             return value;
         }
 
-        public Result<int> Add(ulong id, int value)
+        public async Task<Result<int>> AddAsync(ulong id, int value)
         {
-            var balance = repository.GetOrCreateAsync(id, 0).Result + value;
+            var user = await GetUser(id).ConfigureAwait(false);
+            var balance = user.Bichecoins + value;
             if (balance < 0)
                 balance = 0;
-            
-            repository.CreateOrUpdateAsync(id, balance);
+
+            user.Bichecoins = balance;
 
             return balance;
         }
 
         // В теории конечно потокобезопастности бы
-        public Result TryTransact(ulong @from, ulong to, int value)
+        public async Task<Result> TryTransactAsync(ulong @from, ulong to, int value)
         {
-            if (GetBalance(from) >= value)
-            {
-                Add(from, -value);
-                Add(to, value);
+            var fromUser = await GetUser(from).ConfigureAwait(false);
+            if (fromUser.Bichecoins < value)
+                return "Not enough balance";
+            
+            await AddAsync(@from, -value).ConfigureAwait(false);
+            await AddAsync(to, value).ConfigureAwait(false);
                 
-                return Result.Ok();
-            }
+            return Result.Ok();
 
 
-            return "Not enough balance";
+        }
+
+        private async Task<Bicheman> GetUser(ulong id)
+        {
+            if (bichemans.TryGetValue(id, out var user))
+                return user;
+
+            return await repository.GetOrCreateAsync(id, new Bicheman {Id = id, Bichecoins = 0}).ConfigureAwait(false);
         }
     }
 }
