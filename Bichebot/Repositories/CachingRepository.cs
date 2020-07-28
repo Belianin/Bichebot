@@ -21,6 +21,8 @@ namespace Bichebot.Repositories
             foreach (var (key, value) in data) 
                 memory[key] = value;
 
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => SaveStates().Wait();
+            
             Task.Run(SaveStates);
         }
 

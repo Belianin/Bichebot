@@ -8,7 +8,7 @@ namespace Bichebot
     {
         public static IBotConfigurationBuilder UseReactModule(this IBotConfigurationBuilder builder)
         {
-            return builder.Use<ReactModule>(core => new ReactModuleSettings()
+            return builder.Use<ReactModule, ReactModuleSettings>(core => new ReactModuleSettings()
             {
                 Triggers = new IReactionTrigger[]
                 {

@@ -7,6 +7,7 @@ using Bichebot.Modules.MemeGenerator;
 using Bichebot.Modules.Moderate;
 using Bichebot.Modules.Statistics;
 using Bichebot.Modules.Supreme;
+using Bichebot.Modules.Withermans;
 using Nexus.Logging.Console;
 
 namespace Bichebot
@@ -16,15 +17,17 @@ namespace Bichebot
         public Bot Create(BotSettings settings)
         {
             return new BotConfigurationBuilder(settings, new ColourConsoleLog())
-                .Use<MemeGeneratorModule>(new MemeGeneratorModuleSettings{MemePhrases = File.ReadAllLines("Resources/memes.txt")})
+                .Use<MemeGeneratorModule, MemeGeneratorModuleSettings>(new MemeGeneratorModuleSettings
+                    {MemePhrases = File.ReadAllLines("Resources/memes.txt")})
                 .Use<StatisticsModule>()
                 .UseReactModule()
                 .Use<AudioModule>()
                 .Use<SupremeModule>()
                 .Use<ModerateModule>()
-                .Use<BankModule>(settings.BankModule)
-                .Use<BestModule>(settings.BestModule)
-                .Use<GreeterModule>(settings.GreeterModule)
+                .Use<BankModule, BankModuleSettings>(settings.BankModule)
+                .Use<BestModule, BestModuleSettings>(settings.BestModule)
+                .Use<GreeterModule, GreeterModuleSettings>(settings.GreeterModule)
+                .Use<WithermansModule, WithermansSettings>(settings.WithermansModule)
                 .Build();
         }
     }

@@ -26,35 +26,34 @@ namespace Bichebot
             serviceCollection.AddSingleton<DiscordSocketClient>();
             serviceCollection.AddSingleton<IBotCore>(sp => 
                 new BotCore(botSettings.GuildId, sp.GetService<DiscordSocketClient>()));
-            serviceCollection.AddSingleton<IBankCore>(
-                new BankCore(new BichemansRepository()));
+            serviceCollection.AddSingleton<IBankCore>(new BankCore(new BichemansRepository()));
             serviceCollection.AddSingleton<AudioSpeaker>();
         }
 
-        public IBotConfigurationBuilder Use<TModule>() where TModule : IBotModule
+        public IBotConfigurationBuilder Use<TModule>() where TModule : class, IBotModule
         {
-            serviceCollection.Add(new ServiceDescriptor(typeof(IBotModule), typeof(TModule)));
+            serviceCollection.AddSingleton<IBotModule, TModule>();
 
             return this;
         }
 
-        public IBotConfigurationBuilder Use<TModule>(object settings) where TModule : IBotModule
+        public IBotConfigurationBuilder Use<TModule, TSettings>(TSettings settings) where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(settings);
+            serviceCollection.AddSingleton<TSettings>(settings);
 
             return Use<TModule>();
         }
 
-        public IBotConfigurationBuilder Use<TModule>(Func<IServiceProvider, object> settings) where TModule : IBotModule
+        public IBotConfigurationBuilder Use<TModule, TSettings>(Func<IServiceProvider, TSettings> settings) where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(settings);
+            serviceCollection.AddSingleton<TSettings>(settings);
 
             return Use<TModule>();
         }
 
-        public IBotConfigurationBuilder Use<TModule>(Func<IBotCore, object> settings) where TModule : IBotModule
+        public IBotConfigurationBuilder Use<TModule, TSettings>(Func<IBotCore, TSettings> settings) where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(sp => settings(sp.GetRequiredService<IBotCore>()));
+            serviceCollection.AddSingleton<TSettings>(sp => settings(sp.GetRequiredService<IBotCore>()));
 
             return Use<TModule>();
         }
@@ -62,6 +61,10 @@ namespace Bichebot
         public Bot Build()
         {
             var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            var core = serviceProvider.GetRequiredService<IBotCore>();
+
+            var a = serviceProvider.GetServices<IBotModule>().ToArray();
             
             return new Bot(
                 serviceProvider.GetRequiredService<IBotCore>(),
@@ -73,13 +76,13 @@ namespace Bichebot
 
     public interface IBotConfigurationBuilder
     {
-        IBotConfigurationBuilder Use<TModule>() where TModule : IBotModule;
+        IBotConfigurationBuilder Use<TModule>() where TModule : class, IBotModule;
 
-        IBotConfigurationBuilder Use<TModule>(object settings) where TModule : IBotModule;
+        IBotConfigurationBuilder Use<TModule, TSettings>(TSettings settings) where TModule : class, IBotModule where TSettings : class;
 
-        IBotConfigurationBuilder Use<TModule>(Func<IServiceProvider, object> settings) where TModule : IBotModule;
+        IBotConfigurationBuilder Use<TModule, TSettings>(Func<IServiceProvider, TSettings> settings) where TModule : class, IBotModule where TSettings : class;
 
-        IBotConfigurationBuilder Use<TModule>(Func<IBotCore, object> settings) where TModule : IBotModule;
+        IBotConfigurationBuilder Use<TModule, TSettings>(Func<IBotCore, TSettings> settings) where TModule : class, IBotModule where TSettings : class;
 
         Bot Build();
     }

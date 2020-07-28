@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Bichebot.Modules.Bank;
 using Bichebot.Modules.Best;
 using Bichebot.Modules.Greeter;
+using Bichebot.Modules.Withermans;
 
 namespace Bichebot
 {
@@ -32,6 +33,8 @@ namespace Bichebot
                 {490208786036948994, "ilidan.mp3"}
             }
         };
+        
+        public WithermansSettings WithermansModule { get; set; } = new WithermansSettings();
 
     }
 }
