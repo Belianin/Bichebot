@@ -6,7 +6,7 @@ namespace Bichebot.Modules.Withermans
 
         public JumpGameSettings JumpGame { get; set; } = new JumpGameSettings
         {
-            ChannelId = 656922777344802882
+            ChannelId = 553146693743280128
         };
     }
 }
