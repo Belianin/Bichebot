@@ -18,6 +18,8 @@ namespace Bichebot.Modules.React.Triggers.Domain
 
         public bool IsNeedReaction(IMessage message)
         {
+            if (message.Author.IsBot)
+                return false;
             if (message.Attachments.Count > 0 || message.Content.Length >= 100)
                 return true;
 

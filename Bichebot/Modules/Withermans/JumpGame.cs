@@ -54,7 +54,7 @@ namespace Bichebot.Modules.Withermans
 
 
             var finalMessage = await channel.GetMessageAsync(sentMessage.Id).ConfigureAwait(false);
-            var winners = await finalMessage.GetReactionUsersAsync(smile, 100).Flatten().ToListAsync();
+            var winners = await finalMessage.GetReactionUsersAsync(smile, 100).Flatten().Where(u => !u.IsBot).ToListAsync();
 
             if (winners.Count == 0)
                 await channel.SendMessageAsync($"Никто не прыгнул. ВСЕМ БАН{core.ToEmojiString("lejatbamboe")}")

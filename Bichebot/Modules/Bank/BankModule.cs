@@ -19,7 +19,7 @@ namespace Bichebot.Modules.Bank
             this.bank = bank;
         }
 
-        protected override async Task HandleMessageAsync(SocketMessage message)
+        protected override Task HandleMessageAsync(SocketMessage message)
         {
             if (FromAdmin(message))
             {
@@ -28,13 +28,12 @@ namespace Bichebot.Modules.Bank
 
             switch (message.Content)
             {
-                case "/bank-help":
-                    await ShowBalanceAsync(message).ConfigureAwait(false);
-                    return;
+                case "мои коины":
                 case "/bank-balance":
-                    await ShowBalanceAsync(message).ConfigureAwait(false);
-                    return;
+                    return ShowBalanceAsync(message);
             }
+            
+            return Task.CompletedTask;
         }
         
         private async Task ShowHelpAsync(SocketMessage message)
