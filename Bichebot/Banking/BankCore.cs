@@ -15,6 +15,13 @@ namespace Bichebot.Banking
             this.repository = repository;
         }
 
+        public async Task<(string username, int balance)[]> GetAllBalanceAsync()
+        {
+            var all = await repository.GetAllAsync().ConfigureAwait(false);
+            
+            return new (string username, int balance)[0];
+        }
+
         public async Task<int> GetBalanceAsync(ulong id)
         {
             var user = await GetUser(id).ConfigureAwait(false);

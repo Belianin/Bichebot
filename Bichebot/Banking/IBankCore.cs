@@ -5,6 +5,7 @@ namespace Bichebot.Banking
 {
     public interface IBankCore
     {
+        Task<(string username, int balance)[]> GetAllBalanceAsync();
         Task<int> GetBalanceAsync(ulong id);
 
         Task<Result<int>> SetBalanceAsync(ulong id, int value);

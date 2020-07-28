@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Bichebot.Banking;
 using Bichebot.Core;
 using Bichebot.Modules.Base;
+using Bichebot.Modules.React;
 using Discord;
 using Discord.WebSocket;
 
@@ -28,12 +30,23 @@ namespace Bichebot.Modules.Bank
 
             switch (message.Content)
             {
+                case "бичекоины":
+                    return ShowAllBalanceAsync(message);
                 case "мои коины":
                 case "/bank-balance":
                     return ShowBalanceAsync(message);
             }
             
             return Task.CompletedTask;
+        }
+
+        private async Task ShowAllBalanceAsync(SocketMessage message)
+        {
+            var balances = await bank.GetAllBalanceAsync().ConfigureAwait(false);
+            await message.Channel
+                .SendMessageAsync(
+                    $"Бичекоины:\n{string.Join("\n", balances.Select(t => $"{t.username}: {t.balance}"))}")
+                .ConfigureAwait(false);
         }
         
         private async Task ShowHelpAsync(SocketMessage message)
