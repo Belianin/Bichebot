@@ -27,7 +27,7 @@ namespace Bichebot.Modules.Withermans
         {
             while (true)
             {
-                await Task.Delay(1000 * core.Random.Next(60, 60 * 48)).ConfigureAwait(false);
+                await Task.Delay(1000 * 60 * core.Random.Next(60, 60 * 48)).ConfigureAwait(false);
                 await Run().ConfigureAwait(false);
             }
         }
@@ -59,7 +59,7 @@ namespace Bichebot.Modules.Withermans
             if (winners.Count == 0)
                 await channel.SendMessageAsync($"Никто не прыгнул. ВСЕМ БАН{core.ToEmojiString("lejatbamboe")}")
                     .ConfigureAwait(false);
-            if (winners.Count == 1)
+            else if (winners.Count == 1)
             {
                 var winner = winners.First();
                 var winnerRoles = core.Guild.GetUser(winner.Id).Roles.Where(r => !r.IsEveryone);
