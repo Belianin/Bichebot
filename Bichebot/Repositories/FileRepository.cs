@@ -45,10 +45,11 @@ namespace Bichebot.Repositories
             return result;
         }
 
-        public async Task CreateOrUpdateAsync(TKey key, TValue item)
+        public Task CreateOrUpdateAsync(TKey key, TValue item)
         {
-            await File.WriteAllTextAsync($"{directory}/{key.ToString()}", JsonConvert.SerializeObject(item))
-                .ConfigureAwait(false);
+            return File.WriteAllTextAsync(
+                $"{directory}/{key.ToString()}",
+                JsonConvert.SerializeObject(item, Formatting.Indented));
         }
 
         public async Task DeleteAsync(TKey key)

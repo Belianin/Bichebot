@@ -26,7 +26,8 @@ namespace Bichebot
             serviceCollection.AddSingleton<DiscordSocketClient>();
             serviceCollection.AddSingleton<IBotCore>(sp => 
                 new BotCore(botSettings.GuildId, sp.GetService<DiscordSocketClient>()));
-            serviceCollection.AddSingleton<IBankCore>(new BankCore(new BichemansRepository()));
+            serviceCollection.AddSingleton<IBankCore>(new BankCore(
+                new FileRepository<ulong, Bicheman>("Bichemans", ulong.Parse)));
             serviceCollection.AddSingleton<AudioSpeaker>();
         }
 

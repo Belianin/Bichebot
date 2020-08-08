@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bichebot.Repositories;
 using Bichebot.Utilities;
@@ -7,10 +8,9 @@ namespace Bichebot.Banking
 {
     public class BankCore : IBankCore
     {
-        private readonly BichemansRepository repository;
-        private readonly Dictionary<ulong, Bicheman> bichemans = new Dictionary<ulong, Bicheman>();
+        private readonly IRepository<ulong, Bicheman> repository;
 
-        public BankCore(BichemansRepository repository)
+        public BankCore(IRepository<ulong, Bicheman> repository)
         {
             this.repository = repository;
         }
@@ -18,8 +18,8 @@ namespace Bichebot.Banking
         public async Task<(string username, int balance)[]> GetAllBalanceAsync()
         {
             var all = await repository.GetAllAsync().ConfigureAwait(false);
-            
-            return new (string username, int balance)[0];
+
+            return all.Values.Select(b => (b.Id.ToString(), b.Bichecoins)).ToArray();
         }
 
         public async Task<int> GetBalanceAsync(ulong id)
@@ -36,6 +36,8 @@ namespace Bichebot.Banking
 
             var user = await GetUser(id).ConfigureAwait(false);
             user.Bichecoins = value;
+
+            await repository.CreateOrUpdateAsync(user.Id, user).ConfigureAwait(false);
             
             return value;
         }
@@ -48,6 +50,8 @@ namespace Bichebot.Banking
                 balance = 0;
 
             user.Bichecoins = balance;
+
+            await repository.CreateOrUpdateAsync(user.Id, user).ConfigureAwait(false);
 
             return balance;
         }
@@ -67,12 +71,9 @@ namespace Bichebot.Banking
 
         }
 
-        private async Task<Bicheman> GetUser(ulong id)
+        private Task<Bicheman> GetUser(ulong id)
         {
-            if (bichemans.TryGetValue(id, out var user))
-                return user;
-
-            return await repository.GetOrCreateAsync(id, new Bicheman {Id = id, Bichecoins = 0}).ConfigureAwait(false);
+            return repository.GetOrCreateAsync(id, new Bicheman(id, "Name"));
         }
     }
 }
