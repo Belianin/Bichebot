@@ -72,7 +72,10 @@ namespace Bichebot.Modules.FOnlineStatistics
                 {
                     if (diff.Death == 0 && diff.Kills == 0)
                         sb.Append($"На пустоши появился новенький: {diff.Player}{FormMessageEndForNewbie(diff)}\n");
-                    else if (diff.Death == 0)
+                }
+                else
+                {
+                    if (diff.Death == 0)
                         sb.Append($"{diff.Player} убил {diff.Kills} человек\n");
                     else if (diff.Kills == 0)
                         sb.Append($"{diff.Player} слился {diff.Death} раз\n");
