@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Bichebot.Modules.Bank;
 using Bichebot.Modules.Best;
+using Bichebot.Modules.FOnlineStatistics;
 using Bichebot.Modules.Greeter;
 using Bichebot.Modules.Withermans;
 
@@ -36,5 +37,10 @@ namespace Bichebot
         
         public WithermansSettings WithermansModule { get; set; } = new WithermansSettings();
 
+        public FonlineStatisticsModuleSettings FonlineStatisticsModule { get; set; } =
+            new FonlineStatisticsModuleSettings
+            {
+                ChannelId = 656922777344802882
+            };
     }
 }

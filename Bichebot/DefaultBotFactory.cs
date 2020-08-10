@@ -2,6 +2,7 @@ using System.IO;
 using Bichebot.Modules.Audio;
 using Bichebot.Modules.Bank;
 using Bichebot.Modules.Best;
+using Bichebot.Modules.FOnlineStatistics;
 using Bichebot.Modules.Greeter;
 using Bichebot.Modules.MemeGenerator;
 using Bichebot.Modules.Moderate;
@@ -28,6 +29,7 @@ namespace Bichebot
                 .Use<BestModule, BestModuleSettings>(settings.BestModule)
                 .Use<GreeterModule, GreeterModuleSettings>(settings.GreeterModule)
                 .Use<WithermansModule, WithermansSettings>(settings.WithermansModule)
+                .Use<FOnlineStatisticsModule, FonlineStatisticsModuleSettings>(settings.FonlineStatisticsModule)
                 .Build();
         }
     }

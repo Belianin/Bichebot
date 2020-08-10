@@ -63,10 +63,6 @@ namespace Bichebot
         {
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var core = serviceProvider.GetRequiredService<IBotCore>();
-
-            var a = serviceProvider.GetServices<IBotModule>().ToArray();
-            
             return new Bot(
                 serviceProvider.GetRequiredService<IBotCore>(),
                 serviceProvider.GetServices<IBotModule>().ToArray(),
