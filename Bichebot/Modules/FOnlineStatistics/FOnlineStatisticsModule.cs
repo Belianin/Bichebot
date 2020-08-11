@@ -51,7 +51,6 @@ namespace Bichebot.Modules.FOnlineStatistics
                     currentStatistics = newStats.Value.ToDictionary(k => k.Player);
                     return;
                 }
-                currentStatistics = newStats.Value.ToDictionary(k => k.Player);
 
                 var diffs = ShowDifferences(newStats.Value);
                 if (diffs.Count > 0)
@@ -59,15 +58,9 @@ namespace Bichebot.Modules.FOnlineStatistics
                     try
                     {
                         var message = FormMessage(diffs);
-                        if (message.Length < 2000)
-                            await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(message)
+                        foreach (var batch in SplitMessage(message, 1600))
+                            await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(batch)
                                 .ConfigureAwait(false);
-                        else
-                        {
-                            foreach (var batch in SplitMessage(message, 2000))
-                                await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(batch)
-                                    .ConfigureAwait(false);
-                        }
                     }
                     catch (Exception e)
                     {
@@ -75,6 +68,8 @@ namespace Bichebot.Modules.FOnlineStatistics
                             .ConfigureAwait(false);
                     }
                 }
+                
+                currentStatistics = newStats.Value.ToDictionary(k => k.Player);
             }
         }
 
