@@ -28,7 +28,7 @@ namespace Bichebot.Modules.FOnlineStatistics
             while (true)
             {
                 await PollAsync().ConfigureAwait(false);
-                await Task.Delay(TimeSpan.FromMinutes(5)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromMinutes(2)).ConfigureAwait(false);
             }
         }
         
@@ -55,10 +55,36 @@ namespace Bichebot.Modules.FOnlineStatistics
                 var diffs = ShowDifferences(newStats.Value);
                 if (diffs.Count > 0)
                 {
-                    var message = FormMessage(diffs);
-                    await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(message)
-                        .ConfigureAwait(false);
+                    try
+                    {
+                        var message = FormMessage(diffs);
+                        if (message.Length < 2000)
+                            await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(message)
+                                .ConfigureAwait(false);
+                        else
+                        {
+                            foreach (var batch in SplitMessage(message, 2000))
+                                await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(batch)
+                                    .ConfigureAwait(false);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(e.Message)
+                            .ConfigureAwait(false);
+                    }
                 }
+            }
+        }
+
+        private IEnumerable<string> SplitMessage(string message, int batchLength)
+        {
+            for (int i = 0; i < message.Length; i += batchLength)
+            {
+                if (message.Length <= batchLength * (i + 1))
+                    yield return message.Substring(i);
+                else
+                    yield return message.Substring(i, i + batchLength);
             }
         }
 
@@ -107,13 +133,16 @@ namespace Bichebot.Modules.FOnlineStatistics
                     diffs.Add(stat.ToNew());
                 else
                 {
-                    diffs.Add(new StatisticsDiff
+                    var diff = new StatisticsDiff
                     {
                         Player = stat.Player,
                         Death = stat.Death - oldStat.Death,
                         Kills = stat.Kills - oldStat.Kills,
                         Rating = stat.Rating - oldStat.Rating
-                    });
+                    };
+                    
+                    if (diff.Death != 0 || diff.Kills != 0)
+                        diffs.Add(diff);
                 }
             }
 
