@@ -51,6 +51,7 @@ namespace Bichebot.Modules.FOnlineStatistics
                     currentStatistics = newStats.Value.ToDictionary(k => k.Player);
                     return;
                 }
+                currentStatistics = newStats.Value.ToDictionary(k => k.Player);
 
                 var diffs = ShowDifferences(newStats.Value);
                 if (diffs.Count > 0)
@@ -91,7 +92,7 @@ namespace Bichebot.Modules.FOnlineStatistics
         private string FormMessage(List<StatisticsDiff> diffs)
         {
             var sb = new StringBuilder();
-            sb.Append("Тем временем в пустоши...\n\n");
+            sb.Append("**Тем временем в пустоши...**\n");
             foreach (var diff in diffs)
             {
                 if (diff.IsNew)
