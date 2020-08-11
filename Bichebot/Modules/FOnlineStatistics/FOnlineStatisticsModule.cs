@@ -93,21 +93,34 @@ namespace Bichebot.Modules.FOnlineStatistics
         {
             var sb = new StringBuilder();
             sb.Append("**Тем временем в пустоши...**\n");
-            foreach (var diff in diffs)
+
+            if (diffs.Count == 2 && 
+                diffs.Any(d => d.Kills == 1 && d.Death == 0) &&
+                diffs.Any(d => d.Kills == 0 && d.Death == 1))
             {
-                if (diff.IsNew)
+                var killer = diffs.First(d => d.Kills == 1);
+                var victim = diffs.First(d => d.Death == 1);
+
+                sb.Append($"**{killer.Player}** убил **{victim.Player}** подняв свой рейтинг на **{killer.Rating}**");
+            }
+            else
+            {
+                foreach (var diff in diffs)
                 {
-                    if (diff.Death == 0 && diff.Kills == 0)
-                        sb.Append($"На пустоши появился новенький: {diff.Player}{FormMessageEndForNewbie(diff)}\n");
-                }
-                else
-                {
-                    if (diff.Death == 0)
-                        sb.Append($"{diff.Player} убил {diff.Kills} человек\n");
-                    else if (diff.Kills == 0)
-                        sb.Append($"{diff.Player} слился {diff.Death} раз\n");
+                    if (diff.IsNew)
+                    {
+                        if (diff.Death == 0 && diff.Kills == 0)
+                            sb.Append($"На пустоши появился новенький: {diff.Player}{FormMessageEndForNewbie(diff)}\n");
+                    }
                     else
-                        sb.Append($"{diff.Player} убил {diff.Kills} человек и умер {diff.Death} раз\n");
+                    {
+                        if (diff.Death == 0)
+                            sb.Append($"**{diff.Player}** убил **{diff.Kills}** человек\n");
+                        else if (diff.Kills == 0)
+                            sb.Append($"**{diff.Player}** слился **{diff.Death}** раз\n");
+                        else
+                            sb.Append($"**{diff.Player}** убил **{diff.Kills}** человек и умер **{diff.Death}** раз\n");
+                    }
                 }
             }
 
@@ -119,10 +132,10 @@ namespace Bichebot.Modules.FOnlineStatistics
             if (diff.Death == 0 && diff.Kills == 0)
                 return "";
             if (diff.Death == 0)
-                return $" и даже успел кого-то убить ({diff.Kills} человек)";
+                return $" и даже успел кого-то **{diff.Kills}** человек";
             if (diff.Kills == 0)
-                return $" и уже успел слиться (об {diff.Death} человек)";
-            return $"и уже успел натворить дел {diff.Death} раз умер, {diff.Kills} убил";
+                return $" и уже успел слиться **{diff.Death}** раз";
+            return $"и уже успел натворить дел: **{diff.Death}** раз умер, убил **{diff.Kills}** человек";
         }
 
         private List<StatisticsDiff> ShowDifferences(IEnumerable<FoStatistics> newStats)
