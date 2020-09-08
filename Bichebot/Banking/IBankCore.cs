@@ -12,6 +12,6 @@ namespace Bichebot.Banking
 
         Task<Result<int>> AddAsync(ulong id, int value);
         
-        Task<Result> TryTransactAsync(ulong from, ulong to, int value);
+        Task<Result<Transaction>> TryTransactAsync(ulong from, ulong to, int value);
     }
 }

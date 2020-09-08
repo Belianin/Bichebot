@@ -57,23 +57,39 @@ namespace Bichebot.Banking
         }
 
         // В теории конечно потокобезопастности бы
-        public async Task<Result> TryTransactAsync(ulong @from, ulong to, int value)
+        public async Task<Result<Transaction>> TryTransactAsync(ulong @from, ulong to, int value)
         {
+            if (value < 1)
+                return "Must be a positive number";
             var fromUser = await GetUser(from).ConfigureAwait(false);
             if (fromUser.Bichecoins < value)
                 return "Not enough balance";
             
-            await AddAsync(@from, -value).ConfigureAwait(false);
-            await AddAsync(to, value).ConfigureAwait(false);
-                
-            return Result.Ok();
+            var fromBalance = await AddAsync(@from, -value).ConfigureAwait(false);
+            var toBalance = await AddAsync(to, value).ConfigureAwait(false);
 
-
+            return new Transaction
+            {
+                Form = from,
+                To = to,
+                Value = value,
+                FromBalance = fromBalance.Value,
+                ToBalance = toBalance.Value
+            };
         }
 
         private Task<Bicheman> GetUser(ulong id)
         {
             return repository.GetOrCreateAsync(id, new Bicheman(id, "Name"));
         }
+    }
+
+    public class Transaction
+    {
+        public ulong Form { get; set; }
+        public ulong To { get; set; }
+        public int Value { get; set; }
+        public int FromBalance { get; set; }
+        public int ToBalance { get; set; }
     }
 }
