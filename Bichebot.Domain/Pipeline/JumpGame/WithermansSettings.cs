@@ -2,11 +2,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
 {
     public class WithermansSettings
     {
-        public ulong Admin { get; set; } = 272446177163608066;
-
-        public JumpGameSettings JumpGame { get; set; } = new JumpGameSettings
-        {
-            ChannelId = 553146693743280128
-        };
+        public ulong Admin { get; set; }
+        public JumpGameSettings JumpGame { get; set; }
     }
 }

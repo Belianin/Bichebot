@@ -1,4 +1,5 @@
 using Bichebot.Core;
+using Bichebot.Settings;
 
 namespace Bichebot
 {

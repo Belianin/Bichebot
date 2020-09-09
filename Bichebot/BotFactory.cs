@@ -10,6 +10,7 @@ using Bichebot.Domain.Pipeline.React.Triggers;
 using Bichebot.Domain.Pipeline.React.Triggers.Domain;
 using Bichebot.Domain.Pipeline.Statistics;
 using Bichebot.Domain.Pipeline.Supreme;
+using Bichebot.Settings;
 using Nexus.Logging.Console;
 
 namespace Bichebot
