@@ -15,7 +15,10 @@ namespace Bichebot.Core.Banking
 
         public Result Register(User user)
         {
-            return repository.CreateOrUpdate(user);
+            if (repository.Get(user.Id).IsFail)
+                return repository.CreateOrUpdate(user);
+            
+            return Result.Ok();
         }
 
         public Result<int> GetBalance(ulong id)
