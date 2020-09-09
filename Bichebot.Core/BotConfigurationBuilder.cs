@@ -5,6 +5,7 @@ using Bichebot.Core.Banking;
 using Bichebot.Core.Modules;
 using Bichebot.Core.Pipeline;
 using Bichebot.Core.Repositories;
+using Bichebot.Core.Users;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Nexus.Logging;
@@ -17,7 +18,7 @@ namespace Bichebot.Core
 
         public BotConfigurationBuilder(ulong guildId, ILog log)
         {
-            var bank = new BankCore(new FileRepository<ulong, Bicheman>("Bichemans", ulong.Parse));
+            var bank = new BankCore(new FileUserRepository("Bichemans"));
             var core = new BotCore(guildId, new DiscordSocketClient(), bank, log);
             
             serviceCollection.AddSingleton<IBotCore>(core);

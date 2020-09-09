@@ -1,12 +1,12 @@
-namespace Bichebot.Core
+namespace Bichebot.Core.Users
 {
-    public class Bicheman
+    public class User
     {
         public ulong Id { get; set; }
         public string Name { get; set; }
         public int Bichecoins { get; set; } = 0;
 
-        public Bicheman(ulong id, string name)
+        public User(ulong id, string name)
         {
             Id = id;
             Name = name;

@@ -116,10 +116,18 @@ namespace Bichebot.Domain.Pipeline.Bank
         private async Task ShowAllBalanceAsync(SocketMessage message)
         {
             var balances = await core.Bank.GetAllBalanceAsync().ConfigureAwait(false);
-            await message.Channel
-                .SendMessageAsync(
-                    $"Бичекоины:\n{string.Join("\n", balances.Select(t => $"{t.username}: {t.balance}"))}")
-                .ConfigureAwait(false);
+            if (balances.IsFail)
+            {
+                await message.Channel.SendMessageAsync("Не смогли достать всех пользователей")
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                await message.Channel
+                    .SendMessageAsync(
+                        $"Бичекоины:\n{string.Join("\n", balances.Value.Select(t => $"{t.Name}: {t.Bichecoins}"))}")
+                    .ConfigureAwait(false);
+            }
         }
         
         private async Task ShowHelpAsync(SocketMessage message)

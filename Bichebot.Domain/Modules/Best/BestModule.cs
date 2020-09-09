@@ -14,12 +14,10 @@ namespace Bichebot.Domain.Modules.Best
     {
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
         private readonly BestModuleSettings settings;
-        private readonly IBankCore bank;
         
-        public BestModule(IBotCore core, IBankCore bank, BestModuleSettings settings) : base(core)
+        public BestModule(IBotCore core, BestModuleSettings settings) : base(core)
         {
             this.settings = settings;
-            this.bank = bank;
         }
         
         protected override async Task HandleReactionAsync(
@@ -67,12 +65,23 @@ namespace Bichebot.Domain.Modules.Best
             await Core.Guild.GetTextChannel(settings.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
 
-            await userMessage.Channel
-                .SendMessageAsync(
-                    $"{userMessage.Author.Username} получает {settings.Reward} бичекоинов за попадание в лучшее")
-                .ConfigureAwait(false);
-
-            await bank.AddAsync(userMessage.Author.Id, settings.Reward);
+            var newAmount = await Core.Bank.AddAsync(userMessage.Author.Id, settings.Reward);
+            if (newAmount.IsFail)
+            {
+                await userMessage.Channel
+                    .SendMessageAsync(
+                        $"{userMessage.Author.Username} попадает в лучшее, но не получает награду: {newAmount.Error}")
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                await userMessage.Channel
+                    .SendMessageAsync(
+                        $"{userMessage.Author.Username} получает {settings.Reward} ({newAmount.Value}) бичекоинов за попадание в лучшее")
+                    .ConfigureAwait(false);
+                
+            }
+            
         }
     }
 }
