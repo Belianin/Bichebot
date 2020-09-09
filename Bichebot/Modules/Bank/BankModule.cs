@@ -27,7 +27,42 @@ namespace Bichebot.Modules.Bank
         {
             if (FromAdmin(message))
             {
-                
+                if (Regex.IsMatch(message.Content, @"дать -?\d+$"))
+                {
+                    var recipients2 = message.MentionedUsers.Where(u => u.Id != message.Author.Id).ToArray();
+                    if (recipients2.Length != 1)
+                    {
+                        await message.Channel
+                            .SendMessageAsync($"Чел, переводи по одному {Core.ToEmojiString("kripotabamboe")}")
+                            .ConfigureAwait(false);
+                    }
+
+                    var words = message.Content.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                    var numbers = words.Where(w => int.TryParse(w, out var _)).Select(int.Parse).ToArray();
+
+                    if (numbers.Length != 1)
+                    {
+                        await message.Channel.SendMessageAsync($"Чё {Core.ToEmojiString("valera")} ?")
+                            .ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        var transaction = await bank.AddAsync(recipients2.First().Id, numbers.First())
+                            .ConfigureAwait(false);
+
+                        if (transaction.IsSuccess)
+                        {
+                            var t = transaction.Value;
+                            await message.Channel.SendMessageAsync($"{recipients2.First().Username}: {t}")
+                                .ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await message.Channel.SendMessageAsync($"Проблемка: {transaction.Error}")
+                                .ConfigureAwait(false);
+                        }
+                    }
+                }
             }
 
             var recipients = message.MentionedUsers.Where(u => u.Id != message.Author.Id).ToArray();
