@@ -7,11 +7,11 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
     public class RudeTrigger : ReactionTrigger
     {
         private readonly IBotCore core;
-        
-        public RudeTrigger(IBotCore core) : base(new []
+
+        public RudeTrigger(IBotCore core) : base(new[]
         {
-            new [] {"бот"},
-            new [] {"лох", "деб", "твар"} 
+            new[] {"бот"},
+            new[] {"лох", "деб", "твар"}
         })
         {
             this.core = core;

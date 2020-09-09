@@ -18,7 +18,7 @@ namespace Bichebot
     internal class BotFactory : IBotFactory
     {
         public static IBotFactory Instance => new BotFactory();
-        
+
         public Bot Create(BotSettings settings)
         {
             return new BotConfigurationBuilder(settings.GuildId, new ColourConsoleLog())
@@ -31,7 +31,7 @@ namespace Bichebot
                     .Use<SupremeHandler>()
                     .Use<BankMessageHandler, BankModuleSettings>(settings.BankModule)
                     .Use<JumpGameMessageHandler, WithermansSettings>(settings.WithermansModule)
-                    .Use<ReactMessageHandler, ReactSettings>(core => new ReactSettings()
+                    .Use<ReactMessageHandler, ReactSettings>(core => new ReactSettings
                     {
                         Triggers = new IReactionTrigger[]
                         {
@@ -41,7 +41,7 @@ namespace Bichebot
                             new LikeTrigger(core),
                             new QuestionTrigger(core),
                             new RareTrigger(core),
-                            new RudeTrigger(core),
+                            new RudeTrigger(core)
                         }
                     }))
                 .Build();

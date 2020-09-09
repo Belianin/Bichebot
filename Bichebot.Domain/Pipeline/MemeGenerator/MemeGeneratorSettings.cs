@@ -2,6 +2,6 @@ namespace Bichebot.Domain.Pipeline.MemeGenerator
 {
     public class MemeGeneratorSettings
     {
-        public string[] MemePhrases { get; set; } 
+        public string[] MemePhrases { get; set; }
     }
 }

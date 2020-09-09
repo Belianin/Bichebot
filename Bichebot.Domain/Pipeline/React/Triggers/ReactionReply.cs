@@ -6,15 +6,12 @@ namespace Bichebot.Domain.Pipeline.React.Triggers
 {
     public class ReactionReply
     {
-        public string Text { get; }
-        public ICollection<IEmote> Emotes { get; }
-
         public ReactionReply(string text, params IEmote[] emotes)
         {
             Text = text;
             Emotes = emotes;
         }
-        
+
         public ReactionReply(string text)
         {
             Text = text;
@@ -25,6 +22,9 @@ namespace Bichebot.Domain.Pipeline.React.Triggers
         {
             Emotes = emotes;
         }
+
+        public string Text { get; }
+        public ICollection<IEmote> Emotes { get; }
 
         public override string ToString()
         {

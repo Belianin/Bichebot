@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bichebot.Core;
-using Bichebot.Core.Banking;
 using Bichebot.Core.Modules.Base;
 using Discord;
 using Discord.Rest;
@@ -14,23 +13,20 @@ namespace Bichebot.Domain.Modules.Best
     {
         private readonly HashSet<ulong> alreadyBest = new HashSet<ulong>();
         private readonly BestModuleSettings settings;
-        
+
         public BestModule(IBotCore core, BestModuleSettings settings) : base(core)
         {
             this.settings = settings;
         }
-        
+
         protected override async Task HandleReactionAsync(
             Cacheable<IUserMessage, ulong> cachedMessage,
             ISocketMessageChannel channel,
             SocketReaction reaction)
         {
             var message = await channel.GetMessageAsync(reaction.MessageId).ConfigureAwait(false);
-            
-            if (message is RestUserMessage userMessage)
-            {
-                await SendToBestChannelAsync(userMessage).ConfigureAwait(false);
-            }
+
+            if (message is RestUserMessage userMessage) await SendToBestChannelAsync(userMessage).ConfigureAwait(false);
         }
 
         private async Task SendToBestChannelAsync(IUserMessage userMessage)
@@ -40,7 +36,7 @@ namespace Bichebot.Domain.Modules.Best
                 !userMessage.Reactions.Values.Any(r => r.ReactionCount >= settings.ReactionCountToBeBest) ||
                 userMessage.Channel.Id == settings.BestChannelId)
                 return;
-            
+
             alreadyBest.Add(userMessage.Id);
 
             var emotes = string.Join("", userMessage
@@ -67,21 +63,15 @@ namespace Bichebot.Domain.Modules.Best
 
             var newAmount = Core.Bank.Add(userMessage.Author.Id, settings.Reward);
             if (newAmount.IsFail)
-            {
                 await userMessage.Channel
                     .SendMessageAsync(
                         $"{userMessage.Author.Username} попадает в лучшее, но не получает награду: {newAmount.Error}")
                     .ConfigureAwait(false);
-            }
             else
-            {
                 await userMessage.Channel
                     .SendMessageAsync(
                         $"{userMessage.Author.Username} получает {settings.Reward} ({newAmount.Value}) бичекоинов за попадание в лучшее")
                     .ConfigureAwait(false);
-                
-            }
-            
         }
     }
 }

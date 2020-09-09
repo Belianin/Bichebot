@@ -25,7 +25,7 @@ namespace Bichebot.Domain.Pipeline.Moderate
                 .ConfigureAwait(false);
 
             var messageToDelete = messages.FirstOrDefault();
-            
+
             if (messageToDelete is IUserMessage userMessage && !userMessage.Content.Contains("~~"))
             {
                 await userMessage.DeleteAsync().ConfigureAwait(false);

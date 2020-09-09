@@ -9,7 +9,7 @@ namespace Bichebot.Domain.Pipeline.React
         {
             553146693743280128, 676118662205276163, 656922777344802882
         };
-        
+
         public ICollection<IReactionTrigger> Triggers { get; set; }
     }
 }

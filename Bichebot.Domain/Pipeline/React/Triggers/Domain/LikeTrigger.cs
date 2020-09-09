@@ -7,10 +7,11 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
     public class LikeTrigger : ReactionTrigger
     {
         private readonly IBotCore core;
-        public LikeTrigger(IBotCore core) : base(new []
+
+        public LikeTrigger(IBotCore core) : base(new[]
         {
-            new [] {"бот"},
-            new [] {"красавчик", "молор", "найс", "дядя", "мужик", "васян", "гунирал", "ля", "какой"}
+            new[] {"бот"},
+            new[] {"красавчик", "молор", "найс", "дядя", "мужик", "васян", "гунирал", "ля", "какой"}
         })
         {
             this.core = core;

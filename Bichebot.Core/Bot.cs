@@ -37,7 +37,7 @@ namespace Bichebot.Core
             core.Log.Info("Started");
 
             await Task.Delay(-1, cancellationToken).ConfigureAwait(false);
-            
+
             core.Log.Info("Stopping");
         }
 

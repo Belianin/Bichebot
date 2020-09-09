@@ -9,6 +9,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
     {
         private readonly JumpGame jumpGame;
         private readonly WithermansSettings settings;
+
         public JumpGameMessageHandler(IBotCore core, WithermansSettings settings)
         {
             this.settings = settings;
@@ -24,7 +25,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
                 Task.Run(() => jumpGame.Run());
                 return true;
             }
-            
+
             return false;
         }
     }

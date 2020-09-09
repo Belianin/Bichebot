@@ -15,7 +15,7 @@ namespace Bichebot.Core.Utilities
                 yield return e;
             }
         }
-        
+
         public static bool ContainsAny(this string row, IEnumerable<string> rows)
         {
             return rows.Any(row.Contains);

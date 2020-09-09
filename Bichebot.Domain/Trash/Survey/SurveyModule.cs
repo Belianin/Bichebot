@@ -14,29 +14,30 @@ namespace Bichebot.Domain.Trash.Survey
     // unused
     internal class SurveyModule : StatefulBaseModule<SurveyState>
     {
-        private readonly List<string> questions;
-
         private readonly List<string> possibleAnswers = new List<string>
         {
             "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"
         };
-        
-        public SurveyModule(IBotCore core, Func<SurveyState> createDefault, List<string> questions) : base(core, createDefault)
+
+        private readonly List<string> questions;
+
+        public SurveyModule(IBotCore core, Func<SurveyState> createDefault, List<string> questions) : base(core,
+            createDefault)
         {
             this.questions = questions;
         }
 
-        protected override async Task HandleReactionAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        protected override async Task HandleReactionAsync(Cacheable<IUserMessage, ulong> cachedMessage,
+            ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.User.Value.IsBot)
                 return;
-            
+
             if (!possibleAnswers.Contains(reaction.Emote.Name))
                 return;
-            
+
             var state = GetState(reaction.UserId);
             if (reaction.MessageId == state.LastMessageId) // && possibleAnswers.Contains(reaction.Emote.Name))
-            {
                 try
                 {
                     if (state.CurrentQuestion - 1 != questions.Count)
@@ -48,7 +49,6 @@ namespace Bichebot.Domain.Trash.Survey
                     Console.WriteLine(e);
                     throw;
                 }
-            }
         }
 
         protected override async Task HandleMessageAsync(SocketMessage message)
@@ -74,21 +74,22 @@ namespace Bichebot.Domain.Trash.Survey
             {
                 state.Status = SurveyStatus.Done;
                 state.LastMessageId = 0;
-                File.WriteAllText($"{user.Username}{DateTime.Now.ToString("yyyy-M-d-hh")}", 
-                    JsonConvert.SerializeObject(state.Answers.Select(a => new UserAnswer(a.Question, 
+                File.WriteAllText($"{user.Username}{DateTime.Now.ToString("yyyy-M-d-hh")}",
+                    JsonConvert.SerializeObject(state.Answers.Select(a => new UserAnswer(a.Question,
                         (possibleAnswers.IndexOf(a.Answer) + 1).ToString()))));
                 await user.SendMessageAsync(string.Join("\n", state.Answers.Select(a => $"{a.Question}:{a.Answer}")))
                     .ConfigureAwait(false);
                 return;
             }
 
-            var message = await user.SendMessageAsync( Core.ToEmojiString(questions[state.CurrentQuestion]) + " (" + questions[state.CurrentQuestion] + ")")
+            var message = await user.SendMessageAsync(Core.ToEmojiString(questions[state.CurrentQuestion]) + " (" +
+                                                      questions[state.CurrentQuestion] + ")")
                 .ConfigureAwait(false);
 
             await message.AddReactionsAsync(possibleAnswers.Select(e => new Emoji(e)).ToArray(), RequestOptions.Default)
                 .ConfigureAwait(false);
             state.LastMessageId = message.Id;
-            
+
             state.CurrentQuestion++;
         }
     }

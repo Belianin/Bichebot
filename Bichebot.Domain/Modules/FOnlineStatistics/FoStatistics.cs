@@ -28,7 +28,6 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                 Kills = current.Kills - prev.Kills,
                 Rating = current.Rating - prev.Rating
             };
-
         }
     }
 }

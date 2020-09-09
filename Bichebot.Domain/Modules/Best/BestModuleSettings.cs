@@ -9,7 +9,7 @@ namespace Bichebot.Domain.Modules.Best
         public int ReactionCountToBeBest { get; set; } = 3;
 
         public int Reward { get; set; } = 100;
-        
+
         public HashSet<ulong> SourceChannelIds { get; set; }
     }
 }

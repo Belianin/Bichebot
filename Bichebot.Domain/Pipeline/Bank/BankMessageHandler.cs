@@ -13,9 +13,9 @@ namespace Bichebot.Domain.Pipeline.Bank
     public class BankMessageHandler : IMessageHandler
     {
         private readonly IBotCore core;
-        
+
         private readonly BankModuleSettings settings;
-        
+
         public BankMessageHandler(IBotCore core, BankModuleSettings settings)
         {
             this.settings = settings;
@@ -32,19 +32,16 @@ namespace Bichebot.Domain.Pipeline.Bank
         public async Task<bool> HandleAsync(SocketMessage message)
         {
             if (FromAdmin(message))
-            {
                 if (Regex.IsMatch(message.Content, @"дать -?\d+$"))
                 {
                     var recipients2 = message.MentionedUsers.ToArray();
                     if (recipients2.Length != 1)
-                    {
                         await message.Channel
                             .SendMessageAsync($"Чел, переводи по одному {core.ToEmojiString("kripotabamboe")}")
                             .ConfigureAwait(false);
-                    }
 
                     var words = message.Content.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                    var numbers = words.Where(w => int.TryParse(w, out var _)).Select(int.Parse).ToArray();
+                    var numbers = words.Where(w => int.TryParse(w, out _)).Select(int.Parse).ToArray();
 
                     if (numbers.Length != 1)
                     {
@@ -68,19 +65,17 @@ namespace Bichebot.Domain.Pipeline.Bank
                         }
                     }
                 }
-            }
 
             var recipients = message.MentionedUsers.Where(u => u.Id != message.Author.Id).ToArray();
             if (Regex.IsMatch(message.Content, @"лови \d+$") && recipients.Length > 0)
             {
                 if (recipients.Length != 1)
-                {
-                    await message.Channel.SendMessageAsync($"Чел, переводи по одному {core.ToEmojiString("kripotabamboe")}")
-                        .ConfigureAwait(false); 
-                }
-                
+                    await message.Channel
+                        .SendMessageAsync($"Чел, переводи по одному {core.ToEmojiString("kripotabamboe")}")
+                        .ConfigureAwait(false);
+
                 var words = message.Content.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                var numbers = words.Where(w => int.TryParse(w, out var _)).Select(int.Parse).ToArray();
+                var numbers = words.Where(w => int.TryParse(w, out _)).Select(int.Parse).ToArray();
 
                 if (numbers.Length != 1)
                 {
@@ -94,7 +89,9 @@ namespace Bichebot.Domain.Pipeline.Bank
                     if (transaction.IsSuccess)
                     {
                         var t = transaction.Value;
-                        await message.Channel.SendMessageAsync($"{message.Author.Username}: {t.FromBalance} -> {t.Value} -> {t.ToBalance} :{recipients.First().Username}")
+                        await message.Channel
+                            .SendMessageAsync(
+                                $"{message.Author.Username}: {t.FromBalance} -> {t.Value} -> {t.ToBalance} :{recipients.First().Username}")
                             .ConfigureAwait(false);
                     }
                     else
@@ -123,19 +120,15 @@ namespace Bichebot.Domain.Pipeline.Bank
         {
             var balances = core.Bank.GetAllBalances();
             if (balances.IsFail)
-            {
                 await message.Channel.SendMessageAsync("Не смогли достать всех пользователей")
                     .ConfigureAwait(false);
-            }
             else
-            {
                 await message.Channel
                     .SendMessageAsync(
                         $"Бичекоины:\n{string.Join("\n", balances.Value.Select(t => $"{t.Name}: {t.Bichecoins}"))}")
                     .ConfigureAwait(false);
-            }
         }
-        
+
         private async Task ShowHelpAsync(SocketMessage message)
         {
             await message.Channel
@@ -150,14 +143,14 @@ namespace Bichebot.Domain.Pipeline.Bank
                 await message.Channel.SendMessageAsync($"Не получилось узнать баланс: {balance.Error}")
                     .ConfigureAwait(false);
             else
-            {
                 await message.Channel
                     .SendMessageAsync($"{message.Author.Username}: {balance.Value}.0")
                     .ConfigureAwait(false);
-            }
-
         }
 
-        private bool FromAdmin(IMessage message) => settings.Admins.Contains(message.Author.Id);
+        private bool FromAdmin(IMessage message)
+        {
+            return settings.Admins.Contains(message.Author.Id);
+        }
     }
 }

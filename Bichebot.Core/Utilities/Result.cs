@@ -4,8 +4,12 @@ namespace Bichebot.Core.Utilities
 {
     public class Result<T>
     {
+        private Result()
+        {
+        }
+
         public T Value { get; private set; }
-        
+
         public string Error { get; private set; }
 
         public bool IsSuccess { get; private set; }
@@ -39,12 +43,14 @@ namespace Bichebot.Core.Utilities
         {
             return Fail(error);
         }
-        
-        private Result() {}
     }
 
     public class Result
     {
+        private Result()
+        {
+        }
+
         public string Error { get; private set; }
 
         public bool IsSuccess { get; private set; }
@@ -72,7 +78,5 @@ namespace Bichebot.Core.Utilities
         {
             return Fail(error);
         }
-        
-        private Result() {}
     }
 }

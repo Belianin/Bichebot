@@ -15,11 +15,11 @@ namespace Bichebot.Domain.Pipeline.React.Triggers
                 .Select(c => c.Select(x => x.ToLower()).ToArray())
                 .ToArray();
         }
-        
+
         public virtual bool IsNeedReaction(IMessage message)
         {
             var content = message.Content.ToLower();
-            
+
             return conditions.All(c => content.ContainsAny(c));
         }
 

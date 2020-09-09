@@ -1,10 +1,11 @@
 // ReSharper disable IdentifierTypo
+
 namespace Bichebot.Settings
 {
     public static class WellKnown
     {
         public const ulong GuildId = 307817006021738507;
-        
+
         public static class Users
         {
             public const ulong Aler = 272446177163608066;

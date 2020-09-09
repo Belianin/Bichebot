@@ -8,7 +8,7 @@ namespace Bichebot.Domain.Pipeline.Audio
     public class AudioHandler : IMessageHandler
     {
         private readonly AudioSpeaker audio;
-        
+
         public AudioHandler(AudioSpeaker audio)
         {
             this.audio = audio;

@@ -23,7 +23,7 @@ namespace Bichebot.Core
         public IBankCore Bank { get; }
         public ILog Log { get; }
         public DiscordSocketClient Client { get; }
-        
+
         public SocketGuild Guild => Client.Guilds.First(g => g.Id == guildId);
 
         public Random Random { get; } = new Random();
@@ -33,15 +33,15 @@ namespace Bichebot.Core
             var emote = Guild.Emotes.FirstOrDefault(e => e.Name == text);
             if (emote == null)
                 return $":{text}:";
-            
+
             return emote.Animated ? $"<a:{emote.Name}:{emote.Id}>" : $"<:{emote.Name}:{emote.Id}>";
         }
-        
+
         public IEnumerable<IUserMessage> GetMessages(IMessageChannel channel, TimeSpan period)
         {
             var timestamp = DateTime.UtcNow;
             ulong lastId = 0;
-            
+
             var messages = channel.GetMessagesAsync().Flatten();
             var enumerator = messages.GetAsyncEnumerator();
             var isEmpty = true;

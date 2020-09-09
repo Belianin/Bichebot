@@ -13,18 +13,18 @@ namespace Bichebot.Core.Audio
         private const string FFMPEG = "ffmpeg";
 
         private readonly IBotCore core;
-        
-        public IAudioChannel CurrentChannel { get; private set; }
-        
-        public bool IsSpeaking { get; private set; }
-
-        private bool IsConnected => core.Guild.AudioClient != null;
 
         public AudioSpeaker(IBotCore core)
         {
             this.core = core;
         }
-        
+
+        public IAudioChannel CurrentChannel { get; private set; }
+
+        public bool IsSpeaking { get; private set; }
+
+        private bool IsConnected => core.Guild.AudioClient != null;
+
         public void Connect(IUser user)
         {
             Connect(core.Guild.VoiceChannels.FirstOrDefault(c => c.Users.Contains(user)));
@@ -34,7 +34,7 @@ namespace Bichebot.Core.Audio
         {
             if (channel == null)
                 return;
-            
+
             new Thread(() => ConnectToChannel(channel)).Start();
         }
 
@@ -44,7 +44,7 @@ namespace Bichebot.Core.Audio
                 return;
 
             IsSpeaking = true;
-            
+
             var psi = new ProcessStartInfo
             {
                 FileName = FFMPEG,
@@ -54,10 +54,10 @@ namespace Bichebot.Core.Audio
             };
 
             using var ffmpeg = Process.Start(psi);
-            
+
             if (ffmpeg == null)
                 return;
-            
+
             await using var output = ffmpeg.StandardOutput.BaseStream;
             await using var discord = core.Guild.AudioClient.CreatePCMStream(AudioApplication.Mixed);
             try
@@ -70,7 +70,7 @@ namespace Bichebot.Core.Audio
                 IsSpeaking = false;
             }
         }
-        
+
         private void ConnectToChannel(IAudioChannel channel)
         {
             Console.WriteLine("Connecting");

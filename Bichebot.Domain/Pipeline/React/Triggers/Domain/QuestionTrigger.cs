@@ -20,7 +20,7 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
 
         public ReactionReply GetReply(IMessage message)
         {
-            return new ReactionReply(core.GetEmote(core.Random.Choose(new[] {"thinkingbamboe", "papich"})));
+            return new ReactionReply(core.GetEmote(core.Random.Choose("thinkingbamboe", "papich")));
         }
     }
 }

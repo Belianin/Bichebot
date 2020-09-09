@@ -12,9 +12,9 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 {
     public class FOnlineStatisticsModule : BaseModule
     {
-        private Dictionary<string, FoStatistics> currentStatistics;
         private readonly FonlineStatisticsModuleSettings settings;
-        private bool wasFail = false;
+        private Dictionary<string, FoStatistics> currentStatistics;
+        private bool wasFail;
 
         public FOnlineStatisticsModule(IBotCore core, FonlineStatisticsModuleSettings settings) : base(core)
         {
@@ -30,7 +30,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                 await Task.Delay(TimeSpan.FromMinutes(2)).ConfigureAwait(false);
             }
         }
-        
+
         private async Task PollAsync()
         {
             var newStats = GetStatistics();
@@ -53,7 +53,6 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 
                 var diffs = ShowDifferences(newStats.Value);
                 if (diffs.Count > 0)
-                {
                     try
                     {
                         var message = FormMessage(diffs);
@@ -66,21 +65,18 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                         await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(e.Message)
                             .ConfigureAwait(false);
                     }
-                }
-                
+
                 currentStatistics = newStats.Value.ToDictionary(k => k.Player);
             }
         }
 
         private IEnumerable<string> SplitMessage(string message, int batchLength)
         {
-            for (int i = 0; i < message.Length; i += batchLength)
-            {
+            for (var i = 0; i < message.Length; i += batchLength)
                 if (message.Length <= batchLength * (i + 1))
                     yield return message.Substring(i);
                 else
                     yield return message.Substring(i, i + batchLength);
-            }
         }
 
         private string FormMessage(List<StatisticsDiff> diffs)
@@ -88,7 +84,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
             var sb = new StringBuilder();
             sb.Append("**Тем временем в пустоши...**\n");
 
-            if (diffs.Count == 2 && 
+            if (diffs.Count == 2 &&
                 diffs.Any(d => d.Kills == 1 && d.Death == 0) &&
                 diffs.Any(d => d.Kills == 0 && d.Death == 1))
             {
@@ -100,7 +96,6 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
             else
             {
                 foreach (var diff in diffs)
-                {
                     if (diff.IsNew)
                     {
                         if (diff.Death == 0 && diff.Kills == 0)
@@ -115,7 +110,6 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                         else
                             sb.Append($"**{diff.Player}** убил **{diff.Kills}** человек и умер **{diff.Death}** раз\n");
                     }
-                }
             }
 
             return sb.ToString();
@@ -136,9 +130,10 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
         {
             var diffs = new List<StatisticsDiff>();
             foreach (var stat in newStats)
-            {
                 if (!currentStatistics.TryGetValue(stat.Player, out var oldStat))
+                {
                     diffs.Add(stat.ToNew());
+                }
                 else
                 {
                     var diff = new StatisticsDiff
@@ -148,11 +143,10 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                         Kills = stat.Kills - oldStat.Kills,
                         Rating = stat.Rating - oldStat.Rating
                     };
-                    
+
                     if (diff.Death != 0 || diff.Kills != 0)
                         diffs.Add(diff);
                 }
-            }
 
             return diffs;
         }
@@ -166,7 +160,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                 var doc = web.Load(url);
 
                 var table = doc.GetElementbyId("table");
-                
+
                 var rows = table.ChildNodes.Where(n => n.Name == "tr");
 
                 return Result<IEnumerable<FoStatistics>>.Ok(rows.Select(ParsePlayer).ToArray());

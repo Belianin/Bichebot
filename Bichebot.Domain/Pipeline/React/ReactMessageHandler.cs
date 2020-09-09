@@ -10,8 +10,9 @@ namespace Bichebot.Domain.Pipeline.React
 {
     public class ReactMessageHandler : IMessageHandler
     {
-        private readonly ReactSettings settings;
         private readonly ILog log;
+        private readonly ReactSettings settings;
+
         public ReactMessageHandler(ReactSettings settings, ILog log)
         {
             this.settings = settings;
@@ -22,13 +23,14 @@ namespace Bichebot.Domain.Pipeline.React
         {
             if (!(message is IUserMessage userMessage) || !settings.ReactChannels.Contains(message.Channel.Id))
                 return false;
-            
+
             foreach (var trigger in settings.Triggers)
             {
                 if (!trigger.TryGetReaction(message, out var reaction))
                     continue;
-                log.Info($"Reacting with {reaction} by {trigger.GetType().Name} on '{message.Content ?? "attachment"}'");
-                
+                log.Info(
+                    $"Reacting with {reaction} by {trigger.GetType().Name} on '{message.Content ?? "attachment"}'");
+
                 if (reaction.Text != null)
                     await message.Channel.SendMessageAsync(reaction.Text).ConfigureAwait(false);
                 if (reaction.Emotes != null && reaction.Emotes.Count > 0)

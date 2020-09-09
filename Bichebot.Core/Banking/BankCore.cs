@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
-using Bichebot.Core.Repositories;
 using Bichebot.Core.Users;
 using Bichebot.Core.Utilities;
 
@@ -37,7 +34,7 @@ namespace Bichebot.Core.Banking
             if (userResult.IsFail)
                 return userResult.Error;
             var user = userResult.Value;
-            
+
             var balance = userResult.Value.Bichecoins + value;
             if (balance < 0)
                 return "Negative balance";
@@ -57,14 +54,14 @@ namespace Bichebot.Core.Banking
             if (userResult.IsFail)
                 return $"Failed to get user: {userResult.Error}";
             var user = userResult.Value;
-            
+
             user.Bichecoins = value;
             repository.CreateOrUpdate(user);
-            
+
             return value;
         }
 
-        public Result<Transaction> TryTransact(ulong @from, ulong to, int value)
+        public Result<Transaction> TryTransact(ulong from, ulong to, int value)
         {
             if (value < 1)
                 return "Must be a positive number";
@@ -73,14 +70,14 @@ namespace Bichebot.Core.Banking
                 return fromUser.Error;
             if (fromUser.Value.Bichecoins < value)
                 return "Not enough balance";
-            
-            var fromBalance = Add(@from, -value);
+
+            var fromBalance = Add(from, -value);
             if (fromBalance.IsFail)
                 return $"Failed to reduce from-balance: {fromBalance.Error}";
             var toBalance = Add(to, value);
             if (fromBalance.IsFail)
             {
-                var revertResult = Add(@from, value);
+                var revertResult = Add(from, value);
                 if (revertResult.IsFail)
                     return "Failed to revert transaction!";
                 return "Failed to add value to to-balance";
@@ -105,7 +102,6 @@ namespace Bichebot.Core.Banking
         {
             return repository.Get(id);
         }
-
     }
 
     public class Transaction

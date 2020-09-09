@@ -10,7 +10,7 @@ namespace Bichebot.Domain.Pipeline.Supreme
 {
     public class SupremeHandler : IMessageHandler
     {
-        private IBotCore Core;
+        private readonly IBotCore Core;
 
         public SupremeHandler(IBotCore core)
         {
@@ -31,14 +31,14 @@ namespace Bichebot.Domain.Pipeline.Supreme
         private bool IsSupremeAsked(IMessage message)
         {
             var lower = message.Content.ToLower();
-            return lower.ContainsAny(new [] {"бот ", "бот,"}) &&
+            return lower.ContainsAny(new[] {"бот ", "бот,"}) &&
                    lower.Contains("суприм") &&
                    lower.ContainsAny(new[] {"игра", "гам", " в ", "го "});
         }
 
         private async Task TrySupremeSuggestionAsync(SocketMessage message)
         {
-            var sugg = new []{"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
+            var sugg = new[] {"Советую", "Предлагаю", "Попробуй", "Го", "А может", "Как насчет", "Мб"};
 
             var maps = new List<SupremeMap>
             {
@@ -127,7 +127,7 @@ namespace Bichebot.Domain.Pipeline.Supreme
                         $"с нагиб тактикой на четверых - ЯДЕРКА{Core.ToEmojiString("radioactive")}+ПАУК{Core.ToEmojiString("lootecbamboe")}+ИТОТА{Core.ToEmojiString("bombitbamboe")}+FATBOY{Core.ToEmojiString("oldbamboe")}",
                         $"просто почилить главное не забудь антинюку и турели к 15 минуте {Core.ToEmojiString("spongebamboe")}",
                         $"и забань {Core.ToEmojiString("t3")}радар потом го распиливать с клоакой {Core.ToEmojiString("qwirbamboe")}"
-                    },
+                    }
                 },
                 new SupremeMap
                 {
@@ -138,16 +138,16 @@ namespace Bichebot.Domain.Pipeline.Supreme
                         $"поиграть ладдер (no greys{Core.ToEmojiString("face_with_monocle")})",
                         $"сыграть уже в ладдер че как нуб серый{Core.ToEmojiString("qwirchamp")}",
                         $"Ctrl+K и в лол{Core.ToEmojiString("lol2")}",
-                        $"смотреть каст с Сидом играть как-то лень"
+                        "смотреть каст с Сидом играть как-то лень"
                     }
                 }
             };
-            
+
             var map = Core.Random.Choose(maps, m => m.Tactics.Count);
-            var response = $"{message.Author.Username}, {Core.Random.Choose(sugg)} {Core.Random.Choose(map.Names)} {Core.Random.Choose(map.Tactics)}";
-            await message.Channel.SendMessageAsync(response,message.Content.Contains("/tts"))
+            var response =
+                $"{message.Author.Username}, {Core.Random.Choose(sugg)} {Core.Random.Choose(map.Names)} {Core.Random.Choose(map.Tactics)}";
+            await message.Channel.SendMessageAsync(response, message.Content.Contains("/tts"))
                 .ConfigureAwait(false);
         }
-
     }
 }

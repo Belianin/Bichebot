@@ -12,10 +12,12 @@ namespace Bichebot.Domain.Pipeline.Statistics
 {
     public class StatisticsModule : IMessageHandler
     {
-        private readonly Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>> statisticsFunctions;
         private readonly IBotCore core;
         private readonly TimeSpan defaultSearchPeriod = TimeSpan.FromDays(7);
-        
+
+        private readonly Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>>
+            statisticsFunctions;
+
         public StatisticsModule(IBotCore core)
         {
             this.core = core;
@@ -37,11 +39,11 @@ namespace Bichebot.Domain.Pipeline.Statistics
                 searchPeriod = TimeSpan.FromDays(days);
 
             var messages = core.GetMessages(message.Channel, searchPeriod);
-            
+
             var rates = statisticsFunction(messages)
                 .OrderByDescending(r => r.Count)
                 .Take(10);
-            
+
             var response = $"Величайшие смайлы:\n{JoinEmoteStatistics(rates)}";
 
             await message.Channel.SendMessageAsync(response).ConfigureAwait(false);
@@ -62,7 +64,7 @@ namespace Bichebot.Domain.Pipeline.Statistics
             var emotes = messages
                 .Where(m => !m.Author.IsBot)
                 .SelectMany(m => regex.Matches(m.Content));
-            
+
             foreach (var emote in emotes)
             {
                 var value = emote.ToString().Substring(1, emote.ToString().Length - 2);
@@ -82,7 +84,7 @@ namespace Bichebot.Domain.Pipeline.Statistics
         private static IEnumerable<Statistic> GetEmoteReactionsRating(IEnumerable<IUserMessage> messages)
         {
             var result = new Dictionary<string, int>();
-            
+
             foreach (var reaction in messages.SelectMany(m => m.Reactions))
             {
                 if (!result.ContainsKey(reaction.Key.Name))

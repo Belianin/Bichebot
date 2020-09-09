@@ -6,19 +6,19 @@ namespace Bichebot.Core.Modules.Base
     public abstract class BaseMessageModule : IBotModule
     {
         protected readonly IBotCore Core;
-        protected abstract Task HandleMessageAsync(SocketMessage message);
+
         protected BaseMessageModule(IBotCore core)
         {
             Core = core;
         }
 
         public bool IsRunning { get; private set; }
-        
+
         public void Run()
         {
             if (IsRunning)
                 return;
-            
+
             Core.Client.MessageReceived += HandleMessageAsync;
             IsRunning = true;
         }
@@ -27,9 +27,11 @@ namespace Bichebot.Core.Modules.Base
         {
             if (!IsRunning)
                 return;
-            
+
             Core.Client.MessageReceived -= HandleMessageAsync;
             IsRunning = false;
         }
+
+        protected abstract Task HandleMessageAsync(SocketMessage message);
     }
 }

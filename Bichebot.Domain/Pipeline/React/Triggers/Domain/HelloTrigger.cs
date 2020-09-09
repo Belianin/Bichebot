@@ -7,11 +7,11 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
     public class HelloTrigger : ReactionTrigger
     {
         private readonly IBotCore core;
-        
-        public HelloTrigger(IBotCore core) : base(new []
+
+        public HelloTrigger(IBotCore core) : base(new[]
         {
-            new [] {"бот ", "бот,", " бот"},
-            new [] {"привет", "здаров", " хай ", "доброе утро", "добрый вечер", "добрый день"}
+            new[] {"бот ", "бот,", " бот"},
+            new[] {"привет", "здаров", " хай ", "доброе утро", "добрый вечер", "добрый день"}
         })
         {
             this.core = core;
@@ -25,7 +25,6 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
                 $"{message.Author.Username}, добро пожаловать в Бухту Бичехостов",
                 $"{message.Author.Username}, как дела ?",
                 $"{message.Author.Username}, добро пожаловать. Добро пожаловать в Бухту Бичехостов. Сами вы её выбрали или её выбрали за вас, это лучшее место из оставшихся."));
-
         }
     }
 }

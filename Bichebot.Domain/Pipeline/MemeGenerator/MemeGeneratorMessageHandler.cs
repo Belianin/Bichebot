@@ -8,14 +8,15 @@ using Discord;
 using Discord.WebSocket;
 using Nexus.Logging;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Bichebot.Domain.Pipeline.MemeGenerator
 {
     public class MemeGeneratorMessageHandler : IMessageHandler
     {
         private readonly MemeGenerator generator;
-        private readonly ILog log; 
-        
+        private readonly ILog log;
+
         public MemeGeneratorMessageHandler(MemeGeneratorSettings settings, ILog log)
         {
             this.log = log.ForContext(GetType().Name);
@@ -28,14 +29,14 @@ namespace Bichebot.Domain.Pipeline.MemeGenerator
                 return false;
 
             log.Info("Received a meme-request");
-            
+
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment == null)
             {
                 log.Info("No attachments found");
                 return false;
             }
-            
+
             var regex = new Regex("\"(.*?)\"");
             var phrase = regex.Match(message.Content).Value;
             phrase = string.IsNullOrEmpty(phrase) ? null : phrase[1..^1];
@@ -51,22 +52,23 @@ namespace Bichebot.Domain.Pipeline.MemeGenerator
             return true;
         }
 
-        private static async Task<SixLabors.ImageSharp.Image> DownloadImageAsync(string url)
+        private static async Task<Image> DownloadImageAsync(string url)
         {
             using var client = new HttpClient();
             var picture = await client.GetAsync(url).ConfigureAwait(false);
 
             await using var stream = await picture.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return SixLabors.ImageSharp.Image.Load(stream);
+            return Image.Load(stream);
         }
 
-        private static async Task SendMemeAsync(IMessage message, SixLabors.ImageSharp.Image meme)
+        private static async Task SendMemeAsync(IMessage message, Image meme)
         {
             var stream = new MemoryStream();
             meme.Save(stream, new JpegEncoder());
             stream.Position = 0;
 
-            await message.Channel.SendFileAsync(stream, "meme.jpeg", $"Шляпа от {message.Author.Username}").ConfigureAwait(false);
+            await message.Channel.SendFileAsync(stream, "meme.jpeg", $"Шляпа от {message.Author.Username}")
+                .ConfigureAwait(false);
         }
     }
 }

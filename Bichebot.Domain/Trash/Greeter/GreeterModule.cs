@@ -10,27 +10,25 @@ namespace Bichebot.Domain.Trash.Greeter
     // unused
     internal class GreeterModule : BaseVoiceModule
     {
+        private readonly AudioSpeaker audio;
         private readonly GreeterModuleSettings settings;
 
-        private readonly AudioSpeaker audio;
-        
         public GreeterModule(IBotCore core, AudioSpeaker audio, GreeterModuleSettings settings) : base(core)
         {
             this.settings = settings;
             this.audio = audio;
         }
 
-        protected override async Task HandleMessageAsync(SocketUser user, SocketVoiceState firstState, SocketVoiceState secondState)
+        protected override async Task HandleMessageAsync(SocketUser user, SocketVoiceState firstState,
+            SocketVoiceState secondState)
         {
             if (!IsBotChannel(firstState.VoiceChannel) &&
-             IsBotChannel(secondState.VoiceChannel) &&
-             settings.Greetings.TryGetValue(user.Id, out var filename))
-            {
+                IsBotChannel(secondState.VoiceChannel) &&
+                settings.Greetings.TryGetValue(user.Id, out var filename))
                 lock (audio)
                 {
                     audio.SendMessageAsync(filename).Wait();
                 }
-            }
         }
 
         private bool IsBotChannel(IAudioChannel channel)

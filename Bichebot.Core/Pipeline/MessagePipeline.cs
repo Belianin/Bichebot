@@ -17,7 +17,6 @@ namespace Bichebot.Core.Pipeline
         public async Task HandleAsync(SocketMessage message)
         {
             foreach (var handler in handlers)
-            {
                 try
                 {
                     var handleResult = await handler.HandleAsync(message).ConfigureAwait(false);
@@ -28,7 +27,6 @@ namespace Bichebot.Core.Pipeline
                 {
                     await message.Channel.SendMessageAsync($"Мужики, помогите: {e.Message}").ConfigureAwait(false);
                 }
-            }
         }
     }
 }

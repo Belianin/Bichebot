@@ -1,10 +1,9 @@
 using System.IO;
 using System.Linq;
-using Bichebot.Core.Users;
 using Bichebot.Core.Utilities;
 using Newtonsoft.Json;
 
-namespace Bichebot.Core.Repositories
+namespace Bichebot.Core.Users
 {
     public class FileUserRepository : IUserRepository
     {

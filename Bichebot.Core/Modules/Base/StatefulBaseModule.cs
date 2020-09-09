@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Bichebot.Core.Repositories;
 
 namespace Bichebot.Core.Modules.Base
 {
     [Obsolete("Уже не очень полезная абстракция")]
     public class StatefulBaseModule<TState> : BaseModule where TState : class
     {
-        private readonly IDictionary<ulong, TState> repository;
-
         private readonly Func<TState> createDefault;
+        private readonly IDictionary<ulong, TState> repository;
 
         protected StatefulBaseModule(IBotCore core, Func<TState> createDefault) : base(core)
         {

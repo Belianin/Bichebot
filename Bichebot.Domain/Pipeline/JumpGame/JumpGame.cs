@@ -9,8 +9,8 @@ namespace Bichebot.Domain.Pipeline.JumpGame
 {
     public class JumpGame
     {
-        private readonly IBotCore core;
         private readonly ulong channelId;
+        private readonly IBotCore core;
 
         public JumpGame(IBotCore core, ulong channelId)
         {
@@ -32,7 +32,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
         public async Task Run()
         {
             var channel = core.Guild.GetTextChannel(channelId);
-            
+
             var smile = core.Random.Choose(core.Guild.Emotes);
             var timeLeft = TimeSpan.FromMinutes(1);
             var initialMessage = $"Срочно упарываемся и прыгаем!!! Ставь {smile} кто честный. Осталось: {timeLeft:g}";
@@ -44,18 +44,21 @@ namespace Bichebot.Domain.Pipeline.JumpGame
                 await sentMessage.ModifyAsync(m => m.Content = message).ConfigureAwait(false);
 
                 var delay = TimeSpan.FromSeconds(5);
-                
+
                 await Task.Delay(delay).ConfigureAwait(false);
                 timeLeft = timeLeft.Subtract(delay);
             } while (timeLeft >= TimeSpan.Zero);
 
 
             var finalMessage = await channel.GetMessageAsync(sentMessage.Id).ConfigureAwait(false);
-            var winners = await finalMessage.GetReactionUsersAsync(smile, 100).Flatten().Where(u => !u.IsBot).ToListAsync();
+            var winners = await finalMessage.GetReactionUsersAsync(smile, 100).Flatten().Where(u => !u.IsBot)
+                .ToListAsync();
 
             if (winners.Count == 0)
+            {
                 await channel.SendMessageAsync($"Никто не прыгнул. ВСЕМ БАН{core.ToEmojiString("lejatbamboe")}")
                     .ConfigureAwait(false);
+            }
             else if (winners.Count == 1)
             {
                 var winner = winners.First();
@@ -68,7 +71,9 @@ namespace Bichebot.Domain.Pipeline.JumpGame
             }
             else
             {
-                await channel.SendMessageAsync($"Мужики, молодцы. {string.Join(", ", winners.Select(w => w.Username))}: всем по 25 бичекоинов")
+                await channel
+                    .SendMessageAsync(
+                        $"Мужики, молодцы. {string.Join(", ", winners.Select(w => w.Username))}: всем по 25 бичекоинов")
                     .ConfigureAwait(false);
             }
         }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Bichebot.Core.Users;
 using Bichebot.Core.Utilities;
 

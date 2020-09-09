@@ -13,9 +13,9 @@ namespace Bichebot
             var cts = new CancellationTokenSource();
 
             AppDomain.CurrentDomain.ProcessExit += (s, e) => cts.Cancel();
-            
+
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN") ?? File.ReadAllText("BICHEBOT_TOKEN");
-            
+
             await BotFactory.Instance.Create(BotSettings.Default).RunAsync(token, cts.Token);
         }
 
@@ -25,6 +25,5 @@ namespace Bichebot
                    Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) ??
                    Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Machine);
         }
-
     }
 }
