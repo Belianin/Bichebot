@@ -1,9 +1,11 @@
 using System.Collections.Generic;
-using Bichebot.Modules.Bank;
-using Bichebot.Modules.Best;
-using Bichebot.Modules.FOnlineStatistics;
-using Bichebot.Modules.Greeter;
-using Bichebot.Modules.Withermans;
+using System.IO;
+using Bichebot.Domain.Modules.Best;
+using Bichebot.Domain.Modules.FOnlineStatistics;
+using Bichebot.Domain.Pipeline.Bank;
+using Bichebot.Domain.Pipeline.JumpGame;
+using Bichebot.Domain.Pipeline.MemeGenerator;
+using Bichebot.Domain.Trash.Greeter;
 
 namespace Bichebot
 {
@@ -36,6 +38,9 @@ namespace Bichebot
         };
         
         public WithermansSettings WithermansModule { get; set; } = new WithermansSettings();
+
+        public MemeGeneratorSettings MemeGenerator { get; set; } = new MemeGeneratorSettings
+            {MemePhrases = File.ReadAllLines("Resources/memes.txt")};
 
         public FonlineStatisticsModuleSettings FonlineStatisticsModule { get; set; } =
             new FonlineStatisticsModuleSettings

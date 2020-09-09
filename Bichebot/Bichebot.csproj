@@ -49,4 +49,9 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Bichebot.Core\Bichebot.Core.csproj" />
+      <ProjectReference Include="..\Bichebot.Domain\Bichebot.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

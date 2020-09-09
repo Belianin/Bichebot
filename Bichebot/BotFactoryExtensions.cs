@@ -1,4 +1,5 @@
 using System.IO;
+using Bichebot.Core;
 using Newtonsoft.Json;
 
 namespace Bichebot
@@ -11,14 +12,13 @@ namespace Bichebot
                 throw new FileNotFoundException(path);
             try
             {
-
                 var settings = JsonConvert.DeserializeObject<BotSettings>(path);
 
                 return factory.Create(settings);
             }
             catch (JsonException e)
             {
-                throw e;
+                throw;
             }
         }
     }

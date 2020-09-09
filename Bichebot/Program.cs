@@ -1,31 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
+using Bichebot.Core;
 
 namespace Bichebot
 {
-    public class Program
+    public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var cts = new CancellationTokenSource();
 
             AppDomain.CurrentDomain.ProcessExit += (s, e) => cts.Cancel();
             
-            CreateBot().RunAsync(cts.Token).Wait(cts.Token);
-        }
-
-        private static Bot CreateBot()
-        {
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN") ?? File.ReadAllText("BICHEBOT_TOKEN");
-            var mongoPassword = GetEnvironmentVariable("MONGODB_PASSWORD");
-
-            var settings = new BotSettings
-            {
-                Token = token
-            };
             
-            return BotFactory.Instance.Create(settings);
+            await BotFactory.Instance.Create(new BotSettings()).RunAsync(token, cts.Token);
         }
 
         private static string GetEnvironmentVariable(string name)

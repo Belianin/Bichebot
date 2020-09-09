@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0" />
+      <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+      <PackageReference Include="Nexus.Core" Version="1.0.3" />
+      <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta0009" />
+      <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0007" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bichebot.Core\Bichebot.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Modules" />
+      <Folder Include="Trash" />
+    </ItemGroup>
+
+</Project>

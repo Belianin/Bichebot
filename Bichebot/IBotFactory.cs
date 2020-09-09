@@ -1,3 +1,5 @@
+using Bichebot.Core;
+
 namespace Bichebot
 {
     public interface IBotFactory

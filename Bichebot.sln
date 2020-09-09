@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bichebot", "Bichebot\Bichebot.csproj", "{F7241BF3-B046-4067-9466-FA695C8EAE73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bichebot.Domain", "Bichebot.Domain\Bichebot.Domain.csproj", "{DD23F8A8-4E76-4C22-9A4E-3F82E9944860}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bichebot.Core", "Bichebot.Core\Bichebot.Core.csproj", "{469E9B87-61AA-448D-8C96-21FD40A63A93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{F7241BF3-B046-4067-9466-FA695C8EAE73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7241BF3-B046-4067-9466-FA695C8EAE73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7241BF3-B046-4067-9466-FA695C8EAE73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD23F8A8-4E76-4C22-9A4E-3F82E9944860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD23F8A8-4E76-4C22-9A4E-3F82E9944860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD23F8A8-4E76-4C22-9A4E-3F82E9944860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD23F8A8-4E76-4C22-9A4E-3F82E9944860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{469E9B87-61AA-448D-8C96-21FD40A63A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{469E9B87-61AA-448D-8C96-21FD40A63A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{469E9B87-61AA-448D-8C96-21FD40A63A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{469E9B87-61AA-448D-8C96-21FD40A63A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
