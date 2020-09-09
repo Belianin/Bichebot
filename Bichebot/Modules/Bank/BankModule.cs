@@ -40,7 +40,7 @@ namespace Bichebot.Modules.Bank
                 }
                 
                 var words = message.Content.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                var numbers = words.Where(w => Regex.IsMatch(w, @"\d+")).Select(int.Parse).ToArray();
+                var numbers = words.Where(w => int.TryParse(w, out var _)).Select(int.Parse).ToArray();
 
                 if (numbers.Length != 1)
                 {
