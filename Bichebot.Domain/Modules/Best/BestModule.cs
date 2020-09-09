@@ -65,7 +65,7 @@ namespace Bichebot.Domain.Modules.Best
             await Core.Guild.GetTextChannel(settings.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
 
-            var newAmount = await Core.Bank.AddAsync(userMessage.Author.Id, settings.Reward);
+            var newAmount = Core.Bank.Add(userMessage.Author.Id, settings.Reward);
             if (newAmount.IsFail)
             {
                 await userMessage.Channel

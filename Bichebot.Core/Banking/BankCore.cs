@@ -6,6 +6,7 @@ using Bichebot.Core.Utilities;
 
 namespace Bichebot.Core.Banking
 {
+    // дерьмовая абстракция
     public class BankCore : IBankCore
     {
         private readonly IUserRepository repository;
@@ -15,57 +16,55 @@ namespace Bichebot.Core.Banking
             this.repository = repository;
         }
 
-        public void Register(User user)
+        public Result Register(User user)
         {
-            throw new System.NotImplementedException();
+            return repository.CreateOrUpdate(user);
         }
 
-        public async Task<Result<User[]>> GetAllBalanceAsync()
+        public Result<int> GetBalance(ulong id)
         {
-            return repository.GetAll();
+            var userResult = GetUser(id);
+            if (userResult.IsFail)
+                return userResult.Error;
+            var user = userResult.Value;
+
+            return user.Bichecoins;
         }
 
-        public async Task<int> GetBalanceAsync(ulong id)
+        public Result<int> Add(ulong id, int value)
         {
-            var user = GetUser(id);
+            var userResult = GetUser(id);
+            if (userResult.IsFail)
+                return userResult.Error;
+            var user = userResult.Value;
             
-            return user.IsSuccess ? user.Value.Bichecoins : -20; // ну и дерьмо
-        }
-
-        public async Task<Result<int>> SetBalanceAsync(ulong id, int value)
-        {
-            if (value < 0)
-                return "Negative value";
-
-            var user = GetUser(id);
-            if (user.IsFail)
-                return user.Error;
-            user.Value.Bichecoins = value;
-
-            repository.CreateOrUpdate(user.Value);
-            
-            return value;
-        }
-
-        public async Task<Result<int>> AddAsync(ulong id, int value)
-        {
-            var user = GetUser(id);
-            if (user.IsFail)
-                return user.Error;
-            
-            var balance = user.Value.Bichecoins + value;
+            var balance = userResult.Value.Bichecoins + value;
             if (balance < 0)
-                balance = 0;
+                return "Negative balance";
 
-            user.Value.Bichecoins = balance;
-
-            repository.CreateOrUpdate(user.Value);
+            user.Bichecoins = balance;
+            repository.CreateOrUpdate(user);
 
             return balance;
         }
 
-        // В теории конечно потокобезопастности бы
-        public async Task<Result<Transaction>> TryTransactAsync(ulong @from, ulong to, int value)
+        public Result<int> SetBalance(ulong id, int value)
+        {
+            if (value < 0)
+                return "Negative value";
+
+            var userResult = GetUser(id);
+            if (userResult.IsFail)
+                return $"Failed to get user: {userResult.Error}";
+            var user = userResult.Value;
+            
+            user.Bichecoins = value;
+            repository.CreateOrUpdate(user);
+            
+            return value;
+        }
+
+        public Result<Transaction> TryTransact(ulong @from, ulong to, int value)
         {
             if (value < 1)
                 return "Must be a positive number";
@@ -75,8 +74,17 @@ namespace Bichebot.Core.Banking
             if (fromUser.Value.Bichecoins < value)
                 return "Not enough balance";
             
-            var fromBalance = await AddAsync(@from, -value).ConfigureAwait(false);
-            var toBalance = await AddAsync(to, value).ConfigureAwait(false);
+            var fromBalance = Add(@from, -value);
+            if (fromBalance.IsFail)
+                return $"Failed to reduce from-balance: {fromBalance.Error}";
+            var toBalance = Add(to, value);
+            if (fromBalance.IsFail)
+            {
+                var revertResult = Add(@from, value);
+                if (revertResult.IsFail)
+                    return "Failed to revert transaction!";
+                return "Failed to add value to to-balance";
+            }
 
             return new Transaction
             {
@@ -88,10 +96,16 @@ namespace Bichebot.Core.Banking
             };
         }
 
+        public Result<User[]> GetAllBalances()
+        {
+            return repository.GetAll();
+        }
+
         private Result<User> GetUser(ulong id)
         {
             return repository.Get(id);
         }
+
     }
 
     public class Transaction

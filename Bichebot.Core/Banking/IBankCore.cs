@@ -6,15 +6,11 @@ namespace Bichebot.Core.Banking
 {
     public interface IBankCore
     {
-        // времено
-        void Register(User user);
-        Task<Result<User[]>> GetAllBalanceAsync();
-        Task<int> GetBalanceAsync(ulong id);
-
-        Task<Result<int>> SetBalanceAsync(ulong id, int value);
-
-        Task<Result<int>> AddAsync(ulong id, int value);
-        
-        Task<Result<Transaction>> TryTransactAsync(ulong from, ulong to, int value);
+        Result Register(User user);
+        Result<int> GetBalance(ulong id);
+        Result<int> Add(ulong id, int value);
+        Result<int> SetBalance(ulong id, int value);
+        Result<Transaction> TryTransact(ulong from, ulong to, int value);
+        Result<User[]> GetAllBalances();
     }
 }

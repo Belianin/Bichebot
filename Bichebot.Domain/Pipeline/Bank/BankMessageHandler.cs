@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Core.Pipeline;
+using Bichebot.Core.Users;
 using Discord;
 using Discord.WebSocket;
 
@@ -19,6 +20,13 @@ namespace Bichebot.Domain.Pipeline.Bank
         {
             this.settings = settings;
             this.core = core;
+
+            core.Client.UserJoined += user =>
+            {
+                core.Bank.Register(new User(user.Id, user.Username));
+
+                return Task.CompletedTask;
+            };
         }
 
         public async Task<bool> HandleAsync(SocketMessage message)
@@ -45,8 +53,7 @@ namespace Bichebot.Domain.Pipeline.Bank
                     }
                     else
                     {
-                        var transaction = await core.Bank.AddAsync(recipients2.First().Id, numbers.First())
-                            .ConfigureAwait(false);
+                        var transaction = core.Bank.Add(recipients2.First().Id, numbers.First());
 
                         if (transaction.IsSuccess)
                         {
@@ -82,8 +89,7 @@ namespace Bichebot.Domain.Pipeline.Bank
                 }
                 else
                 {
-                    var transaction = await core.Bank.TryTransactAsync(message.Author.Id, recipients.First().Id, numbers.First())
-                        .ConfigureAwait(false);
+                    var transaction = core.Bank.TryTransact(message.Author.Id, recipients.First().Id, numbers.First());
 
                     if (transaction.IsSuccess)
                     {
@@ -115,7 +121,7 @@ namespace Bichebot.Domain.Pipeline.Bank
 
         private async Task ShowAllBalanceAsync(SocketMessage message)
         {
-            var balances = await core.Bank.GetAllBalanceAsync().ConfigureAwait(false);
+            var balances = core.Bank.GetAllBalances();
             if (balances.IsFail)
             {
                 await message.Channel.SendMessageAsync("Не смогли достать всех пользователей")
@@ -139,10 +145,17 @@ namespace Bichebot.Domain.Pipeline.Bank
 
         private async Task ShowBalanceAsync(SocketMessage message)
         {
-            var balance = await core.Bank.GetBalanceAsync(message.Author.Id).ConfigureAwait(false);
-            await message.Channel
-                .SendMessageAsync($"{message.Author.Username}: {balance}.0")
-                .ConfigureAwait(false);
+            var balance = core.Bank.GetBalance(message.Author.Id);
+            if (balance.IsFail)
+                await message.Channel.SendMessageAsync($"Не получилось узнать баланс: {balance.Error}")
+                    .ConfigureAwait(false);
+            else
+            {
+                await message.Channel
+                    .SendMessageAsync($"{message.Author.Username}: {balance.Value}.0")
+                    .ConfigureAwait(false);
+            }
+
         }
 
         private bool FromAdmin(IMessage message) => settings.Admins.Contains(message.Author.Id);

@@ -60,7 +60,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
             {
                 var winner = winners.First();
                 var winnerRoles = core.Guild.GetUser(winner.Id).Roles.Where(r => !r.IsEveryone);
-                await core.Bank.AddAsync(winner.Id, 50).ConfigureAwait(false);
+                core.Bank.Add(winner.Id, 50);
                 await channel
                     .SendMessageAsync(
                         $"Так держать {string.Join(" ", winnerRoles.Select(r => r.Name))} {winner.Username}. Лови джекпот 50 бичекоинов")
