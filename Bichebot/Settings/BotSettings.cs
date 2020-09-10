@@ -61,7 +61,7 @@ namespace Bichebot.Settings
             },
             FonlineStatisticsModule = new FonlineStatisticsModuleSettings
             {
-                ChannelId = WellKnown.Channels.Discussions
+                ChannelId = WellKnown.Channels.Debug
             },
             MemeGenerator = new MemeGeneratorSettings
             {

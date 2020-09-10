@@ -28,12 +28,13 @@ namespace Bichebot.Domain.Pipeline.React
             {
                 if (!trigger.TryGetReaction(message, out var reaction))
                     continue;
-                log.Info(
-                    $"Reacting with {reaction} by {trigger.GetType().Name} on '{message.Content ?? "attachment"}'");
+                log.Info($"Reacting with {reaction} by {trigger.GetType().Name} on '{message.Content ?? "attachment"}'");
 
+                reaction.Emotes = reaction.Emotes.Where(e => e.Name != "tip").ToArray();
+                
                 if (reaction.Text != null)
                     await message.Channel.SendMessageAsync(reaction.Text).ConfigureAwait(false);
-                if (reaction.Emotes != null && reaction.Emotes.Count > 0)
+                if (reaction.Emotes != null && reaction.Emotes.Count > 0 )
                     await userMessage.AddReactionsAsync(reaction.Emotes.ToArray()).ConfigureAwait(false);
             }
 

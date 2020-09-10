@@ -33,8 +33,12 @@ namespace Bichebot.Domain.Modules.Best
         {
             if (alreadyBest.Contains(userMessage.Id) ||
                 !settings.SourceChannelIds.Contains(userMessage.Channel.Id) ||
-                !userMessage.Reactions.Values.Any(r => r.ReactionCount >= settings.ReactionCountToBeBest) ||
                 userMessage.Channel.Id == settings.BestChannelId)
+                return;
+
+            if (!userMessage.Reactions
+                .Where(x => x.Key.Name != "tip")
+                .Any(r => r.Value.ReactionCount >= settings.ReactionCountToBeBest))
                 return;
 
             alreadyBest.Add(userMessage.Id);

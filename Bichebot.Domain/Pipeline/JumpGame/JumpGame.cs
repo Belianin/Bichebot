@@ -33,7 +33,7 @@ namespace Bichebot.Domain.Pipeline.JumpGame
         {
             var channel = core.Guild.GetTextChannel(channelId);
 
-            var smile = core.Random.Choose(core.Guild.Emotes);
+            var smile = core.Random.Choose(core.Guild.Emotes.Where(e => e.Name != "tip"));
             var timeLeft = TimeSpan.FromMinutes(1);
             var initialMessage = $"Срочно упарываемся и прыгаем!!! Ставь {smile} кто честный. Осталось: {timeLeft:g}";
             var sentMessage = await channel.SendMessageAsync(initialMessage).ConfigureAwait(false);

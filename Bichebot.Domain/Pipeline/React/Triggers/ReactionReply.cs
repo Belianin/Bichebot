@@ -24,7 +24,7 @@ namespace Bichebot.Domain.Pipeline.React.Triggers
         }
 
         public string Text { get; }
-        public ICollection<IEmote> Emotes { get; }
+        public ICollection<IEmote> Emotes { get; set; } // временный set
 
         public override string ToString()
         {
