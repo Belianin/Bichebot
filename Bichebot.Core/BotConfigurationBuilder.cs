@@ -13,20 +13,21 @@ namespace Bichebot.Core
 {
     public class BotConfigurationBuilder : IBotConfigurationBuilder
     {
-        private readonly IServiceCollection serviceCollection = new ServiceCollection();
+        private readonly IServiceCollection services = new ServiceCollection();
 
         public BotConfigurationBuilder(ulong guildId, ILog log)
         {
             var bank = new BankCore(new FileUserRepository("Bichemans"));
             var core = new BotCore(guildId, new DiscordSocketClient(), bank, log);
 
-            serviceCollection.AddSingleton<IBotCore>(core);
-            serviceCollection.AddSingleton<AudioSpeaker>();
+            services.AddSingleton<IBotCore>(core);
+            services.AddSingleton<ILog>(log); // временно?
+            services.AddSingleton<AudioSpeaker>();
         }
 
         public IBotConfigurationBuilder Use<TModule>() where TModule : class, IBotModule
         {
-            serviceCollection.AddSingleton<IBotModule, TModule>();
+            services.AddSingleton<IBotModule, TModule>();
 
             return this;
         }
@@ -34,7 +35,7 @@ namespace Bichebot.Core
         public IBotConfigurationBuilder Use<TModule, TSettings>(TSettings settings)
             where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(settings);
+            services.AddSingleton(settings);
 
             return Use<TModule>();
         }
@@ -42,7 +43,7 @@ namespace Bichebot.Core
         public IBotConfigurationBuilder Use<TModule, TSettings>(Func<IServiceProvider, TSettings> settings)
             where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(settings);
+            services.AddSingleton(settings);
 
             return Use<TModule>();
         }
@@ -50,14 +51,14 @@ namespace Bichebot.Core
         public IBotConfigurationBuilder Use<TModule, TSettings>(Func<IBotCore, TSettings> settings)
             where TModule : class, IBotModule where TSettings : class
         {
-            serviceCollection.AddSingleton(sp => settings(sp.GetRequiredService<IBotCore>()));
+            services.AddSingleton(sp => settings(sp.GetRequiredService<IBotCore>()));
 
             return Use<TModule>();
         }
 
         public IBotConfigurationBuilder ConfigurePipeline(Action<IPipelineBuilder> configure)
         {
-            serviceCollection.AddSingleton(x =>
+            services.AddSingleton(x =>
             {
                 var builder = new PipelineBuilder(x.GetRequiredService<IBotCore>());
 
@@ -71,7 +72,7 @@ namespace Bichebot.Core
 
         public Bot Build()
         {
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
 
             return new Bot(
                 serviceProvider.GetRequiredService<IBotCore>(),

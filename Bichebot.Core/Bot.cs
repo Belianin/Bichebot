@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bichebot.Core.Modules;
 using Bichebot.Core.Pipeline;
+using Bichebot.Core.Users;
 using Discord;
 using Discord.WebSocket;
 using Nexus.Logging;
@@ -30,6 +31,17 @@ namespace Bichebot.Core
             core.Client.StartAsync().Wait(cancellationToken);
 
             core.Client.MessageReceived += HandleMessage;
+            
+            core.Client.UserJoined += user =>
+            {
+                core.Bank.Register(new User(user.Id, user.Username));
+
+                return Task.CompletedTask;
+            };
+
+            await Task.Delay(5000);
+            foreach (var guildUser in core.Guild.Users)
+                core.Bank.Register(new User(guildUser.Id, guildUser.Username));
 
             foreach (var module in modules)
                 module.Run();

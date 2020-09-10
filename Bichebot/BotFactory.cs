@@ -1,4 +1,5 @@
 using Bichebot.Core;
+using Bichebot.Domain.Modules;
 using Bichebot.Domain.Modules.Best;
 using Bichebot.Domain.Modules.FOnlineStatistics;
 using Bichebot.Domain.Pipeline.Bank;
@@ -22,15 +23,16 @@ namespace Bichebot
         public Bot Create(BotSettings settings)
         {
             return new BotConfigurationBuilder(settings.GuildId, new ColourConsoleLog())
+                .Use<TipModule>()
                 .Use<BestModule, BestModuleSettings>(settings.BestModule)
                 .Use<FOnlineStatisticsModule, FonlineStatisticsModuleSettings>(settings.FonlineStatisticsModule)
                 .ConfigurePipeline(x => x
+                    .Use<MemeGeneratorMessageHandler, MemeGeneratorSettings>(settings.MemeGenerator)
+                    .Use<JumpGameMessageHandler, WithermansSettings>(settings.WithermansModule)
+                    .Use<BankMessageHandler, BankModuleSettings>(settings.BankModule)
                     .Use<ModerateModule>()
                     .Use<StatisticsModule>()
-                    .Use<MemeGeneratorMessageHandler, MemeGeneratorSettings>(settings.MemeGenerator)
                     .Use<SupremeHandler>()
-                    .Use<BankMessageHandler, BankModuleSettings>(settings.BankModule)
-                    .Use<JumpGameMessageHandler, WithermansSettings>(settings.WithermansModule)
                     .Use<ReactMessageHandler, ReactSettings>(core => new ReactSettings
                     {
                         Triggers = new IReactionTrigger[]

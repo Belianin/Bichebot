@@ -20,16 +20,6 @@ namespace Bichebot.Domain.Pipeline.Bank
         {
             this.settings = settings;
             this.core = core;
-
-            core.Client.UserJoined += user =>
-            {
-                core.Bank.Register(new User(user.Id, user.Username));
-
-                return Task.CompletedTask;
-            };
-
-            foreach (var guildUser in core.Guild.Users)
-                core.Bank.Register(new User(guildUser.Id, guildUser.Username));
         }
 
         public async Task<bool> HandleAsync(SocketMessage message)
