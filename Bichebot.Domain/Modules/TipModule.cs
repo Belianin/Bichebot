@@ -22,6 +22,9 @@ namespace Bichebot.Domain.Modules
                 var user = reaction.User.IsSpecified
                     ? reaction.User.Value
                     : await reaction.Channel.GetUserAsync(reaction.UserId).ConfigureAwait(false);
+
+                if (reaction.UserId == message.Author.Id)
+                    return;
                 
                 var result = Core.Bank.TryTransact(reaction.UserId, message.Author.Id, 10);
                 if (result.IsSuccess)
