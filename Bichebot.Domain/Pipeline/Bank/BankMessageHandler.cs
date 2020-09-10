@@ -116,10 +116,17 @@ namespace Bichebot.Domain.Pipeline.Bank
                 await message.Channel.SendMessageAsync("Не смогли достать всех пользователей")
                     .ConfigureAwait(false);
             else
+            {
+                var text = balances.Value
+                    .Where(t => t.Bichecoins > 0)
+                    .OrderByDescending(t => t.Bichecoins)
+                    .Select(t => $"{t.Name}: **{t.Bichecoins}**");
+                
                 await message.Channel
                     .SendMessageAsync(
-                        $"Бичекоины:\n{string.Join("\n", balances.Value.Where(t => t.Bichecoins > 0).Select(t => $"{t.Name}: {t.Bichecoins}"))}")
+                        $"Бичекоины:\n{string.Join("\n", text)}")
                     .ConfigureAwait(false);
+            }
         }
 
         private async Task ShowHelpAsync(SocketMessage message)
