@@ -118,7 +118,7 @@ namespace Bichebot.Domain.Pipeline.Bank
             else
                 await message.Channel
                     .SendMessageAsync(
-                        $"Бичекоины:\n{string.Join("\n", balances.Value.Select(t => $"{t.Name}: {t.Bichecoins}"))}")
+                        $"Бичекоины:\n{string.Join("\n", balances.Value.Where(t => t.Bichecoins > 0).Select(t => $"{t.Name}: {t.Bichecoins}"))}")
                     .ConfigureAwait(false);
         }
 
