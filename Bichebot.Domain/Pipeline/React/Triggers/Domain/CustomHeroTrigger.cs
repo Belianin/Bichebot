@@ -13,7 +13,7 @@ namespace Bichebot.Domain.Pipeline.React.Triggers.Domain
         public CustomHeroTrigger(IBotCore core) : base(new []
         {
             new [] {"кх", "прогре", "грей", "грею", "грев", "греть"}
-        }, 2)
+        })
         {
             this.core = core;
         }
