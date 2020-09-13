@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Bichebot.Settings;
+using Bichebot.Domain;
 
 namespace Bichebot
 {
@@ -14,9 +14,11 @@ namespace Bichebot
 
             AppDomain.CurrentDomain.ProcessExit += (s, e) => cts.Cancel();
 
+            var bot = BotFactory.Instance.Create(WellKnown.Settings);
+            
             var token = GetEnvironmentVariable("BICHEBOT_TOKEN") ?? File.ReadAllText("BICHEBOT_TOKEN");
-
-            await BotFactory.Instance.Create(BotSettings.Default).RunAsync(token, cts.Token);
+            
+            await bot.RunAsync(token, cts.Token).ConfigureAwait(false);
         }
 
         private static string GetEnvironmentVariable(string name)

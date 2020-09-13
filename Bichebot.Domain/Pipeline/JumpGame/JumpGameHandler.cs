@@ -5,12 +5,12 @@ using Discord.WebSocket;
 
 namespace Bichebot.Domain.Pipeline.JumpGame
 {
-    public class JumpGameMessageHandler : IMessageHandler
+    public class JumpGameHandler : IMessageHandler
     {
         private readonly JumpGame jumpGame;
         private readonly WithermansSettings settings;
 
-        public JumpGameMessageHandler(IBotCore core, WithermansSettings settings)
+        public JumpGameHandler(IBotCore core, WithermansSettings settings)
         {
             this.settings = settings;
             jumpGame = new JumpGame(core, settings.JumpGame.ChannelId);

@@ -54,9 +54,9 @@ namespace Bichebot.Domain.Modules.Best
 
             var embed = new EmbedBuilder()
                 .WithAuthor(userMessage.Author)
-                .WithTitle(userMessage.Content)
+                .WithTitle(userMessage.Content.Length > 250 ? "Длиннопост" : userMessage.Content)
                 .WithFooter("#бичехосты-лучшее")
-                .WithDescription(description)
+                .WithDescription(userMessage.Content.Length > 250 ? userMessage.Content + " " + description : description)
                 .WithTimestamp(userMessage.Timestamp);
 
             if (userMessage.Attachments.Count > 0)

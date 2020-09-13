@@ -8,12 +8,12 @@ using Nexus.Logging;
 
 namespace Bichebot.Domain.Pipeline.React
 {
-    public class ReactMessageHandler : IMessageHandler
+    public class ReactHandler : IMessageHandler
     {
         private readonly ILog log;
         private readonly ReactSettings settings;
 
-        public ReactMessageHandler(ReactSettings settings, ILog log)
+        public ReactHandler(ReactSettings settings, ILog log)
         {
             this.settings = settings;
             this.log = log.ForContext(GetType().Name);

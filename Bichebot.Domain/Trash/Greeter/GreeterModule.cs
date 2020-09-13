@@ -22,13 +22,15 @@ namespace Bichebot.Domain.Trash.Greeter
         protected override async Task HandleMessageAsync(SocketUser user, SocketVoiceState firstState,
             SocketVoiceState secondState)
         {
-            if (!IsBotChannel(firstState.VoiceChannel) &&
-                IsBotChannel(secondState.VoiceChannel) &&
-                settings.Greetings.TryGetValue(user.Id, out var filename))
-                lock (audio)
+            lock (audio)
+            {
+                if (!IsBotChannel(firstState.VoiceChannel) &&
+                    IsBotChannel(secondState.VoiceChannel) &&
+                    settings.Greetings.TryGetValue(user.Id, out var filename))
                 {
                     audio.SendMessageAsync(filename).Wait();
                 }
+            }
         }
 
         private bool IsBotChannel(IAudioChannel channel)

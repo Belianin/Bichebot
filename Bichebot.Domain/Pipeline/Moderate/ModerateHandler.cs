@@ -6,7 +6,7 @@ using Discord.WebSocket;
 
 namespace Bichebot.Domain.Pipeline.Moderate
 {
-    public class ModerateModule : IMessageHandler
+    public class ModerateHandler : IMessageHandler
     {
         public async Task<bool> HandleAsync(SocketMessage message)
         {

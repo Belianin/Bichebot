@@ -10,7 +10,7 @@ using Discord.WebSocket;
 
 namespace Bichebot.Domain.Pipeline.Statistics
 {
-    public class StatisticsModule : IMessageHandler
+    public class StatisticsHandler : IMessageHandler
     {
         private readonly IBotCore core;
         private readonly TimeSpan defaultSearchPeriod = TimeSpan.FromDays(7);
@@ -18,7 +18,7 @@ namespace Bichebot.Domain.Pipeline.Statistics
         private readonly Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>>
             statisticsFunctions;
 
-        public StatisticsModule(IBotCore core)
+        public StatisticsHandler(IBotCore core)
         {
             this.core = core;
             statisticsFunctions = new Dictionary<string, Func<IEnumerable<IUserMessage>, IEnumerable<Statistic>>>

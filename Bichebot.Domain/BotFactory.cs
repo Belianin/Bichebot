@@ -11,12 +11,11 @@ using Bichebot.Domain.Pipeline.React.Triggers;
 using Bichebot.Domain.Pipeline.React.Triggers.Domain;
 using Bichebot.Domain.Pipeline.Statistics;
 using Bichebot.Domain.Pipeline.Supreme;
-using Bichebot.Settings;
 using Nexus.Logging.Console;
 
-namespace Bichebot
+namespace Bichebot.Domain
 {
-    internal class BotFactory : IBotFactory
+    public class BotFactory : IBotFactory
     {
         public static IBotFactory Instance => new BotFactory();
 
@@ -24,16 +23,16 @@ namespace Bichebot
         {
             return new BotConfigurationBuilder(settings.GuildId, new ColourConsoleLog())
                 .Use<TipModule>()
-                .Use<BestModule, BestModuleSettings>(settings.BestModule)
-                .Use<FOnlineStatisticsModule, FonlineStatisticsModuleSettings>(settings.FonlineStatisticsModule)
+                .Use<BestModule, BestModuleSettings>(settings.Best)
+                .Use<FOnlineStatisticsModule, FonlineStatisticsModuleSettings>(settings.FoStatistics)
                 .ConfigurePipeline(x => x
-                    .Use<MemeGeneratorMessageHandler, MemeGeneratorSettings>(settings.MemeGenerator)
-                    .Use<JumpGameMessageHandler, WithermansSettings>(settings.WithermansModule)
-                    .Use<BankMessageHandler, BankModuleSettings>(settings.BankModule)
-                    .Use<ModerateModule>()
-                    .Use<StatisticsModule>()
+                    .Use<MemeGeneratorHandler, MemeGeneratorSettings>(settings.MemeGenerator)
+                    .Use<JumpGameHandler, WithermansSettings>(settings.Withermans)
+                    .Use<BankHandler, BankSettings>(settings.Bank)
+                    .Use<ModerateHandler>()
+                    .Use<StatisticsHandler>()
                     .Use<SupremeHandler>()
-                    .Use<ReactMessageHandler, ReactSettings>(core => new ReactSettings
+                    .Use<ReactHandler, ReactSettings>(core => new ReactSettings
                     {
                         Triggers = new IReactionTrigger[]
                         {

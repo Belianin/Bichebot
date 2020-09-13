@@ -12,12 +12,12 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace Bichebot.Domain.Pipeline.MemeGenerator
 {
-    public class MemeGeneratorMessageHandler : IMessageHandler
+    public class MemeGeneratorHandler : IMessageHandler
     {
         private readonly MemeGenerator generator;
         private readonly ILog log;
 
-        public MemeGeneratorMessageHandler(MemeGeneratorSettings settings, ILog log)
+        public MemeGeneratorHandler(MemeGeneratorSettings settings, ILog log)
         {
             this.log = log.ForContext(GetType().Name);
             generator = new MemeGenerator(settings.MemePhrases);

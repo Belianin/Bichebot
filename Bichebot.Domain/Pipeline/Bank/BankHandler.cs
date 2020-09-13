@@ -10,13 +10,13 @@ using Discord.WebSocket;
 
 namespace Bichebot.Domain.Pipeline.Bank
 {
-    public class BankMessageHandler : IMessageHandler
+    public class BankHandler : IMessageHandler
     {
         private readonly IBotCore core;
 
-        private readonly BankModuleSettings settings;
+        private readonly BankSettings settings;
 
-        public BankMessageHandler(IBotCore core, BankModuleSettings settings)
+        public BankHandler(IBotCore core, BankSettings settings)
         {
             this.settings = settings;
             this.core = core;
