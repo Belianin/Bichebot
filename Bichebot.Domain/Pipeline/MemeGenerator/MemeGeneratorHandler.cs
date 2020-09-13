@@ -67,7 +67,7 @@ namespace Bichebot.Domain.Pipeline.MemeGenerator
             meme.Save(stream, new JpegEncoder());
             stream.Position = 0;
 
-            await message.Channel.SendFileAsync(stream, "meme.jpeg", $"Шляпа от {message.Author.Mention}")
+            await message.Channel.SendFileAsync(stream, "meme.jpeg", $"Шляпа от {message.Author.Mention} ({message.Author.Username})")
                 .ConfigureAwait(false);
         }
     }
