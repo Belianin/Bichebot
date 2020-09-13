@@ -65,16 +65,25 @@ namespace Bichebot.Domain.Modules.Best
             await Core.Guild.GetTextChannel(settings.BestChannelId).SendMessageAsync(embed: embed.Build())
                 .ConfigureAwait(false);
 
-            var newAmount = Core.Bank.Add(userMessage.Author.Id, settings.Reward);
+            IUser GetRecipient()
+            {
+                if (userMessage.Author.IsBot && userMessage.Content.StartsWith("Шляпа от") && userMessage.MentionedUserIds.Count > 0)
+                    return Core.Guild.GetUser(userMessage.MentionedUserIds.First());
+
+                return userMessage.Author;
+            }
+
+            var recipient = GetRecipient();
+            var newAmount = Core.Bank.Add(recipient.Id, settings.Reward);
             if (newAmount.IsFail)
                 await userMessage.Channel
                     .SendMessageAsync(
-                        $"{userMessage.Author.Username} попадает в лучшее, но не получает награду: {newAmount.Error}")
+                        $"{recipient.Username} попадает в лучшее, но не получает награду: {newAmount.Error}")
                     .ConfigureAwait(false);
             else
                 await userMessage.Channel
                     .SendMessageAsync(
-                        $"{userMessage.Author.Username} получает {settings.Reward} ({newAmount.Value}) бичекоинов за попадание в лучшее")
+                        $"{recipient.Username} получает {settings.Reward} ({newAmount.Value}) бичекоинов за попадание в лучшее")
                     .ConfigureAwait(false);
         }
     }
