@@ -42,7 +42,8 @@ namespace Bichebot.Domain
                             new LikeTrigger(core),
                             new QuestionTrigger(core),
                             new RareTrigger(core),
-                            new RudeTrigger(core)
+                            new RudeTrigger(core),
+                            new CustomHeroTrigger(core), 
                         }
                     }))
                 .Build();
