@@ -16,6 +16,9 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
         private Dictionary<string, FoStatistics> currentStatistics;
         private bool wasFail;
 
+        private DateTime currentDate = DateTime.Now;
+        private Dictionary<CharacterOwner, Kda> kills = new Dictionary<CharacterOwner, Kda>();
+        
         public FOnlineStatisticsModule(IBotCore core, FonlineStatisticsModuleSettings settings) : base(core)
         {
             this.settings = settings;
@@ -28,10 +31,29 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
             {
                 await PollAsync().ConfigureAwait(false);
                 await Task.Delay(TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+
+                if (DateTime.Now.Date > currentDate.Date)
+                {
+                    currentDate = DateTime.Now;
+                    await PayRewardsAsync().ConfigureAwait(false);
+                }
             }
         }
 
-        private async Task PollAsync()
+        private async Task PayRewardsAsync()
+        {
+            var channel = Core.Guild.GetChannel(settings.ChannelId);
+            foreach (var kda in kills)
+            {
+                var sum = kda.Value.Kills * settings.PriceList.KillReward -
+                          kda.Value.Deaths * settings.PriceList.DeathPenalty;
+
+            }
+            
+            kills = new Dictionary<CharacterOwner, Kda>();
+        }
+
+    private async Task PollAsync()
         {
             var newStats = GetStatistics();
             if (newStats.IsFail)
@@ -96,6 +118,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
             else
             {
                 foreach (var diff in diffs)
+                {
                     if (diff.IsNew)
                     {
                         if (diff.Death == 0 && diff.Kills == 0)
@@ -110,6 +133,16 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                         else
                             sb.Append($"**{diff.Player}** убил **{diff.Kills}** человек и умер **{diff.Death}** раз\n");
                     }
+
+                    if (settings.Color.TryGetValue(diff.Player, out var owner) && owner.IsBichehost())
+                    {
+                        if (!kills.ContainsKey(owner))
+                            kills[owner] = new Kda();
+
+                        kills[owner].Kills += diff.Kills;
+                        kills[owner].Deaths += diff.Death;
+                    }
+                }
             }
 
             return sb.ToString();
