@@ -17,7 +17,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
         private bool wasFail;
 
         private DateTime currentDate = DateTime.Now;
-        private Dictionary<CharacterOwner, Kda> kills = new Dictionary<CharacterOwner, Kda>();
+        private Dictionary<ulong, Kda> kills = new Dictionary<ulong, Kda>();
         
         public FOnlineStatisticsModule(IBotCore core, FonlineStatisticsModuleSettings settings) : base(core)
         {
@@ -42,15 +42,29 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 
         private async Task PayRewardsAsync()
         {
-            var channel = Core.Guild.GetChannel(settings.ChannelId);
-            foreach (var kda in kills)
+            var channel = Core.Guild.GetTextChannel(settings.RewardChannelId);
+
+            var players = kills.Select(kda =>
             {
                 var sum = kda.Value.Kills * settings.PriceList.KillReward -
                           kda.Value.Deaths * settings.PriceList.DeathPenalty;
 
+                var name = channel.GetUser(kda.Key).Nickname;
+                
+                return (sum, kda.Value.Kills, kda.Value.Deaths, name, kda.Key);
+            }).ToArray();
+
+            foreach (var player in players)
+            {
+                await channel
+                    .SendMessageAsync($"{player.name} убил {player.Kills} и умер {player.Deaths}. Счет: {player.sum}")
+                    .ConfigureAwait(false);
+
+                if (player.sum > 0)
+                    Core.Bank.Add(player.Key, player.sum);
             }
             
-            kills = new Dictionary<CharacterOwner, Kda>();
+            kills = new Dictionary<ulong, Kda>();
         }
 
     private async Task PollAsync()
@@ -134,7 +148,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                             sb.Append($"**{diff.Player}** убил **{diff.Kills}** человек и умер **{diff.Death}** раз\n");
                     }
 
-                    if (settings.Color.TryGetValue(diff.Player, out var owner) && owner.IsBichehost())
+                    if (settings.Color.TryGetValue(diff.Player, out var owner))
                     {
                         if (!kills.ContainsKey(owner))
                             kills[owner] = new Kda();
