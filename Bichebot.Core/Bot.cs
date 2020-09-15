@@ -51,6 +51,11 @@ namespace Bichebot.Core
             await Task.Delay(-1, cancellationToken).ConfigureAwait(false);
 
             core.Log.Info("Stopping");
+
+            foreach (var module in modules)
+            {
+                module.Stop();
+            }
         }
 
         private Task HandleMessage(SocketMessage message)

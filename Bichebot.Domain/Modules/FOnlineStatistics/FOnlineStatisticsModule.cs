@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Bichebot.Core;
 using Bichebot.Core.Modules.Base;
@@ -22,16 +23,15 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
         public FOnlineStatisticsModule(IBotCore core, FonlineStatisticsModuleSettings settings) : base(core)
         {
             this.settings = settings;
-            Task.Run(StartPollingAsync).ConfigureAwait(false);
         }
 
-        private async Task StartPollingAsync()
+        protected override async Task DoWorkAsync(CancellationToken token)
         {
-            await Task.Delay(10 * 1000).ConfigureAwait(false); // ждем botcore guild
-            while (true)
+            await Task.Delay(10 * 1000, token).ConfigureAwait(false); // ждем botcore guild
+            while (token.IsCancellationRequested)
             {
                 await PollAsync().ConfigureAwait(false);
-                await Task.Delay(TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+                await Task.Delay(TimeSpan.FromMinutes(2), token).ConfigureAwait(false);
 
                 if (DateTime.Now.Date > currentDate.Date)
                 {
