@@ -71,6 +71,11 @@ namespace Bichebot.Domain.Pipeline.JumpGame
             }
             else
             {
+                foreach (var winner in winners)
+                {
+                    core.Bank.Add(winner.Id, 25);
+                }
+                
                 await channel
                     .SendMessageAsync(
                         $"Мужики, молодцы. {string.Join(", ", winners.Select(w => w.Username))}: всем по 25 бичекоинов")
