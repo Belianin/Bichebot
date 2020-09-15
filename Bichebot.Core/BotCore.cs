@@ -24,7 +24,7 @@ namespace Bichebot.Core
         public ILog Log { get; }
         public DiscordSocketClient Client { get; }
 
-        public SocketGuild Guild => Client.Guilds.First(g => g.Id == guildId);
+        public SocketGuild Guild => Client.GetGuild(guildId);
 
         public Random Random { get; } = new Random();
 

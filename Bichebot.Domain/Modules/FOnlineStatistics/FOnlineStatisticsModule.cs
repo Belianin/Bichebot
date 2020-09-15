@@ -18,7 +18,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 
         private DateTime currentDate = DateTime.Now;
         private Dictionary<ulong, Kda> kills = new Dictionary<ulong, Kda>();
-        
+
         public FOnlineStatisticsModule(IBotCore core, FonlineStatisticsModuleSettings settings) : base(core)
         {
             this.settings = settings;
@@ -27,6 +27,7 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 
         private async Task StartPollingAsync()
         {
+            await Task.Delay(10 * 1000).ConfigureAwait(false); // ждем botcore guild
             while (true)
             {
                 await PollAsync().ConfigureAwait(false);
@@ -42,32 +43,41 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
 
         private async Task PayRewardsAsync()
         {
-            var channel = Core.Guild.GetTextChannel(settings.RewardChannelId);
-
-            var players = kills.Select(kda =>
+            try
             {
-                var sum = kda.Value.Kills * settings.PriceList.KillReward -
-                          kda.Value.Deaths * settings.PriceList.DeathPenalty;
+                var channel = Core.Guild.GetTextChannel(settings.RewardChannelId);
 
-                var name = channel.GetUser(kda.Key).Nickname;
-                
-                return (sum, kda.Value.Kills, kda.Value.Deaths, name, kda.Key);
-            }).ToArray();
+                var players = kills.Select(kda =>
+                {
+                    var sum = kda.Value.Kills * settings.PriceList.KillReward -
+                              kda.Value.Deaths * settings.PriceList.DeathPenalty;
 
-            foreach (var player in players)
-            {
-                await channel
-                    .SendMessageAsync($"{player.name} убил {player.Kills} и умер {player.Deaths}. Счет: {player.sum}")
-                    .ConfigureAwait(false);
+                    var name = channel.GetUser(kda.Key).Nickname;
 
-                if (player.sum > 0)
-                    Core.Bank.Add(player.Key, player.sum);
+                    return (sum, kda.Value.Kills, kda.Value.Deaths, name, kda.Key);
+                }).ToArray();
+
+                foreach (var player in players)
+                {
+                    await channel
+                        .SendMessageAsync(
+                            $"{player.name} убил {player.Kills} и умер {player.Deaths}. Счет: {player.sum}")
+                        .ConfigureAwait(false);
+
+                    if (player.sum > 0)
+                        Core.Bank.Add(player.Key, player.sum);
+                }
+
+                kills = new Dictionary<ulong, Kda>();
             }
-            
-            kills = new Dictionary<ulong, Kda>();
+            catch (Exception e)
+            {
+                await Core.Guild.GetTextChannel(settings.ChannelId).SendMessageAsync(e.Message)
+                    .ConfigureAwait(false);
+            }
         }
 
-    private async Task PollAsync()
+        private async Task PollAsync()
         {
             var newStats = GetStatistics();
             if (newStats.IsFail)
@@ -128,6 +138,15 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
                 var victim = diffs.First(d => d.Death == 1);
 
                 sb.Append($"**{killer.Player}** убил **{victim.Player}** подняв свой рейтинг на **{killer.Rating}**");
+                
+                if (settings.Color.TryGetValue(killer.Player, out var owner))
+                {
+                    if (!kills.ContainsKey(owner))
+                        kills[owner] = new Kda();
+
+                    kills[owner].Kills += killer.Kills;
+                }
+                
             }
             else
             {
