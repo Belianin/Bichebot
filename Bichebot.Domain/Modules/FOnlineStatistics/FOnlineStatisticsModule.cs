@@ -28,9 +28,10 @@ namespace Bichebot.Domain.Modules.FOnlineStatistics
         protected override async Task DoWorkAsync(CancellationToken token)
         {
             await Task.Delay(10 * 1000, token).ConfigureAwait(false); // ждем botcore guild
-            while (token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
                 await PollAsync().ConfigureAwait(false);
+
                 await Task.Delay(TimeSpan.FromMinutes(2), token).ConfigureAwait(false);
 
                 if (DateTime.Now.Date > currentDate.Date)
