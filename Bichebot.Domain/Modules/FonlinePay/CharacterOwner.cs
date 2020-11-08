@@ -1,4 +1,4 @@
-namespace Bichebot.Domain.Modules.FOnlineStatistics
+namespace Bichebot.Domain.Modules.FonlinePay
 {
     public enum CharacterOwner
     {

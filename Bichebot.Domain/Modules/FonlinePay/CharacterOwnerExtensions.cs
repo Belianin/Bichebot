@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Bichebot.Domain.Modules.FOnlineStatistics
+namespace Bichebot.Domain.Modules.FonlinePay
 {
     public static class CharacterOwnerExtensions
     {

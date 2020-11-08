@@ -1,4 +1,5 @@
 using Bichebot.Domain.Modules.Best;
+using Bichebot.Domain.Modules.FonlinePay;
 using Bichebot.Domain.Modules.FOnlineStatistics;
 using Bichebot.Domain.Pipeline.Bank;
 using Bichebot.Domain.Pipeline.JumpGame;
@@ -16,5 +17,6 @@ namespace Bichebot.Domain
         public WithermansSettings Withermans { get; set; }
         public MemeGeneratorSettings MemeGenerator { get; set; }
         public FonlineStatisticsModuleSettings FoStatistics { get; set; }
+        public FOnlinePayModuleSettings FonlinePay { get; set; }
     }
 }

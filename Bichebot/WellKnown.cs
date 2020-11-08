@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Bichebot.Domain;
 using Bichebot.Domain.Modules.Best;
+using Bichebot.Domain.Modules.FonlinePay;
 using Bichebot.Domain.Modules.FOnlineStatistics;
 using Bichebot.Domain.Pipeline.Bank;
 using Bichebot.Domain.Pipeline.JumpGame;
@@ -76,7 +77,10 @@ namespace Bichebot
             },
             FoStatistics = new FonlineStatisticsModuleSettings
             {
-                ChannelId = Channels.Debug,
+                ChannelId = Channels.Debug
+            },
+            FonlinePay = new FOnlinePayModuleSettings
+            {
                 RewardChannelId = Channels.Discussions,
                 PriceList = new PriceList
                 {
